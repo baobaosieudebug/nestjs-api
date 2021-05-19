@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import { AddAddressDTO } from '../dto/add-address.dto';
 import { AddressEntity } from './address.entity';
 
 @Injectable()
@@ -17,10 +18,8 @@ export class AddressService {
 
   // }
 
-  async createAddress(idUser, address: AddressEntity) {
-    const newAddress = new AddressEntity();
-    newAddress.nameAddress = address.nameAddress;
-    newAddress.author = idUser;
+  async createAddress(address: AddressEntity) {
+    const newAddress = this.addressRepository.create(address);
     return await this.addressRepository.save(newAddress);
   }
 

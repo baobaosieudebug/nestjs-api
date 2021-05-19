@@ -4,9 +4,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './group/group.module';
-import { AddressModule } from './address/address.module';
+import { AddressModule } from './users/address/address.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
+import { AddAddressDTO } from './users/dto/add-address.dto';
+import { AddressService } from './users/address/address.service';
+import { AddressEntity } from './users/address/address.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { UsersController } from './users/users.controller';
     AddressModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AddressEntity],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

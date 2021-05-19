@@ -1,6 +1,6 @@
 import { Length, IsEmail, IsDefined } from 'class-validator';
 
-export class UsersDTO {
+export class AddUserDTO {
   @Length(10, 20)
   @IsDefined()
   name: string;

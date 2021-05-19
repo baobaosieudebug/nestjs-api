@@ -7,7 +7,7 @@ import {
 import { Request, Response } from 'express';
 
 @Catch(HttpException)
-export class userNotFoundExceptionFilter implements ExceptionFilter {
+export class GroupNotFoundExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -18,7 +18,7 @@ export class userNotFoundExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: 'ID User Incorrect',
+      message: 'ID Group Incorrect',
     });
   }
 }

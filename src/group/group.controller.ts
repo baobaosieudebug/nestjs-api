@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { GroupsService } from './group.service';
 import { GroupsEntity } from './group.entity';
-import { groupNotFoundExceptionFilter } from 'src/exception-filter/groupNotFound.filter';
+import { GroupNotFoundExceptionFilter } from 'src/exception filter/groupnotfound.filter';
 
 @Controller('groups')
-@UseFilters(new groupNotFoundExceptionFilter())
+@UseFilters(new GroupNotFoundExceptionFilter())
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 

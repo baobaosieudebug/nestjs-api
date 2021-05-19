@@ -5,8 +5,10 @@ import { UsersEntity } from './users.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { getRepository } from 'typeorm';
 import { validate } from 'class-validator';
-import { UsersDTO } from './interfaces/users.dto';
-import { UsersRO } from './interfaces/users.ro';
+import { AddUserDTO } from './dto/add-user.dto';
+import { UsersRO } from './ro/users.ro';
+import { AddressEntity } from './address/address.entity';
+import { AddressService } from './address/address.service';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +26,7 @@ export class UsersService {
       relations: ['groups'],
     });
   }
-  async create(user: UsersDTO): Promise<any> {
+  async create(user: AddUserDTO): Promise<any> {
     const newUser = new UsersEntity();
     newUser.name = user.name;
     newUser.email = user.email;
@@ -39,7 +41,7 @@ export class UsersService {
     });
   }
 
-  async update(id: number, user: UsersDTO) {
+  async update(id: number, user: AddUserDTO) {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     } else {

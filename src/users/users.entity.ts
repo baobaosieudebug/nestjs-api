@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
-import { AddressEntity } from '../address/address.entity';
+import { AddressEntity } from './address/address.entity';
 import * as crypto from 'crypto';
 import { Length, IsEmail } from 'class-validator';
 
@@ -30,7 +30,7 @@ export class UsersEntity {
   // @OneToMany(type => GroupsEntity, group => group.userCretead,{cascade:true})
   // groups: GroupsEntity[];
 
-  @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
+  @OneToMany(() => AddressEntity, (address: AddressEntity) => address.userId)
   addresses: AddressEntity[];
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {

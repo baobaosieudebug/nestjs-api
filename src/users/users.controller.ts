@@ -11,14 +11,20 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UsersDTO } from './interfaces/users.dto';
-import { userNotFoundExceptionFilter } from 'src/exception-filter/userNotFound.filter';
-import { ValidationPipe } from 'src/Pipe/ValidationPipe';
+import { AddUserDTO } from './dto/add-user.dto';
+import { UserNotFoundExceptionFilter } from 'src/exception filter/usernotfound.filter';
+import { ValidationPipe } from 'src/pipe/validation.pipe';
+import { AddressService } from './address/address.service';
+import { AddAddressDTO } from './dto/add-address.dto';
+import { AddressEntity } from './address/address.entity';
 
 @Controller('users')
-@UseFilters(new userNotFoundExceptionFilter())
+@UseFilters(new UserNotFoundExceptionFilter())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private addressService: AddressService,
+  ) {}
 
   @Get()
   async showAllUsers() {
@@ -31,13 +37,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getUser(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
-  ) {
+  async getUser(@Param('id') id: number) {
     return await this.usersService.getOneByIdOrFail(id);
   }
 
@@ -47,7 +47,7 @@ export class UsersController {
   }
 
   @Post()
-  async createUsers(@Body(new ValidationPipe()) user: UsersDTO) {
+  async createUsers(@Body(new ValidationPipe()) user: AddUserDTO) {
     return await this.usersService.create(user);
   }
 
@@ -68,12 +68,17 @@ export class UsersController {
   }
 
   @Put(':id')
-  async update(@Body() user: UsersDTO, @Param('id') id: number) {
+  async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
   }
 
   @Delete(':id')
   async deleteUser(@Param('id') id: number) {
     return await this.usersService.destroy(id);
+  }
+  //Crud Address
+  @Post('add-address')
+  async createAddress(@Body() address: AddressEntity) {
+    return await this.addressService.createAddress(address);
   }
 }
