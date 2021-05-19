@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { AddAddressDTO } from '../dto/add-address.dto';
+import { EditAddressDTO } from '../dto/edit-address.dto';
 import { AddressEntity } from './address.entity';
 
 @Injectable()
@@ -11,19 +12,25 @@ export class AddressService {
     private readonly addressRepository: Repository<AddressEntity>,
   ) {}
 
-  // async showAll(User:UsersEntity) : Promise<AddressEntity[]>{
-  //   let result = Array(new AddressEntity());
-  //   result = await this.addressRepository.find({id:User.id});
-  //   return await result.author;
-
-  // }
-
+  async getAddreess(id: number) {
+    return await this.addressRepository.findOne(id);
+  }
+  async getAddressOrFail(id: number) {
+    if (id == null) {
+      throw new HttpException('ID User Not Found', HttpStatus.NOT_FOUND);
+    } else {
+      return await this.getAddreess(id);
+    }
+  }
+  async getAll() {
+    return await this.addressRepository.find();
+  }
   async createAddress(address: AddressEntity) {
-    const newAddress = this.addressRepository.create(address);
-    return await this.addressRepository.save(newAddress);
+    // const newAddress = this.addressRepository.create(address);
+    return await this.addressRepository.save(address);
   }
 
-  async updateAddress(id: number, address: AddressEntity) {
+  async updateAddress(id: number, address: EditAddressDTO) {
     return await this.addressRepository.update(id, address);
   }
 

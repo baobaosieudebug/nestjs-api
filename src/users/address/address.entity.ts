@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { UsersEntity } from '../users.entity';
-// import { UsersEntity } from '../users/users.entity';
 
 @Entity('address')
 export class AddressEntity {
@@ -8,17 +7,17 @@ export class AddressEntity {
   id: number;
 
   @Column()
-  street: string;
+  ward: string;
 
   @Column()
-  ward: string;
+  nameAddress: string;
 
   @Column()
   district: string;
 
-  @Column('varchar', { name: 'city', nullable: true })
+  @Column()
   city: string;
 
   @ManyToOne(() => UsersEntity, (author: UsersEntity) => author.addresses)
-  userId: UsersEntity;
+  author: UsersEntity;
 }

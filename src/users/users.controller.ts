@@ -17,6 +17,7 @@ import { ValidationPipe } from 'src/pipe/validation.pipe';
 import { AddressService } from './address/address.service';
 import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
+import { EditAddressDTO } from './dto/edit-address.dto';
 
 @Controller('users')
 @UseFilters(new UserNotFoundExceptionFilter())
@@ -77,8 +78,35 @@ export class UsersController {
     return await this.usersService.destroy(id);
   }
   //Crud Address
+  @Get('address/:id')
+  async getAddress(@Param('id') id: number) {
+    return await this.addressService.getAddressOrFail(id);
+  }
+  @Get('address')
+  async getAll() {
+    return await this.addressService.getAll();
+  }
+  @Get(':idUser/address')
+  async getAddressByIdUser(@Param('idUser') idUser: number) {
+    return await this.usersService.getAddressByIdUser(idUser);
+  }
   @Post('add-address')
-  async createAddress(@Body() address: AddressEntity) {
-    return await this.addressService.createAddress(address);
+  async createAddress(@Body() address: AddAddressDTO) {
+    const newAddress = new AddressEntity();
+    const user = await this.usersService.getOneByIdOrFail(address.idUser);
+    newAddress.author = user;
+    newAddress.city = address.city;
+    newAddress.district = address.district;
+    newAddress.ward = address.ward;
+    newAddress.nameAddress = address.nameAddress;
+    return await this.addressService.createAddress(newAddress);
+  }
+  @Put('address/:id')
+  async editAddress(@Param('id') id: number, @Body() address: EditAddressDTO) {
+    return await this.addressService.updateAddress(id, address);
+  }
+  @Delete('address/:id')
+  async removeAddress(@Param('id') id: number) {
+    return await this.addressService.destroy(id);
   }
 }

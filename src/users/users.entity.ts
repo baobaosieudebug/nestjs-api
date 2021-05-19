@@ -30,7 +30,7 @@ export class UsersEntity {
   // @OneToMany(type => GroupsEntity, group => group.userCretead,{cascade:true})
   // groups: GroupsEntity[];
 
-  @OneToMany(() => AddressEntity, (address: AddressEntity) => address.userId)
+  @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
   addresses: AddressEntity[];
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {

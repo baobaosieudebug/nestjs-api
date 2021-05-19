@@ -7,9 +7,9 @@ import { GroupsModule } from './group/group.module';
 import { AddressModule } from './users/address/address.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
-import { AddAddressDTO } from './users/dto/add-address.dto';
-import { AddressService } from './users/address/address.service';
-import { AddressEntity } from './users/address/address.entity';
+// import { AddAddressDTO } from './users/dto/add-address.dto';
+// import { AddressService } from './users/add/address.service';
+// import { AddressEntity } from './users/add/address.entity';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { AddressEntity } from './users/address/address.entity';
     AddressModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AddressEntity],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

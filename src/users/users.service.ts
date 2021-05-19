@@ -7,8 +7,8 @@ import { getRepository } from 'typeorm';
 import { validate } from 'class-validator';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UsersRO } from './ro/users.ro';
-import { AddressEntity } from './address/address.entity';
-import { AddressService } from './address/address.service';
+// import { AddressEntity } from './add/address.entity';
+// import { AddressService } from './add/address.service';
 
 @Injectable()
 export class UsersService {
@@ -93,16 +93,23 @@ export class UsersService {
     }
   }
 
-  async getOneById(id: number): Promise<UsersRO> {
+  async getOneById(id: number) {
     return await this.usersRepository.findOne(id, {
       relations: ['groups'],
     });
   }
-  async getOneByIdOrFail(id: number): Promise<UsersRO> {
+
+  async getOneByIdOrFail(id: number) {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     } else {
       return await this.getOneById(id);
     }
+  }
+
+  async getAddressByIdUser(id: number) {
+    return await this.usersRepository.findOne(id, {
+      relations: ['addresses'],
+    });
   }
 }

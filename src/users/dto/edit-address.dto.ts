@@ -1,14 +1,11 @@
-import { IsNumber, isString, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
-export class AddAddressDTO {
+export class EditAddressDTO {
   @IsNumber()
-  idUser: number;
+  authorId: number;
 
   @IsString()
   nameAddress: string;
-
-  @IsString()
-  street: string;
 
   @IsString()
   ward: string;
