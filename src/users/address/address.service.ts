@@ -25,8 +25,7 @@ export class AddressService {
   async getAll() {
     return await this.addressRepository.find();
   }
-  async createAddress(address: AddressEntity) {
-    // const newAddress = this.addressRepository.create(address);
+  async createAddress(address: AddressEntity): Promise<AddressEntity> {
     return await this.addressRepository.save(address);
   }
 

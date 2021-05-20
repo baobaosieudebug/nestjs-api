@@ -2,13 +2,10 @@ import { IsNumber, isString, IsString } from 'class-validator';
 
 export class AddAddressDTO {
   @IsNumber()
-  idUser: number;
+  userCreatead: number;
 
   @IsString()
   nameAddress: string;
-
-  @IsString()
-  street: string;
 
   @IsString()
   ward: string;

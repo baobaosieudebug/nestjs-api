@@ -18,9 +18,10 @@ import { AddressService } from './address/address.service';
 import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
+import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 
 @Controller('users')
-@UseFilters(new UserNotFoundExceptionFilter())
+// @UseFilters(new UserNotFoundExceptionFilter())
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -38,7 +39,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getUser(@Param('id') id: number) {
+  async getUser(@Param('id', ParseDataToIntPipe) id: number) {
     return await this.usersService.getOneByIdOrFail(id);
   }
 
@@ -93,12 +94,13 @@ export class UsersController {
   @Post('add-address')
   async createAddress(@Body() address: AddAddressDTO) {
     const newAddress = new AddressEntity();
-    const user = await this.usersService.getOneByIdOrFail(address.idUser);
-    newAddress.author = user;
+    const user = await this.usersService.getOneByIdOrFail(address.userCreatead);
+    newAddress.id = user.id;
     newAddress.city = address.city;
     newAddress.district = address.district;
     newAddress.ward = address.ward;
     newAddress.nameAddress = address.nameAddress;
+    newAddress.author = user;
     return await this.addressService.createAddress(newAddress);
   }
   @Put('address/:id')

@@ -7,10 +7,10 @@ export class AddressEntity {
   id: number;
 
   @Column()
-  ward: string;
+  nameAddress: string;
 
   @Column()
-  nameAddress: string;
+  ward: string;
 
   @Column()
   district: string;
