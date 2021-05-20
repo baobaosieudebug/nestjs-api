@@ -9,11 +9,13 @@ import {
   UseFilters,
   ParseIntPipe,
   HttpStatus,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UserNotFoundExceptionFilter } from 'src/exception filter/usernotfound.filter';
-import { ValidationPipe } from 'src/pipe/validation.pipe';
+// import { ValidationPipe } from 'src/pipe/validation.pipe';
 import { AddressService } from './address/address.service';
 import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
@@ -49,7 +51,8 @@ export class UsersController {
   }
 
   @Post()
-  async createUsers(@Body(new ValidationPipe()) user: AddUserDTO) {
+  @UsePipes(ValidationPipe)
+  async createUsers(@Body() user: AddUserDTO) {
     return await this.usersService.create(user);
   }
 
