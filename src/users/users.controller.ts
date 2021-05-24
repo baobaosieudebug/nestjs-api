@@ -23,7 +23,6 @@ import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 
 @Controller('users')
-// @UseFilters(new UserNotFoundExceptionFilter())
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -36,7 +35,8 @@ export class UsersController {
   }
 
   @Get(':idUser/getAllGroup')
-  async getAllGroup(@Param('idUser') idUser: number) {
+  @UseFilters(new UserNotFoundExceptionFilter())
+  async getAllGroup(@Param('idUser', ParseDataToIntPipe) idUser: number) {
     return await this.usersService.getAllGroup(idUser);
   }
 

@@ -21,24 +21,38 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
-  async getAllGroup(idUser: number): Promise<UsersRO> {
-    return await this.usersRepository.findOne(idUser, {
+  async getAllGroup(idUser: number) {
+    const user: UsersRO = await this.usersRepository.findOne(idUser, {
       relations: ['groups'],
     });
+    if (user === undefined) {
+      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+    } else {
+      return user;
+    }
   }
   async create(user: AddUserDTO): Promise<any> {
     const newUser = new UsersEntity();
     newUser.name = user.name;
     newUser.email = user.email;
     newUser.password = user.password;
-    validate(newUser).then((errors) => {
-      // errors is an array of validation errors
-      if (errors.length > 0) {
-        throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
-      } else {
-        return this.usersRepository.save(newUser);
-      }
-    });
+    if (
+      newUser.name == undefined ||
+      newUser.email == undefined ||
+      newUser.password == undefined
+    ) {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    } else {
+      return this.usersRepository.save(newUser);
+    }
+    // validate(newUser).then((errors) => {
+    //   // errors is an array of validation errors
+    //   if (errors.length > 0) {
+    //     throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
+    //   } else {
+    //     return this.usersRepository.save(newUser);
+    //   }
+    // });
   }
 
   async update(id: number, user: AddUserDTO) {
