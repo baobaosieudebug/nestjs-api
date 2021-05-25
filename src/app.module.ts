@@ -19,7 +19,7 @@ import { UsersController } from './users/users.controller';
       port: 3307,
       username: 'root',
       password: 'secret',
-      database: 'mydatabase',
+      database: 'blogdb',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),

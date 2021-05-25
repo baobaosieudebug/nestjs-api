@@ -11,6 +11,9 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  UseGuards,
+  BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
@@ -21,6 +24,11 @@ import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
+import { RolesGuard } from 'src/guard/role.auth';
+import { UsersEntity } from './users.entity';
+import { AuthService } from 'src/auth/auth.service';
+import { Hash } from 'crypto';
+import * as bcrypt from 'bcrypt';
 
 @Controller('users')
 export class UsersController {
@@ -50,6 +58,11 @@ export class UsersController {
     return await this.usersService.getOneById(id);
   }
 
+  @Get()
+  async getUserByEmail(email: string) {
+    return await this.usersService.getUserByEmail(email);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createUsers(@Body() user: AddUserDTO) {
@@ -64,6 +77,39 @@ export class UsersController {
     return await this.usersService.userJoinGroup(idUser, idGroup);
   }
 
+  @Post('login')
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+    // @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = await this.usersService.getUserByEmail(email);
+    const hashPassword = await bcrypt.hash(password, 12);
+    // return crypto.getRandomValues(password);
+
+    console.log(user);
+    console.log(hashPassword);
+    if ((await bcrypt.compare(password, user.password)) == true) {
+      console.log('Logged in!');
+    } else {
+      console.log('Wrong PassWord');
+    }
+    // if (!user) {
+    //   throw new BadRequestException('invalid credentials');
+    // }
+
+    // if (!password) {
+    //   throw new BadRequestException('invalid credentials');
+    // }
+
+    // // const jwt = await this.jwtService.signAsync({ id: user.id });
+
+    // // response.cookie('jwt', jwt, { httpOnly: true });
+
+    // return {
+    //   message: 'success',
+    // };
+  }
   @Post(':idUser/groupJoinByUser/:idGroup')
   async groupJoinByUser(
     @Param('idUser') idUser: number,
@@ -73,6 +119,7 @@ export class UsersController {
   }
 
   @Put(':id')
+  @UseGuards(RolesGuard)
   async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
   }

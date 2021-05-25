@@ -9,6 +9,7 @@ import { AddUserDTO } from './dto/add-user.dto';
 import { UsersRO } from './ro/users.ro';
 // import { AddressEntity } from './add/address.entity';
 // import { AddressService } from './add/address.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -31,11 +32,13 @@ export class UsersService {
       return user;
     }
   }
-  async create(user: AddUserDTO): Promise<any> {
+  async create(user: AddUserDTO) {
+    const hashPassword = await bcrypt.hash(user.password, 12);
     const newUser = new UsersEntity();
     newUser.name = user.name;
     newUser.email = user.email;
-    newUser.password = user.password;
+    newUser.password = hashPassword;
+    console.log(hashPassword);
     if (
       newUser.name == undefined ||
       newUser.email == undefined ||
@@ -45,14 +48,6 @@ export class UsersService {
     } else {
       return this.usersRepository.save(newUser);
     }
-    // validate(newUser).then((errors) => {
-    //   // errors is an array of validation errors
-    //   if (errors.length > 0) {
-    //     throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
-    //   } else {
-    //     return this.usersRepository.save(newUser);
-    //   }
-    // });
   }
 
   async update(id: number, user: AddUserDTO) {
@@ -125,5 +120,9 @@ export class UsersService {
     return await this.usersRepository.findOne(id, {
       relations: ['addresses'],
     });
+  }
+
+  async getUserByEmail(email: string) {
+    return await this.usersRepository.findOne({ email: email });
   }
 }

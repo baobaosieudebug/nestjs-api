@@ -37,9 +37,4 @@ export class UsersEntity {
     cascade: ['insert'],
   })
   groups: GroupsEntity[];
-
-  @BeforeInsert()
-  hashPassword() {
-    this.password = crypto.createHmac('sha256', this.password).digest('hex');
-  }
 }
