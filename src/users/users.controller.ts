@@ -19,9 +19,9 @@ import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
-import { RolesGuard } from 'src/guard/role.auth';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -78,8 +78,8 @@ export class UsersController {
     return await this.usersService.groupJoinByUser(idUser, idGroup);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  @UseGuards(RolesGuard)
   async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
   }

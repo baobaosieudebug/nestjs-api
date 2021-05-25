@@ -49,14 +49,20 @@ export class UsersService {
 
   async update(id: number, user: AddUserDTO) {
     if ((await this.getOneById(id)) == null) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'User not found in your param',
+        HttpStatus.NOT_FOUND,
+      );
     } else {
       if (
         (await user.name) == undefined ||
         (await user.email) == undefined ||
         (await user.password) == undefined
       ) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'User not found in your body',
+          HttpStatus.NOT_FOUND,
+        );
       } else {
         await this.usersRepository.update(id, user);
         const myUser = await this.usersRepository.findOne(id);
