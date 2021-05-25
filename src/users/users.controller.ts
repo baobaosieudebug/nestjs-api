@@ -7,28 +7,20 @@ import {
   Body,
   Param,
   UseFilters,
-  ParseIntPipe,
-  HttpStatus,
   UsePipes,
   ValidationPipe,
   UseGuards,
-  BadRequestException,
-  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UserNotFoundExceptionFilter } from 'src/exception filter/usernotfound.filter';
-// import { ValidationPipe } from 'src/pipe/validation.pipe';
 import { AddressService } from './address/address.service';
 import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 import { RolesGuard } from 'src/guard/role.auth';
-import { UsersEntity } from './users.entity';
-import { AuthService } from 'src/auth/auth.service';
-import { Hash } from 'crypto';
-import * as bcrypt from 'bcrypt';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -48,6 +40,7 @@ export class UsersController {
     return await this.usersService.getAllGroup(idUser);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUser(@Param('id', ParseDataToIntPipe) id: number) {
     return await this.usersService.getOneByIdOrFail(id);
@@ -77,39 +70,6 @@ export class UsersController {
     return await this.usersService.userJoinGroup(idUser, idGroup);
   }
 
-  @Post('login')
-  async login(
-    @Body('email') email: string,
-    @Body('password') password: string,
-    // @Res({ passthrough: true }) response: Response,
-  ) {
-    const user = await this.usersService.getUserByEmail(email);
-    const hashPassword = await bcrypt.hash(password, 12);
-    // return crypto.getRandomValues(password);
-
-    console.log(user);
-    console.log(hashPassword);
-    if ((await bcrypt.compare(password, user.password)) == true) {
-      console.log('Logged in!');
-    } else {
-      console.log('Wrong PassWord');
-    }
-    // if (!user) {
-    //   throw new BadRequestException('invalid credentials');
-    // }
-
-    // if (!password) {
-    //   throw new BadRequestException('invalid credentials');
-    // }
-
-    // // const jwt = await this.jwtService.signAsync({ id: user.id });
-
-    // // response.cookie('jwt', jwt, { httpOnly: true });
-
-    // return {
-    //   message: 'success',
-    // };
-  }
   @Post(':idUser/groupJoinByUser/:idGroup')
   async groupJoinByUser(
     @Param('idUser') idUser: number,
@@ -128,6 +88,7 @@ export class UsersController {
   async deleteUser(@Param('id') id: number) {
     return await this.usersService.destroy(id);
   }
+
   //Crud Address
   @Get('address/:id')
   async getAddress(@Param('id') id: number) {

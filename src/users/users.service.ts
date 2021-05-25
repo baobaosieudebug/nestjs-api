@@ -4,11 +4,8 @@ import { DeleteResult, Repository } from 'typeorm';
 import { UsersEntity } from './users.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { getRepository } from 'typeorm';
-import { validate } from 'class-validator';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UsersRO } from './ro/users.ro';
-// import { AddressEntity } from './add/address.entity';
-// import { AddressService } from './add/address.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

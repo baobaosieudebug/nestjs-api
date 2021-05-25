@@ -7,9 +7,7 @@ import { GroupsModule } from './group/group.module';
 import { AddressModule } from './users/address/address.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
-// import { AddAddressDTO } from './users/dto/add-address.dto';
-// import { AddressService } from './users/add/address.service';
-// import { AddressEntity } from './users/add/address.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,6 +24,7 @@ import { UsersController } from './users/users.controller';
     UsersModule,
     GroupsModule,
     AddressModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
