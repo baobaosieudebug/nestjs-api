@@ -20,7 +20,11 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.usersService.getUserByEmail(email);
     if ((await bcrypt.compare(password, user.password)) == true) {
-      return await this.getToken(user);
+      return {
+        email: user.email,
+        name: user.name,
+        token: await this.getToken(user),
+      };
     } else {
       throw new BadRequestException('Wrong PassWord');
     }

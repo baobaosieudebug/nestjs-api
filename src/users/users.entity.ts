@@ -27,8 +27,9 @@ export class UsersEntity {
   @Column()
   @Length(4, 20)
   password: string;
-  // @OneToMany(type => GroupsEntity, group => group.userCretead,{cascade:true})
-  // groups: GroupsEntity[];
+
+  @Column()
+  isAdmin: boolean;
 
   @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
   addresses: AddressEntity[];

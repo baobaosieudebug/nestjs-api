@@ -12,4 +12,7 @@ export class AddUserDTO {
   @Length(4, 20)
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  isAdmin: boolean;
 }

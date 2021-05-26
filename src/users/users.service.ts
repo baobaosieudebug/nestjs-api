@@ -35,7 +35,7 @@ export class UsersService {
     newUser.name = user.name;
     newUser.email = user.email;
     newUser.password = hashPassword;
-    console.log(hashPassword);
+    newUser.isAdmin = user.isAdmin;
     if (
       newUser.name == undefined ||
       newUser.email == undefined ||
