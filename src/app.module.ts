@@ -8,19 +8,13 @@ import { AddressModule } from './users/address/address.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from './config/config.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3307,
-      username: 'root',
-      password: 'secret',
-      database: 'blogdb',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-    }),
+    DatabaseModule.forRoot(),
+    ConfigModule.forRoot(),
     UsersModule,
     GroupsModule,
     AddressModule,

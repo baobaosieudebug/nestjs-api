@@ -5,6 +5,7 @@ import {
 } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { authConfig, authConfigSchema } from './auth.config';
+import { databaseConfig, databaseConfigSchema } from './database.config';
 
 @Module({})
 export class ConfigModule {
@@ -14,9 +15,10 @@ export class ConfigModule {
       imports: [
         NestConfigModule.forRoot({
           isGlobal: true,
-          load: [authConfig],
+          load: [authConfig, databaseConfig],
           validationSchema: Joi.object({
             ...authConfigSchema,
+            ...databaseConfigSchema,
           }),
         }),
       ],
