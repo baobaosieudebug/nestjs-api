@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  HttpModule,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,6 +24,7 @@ import { DatabaseModule } from './database/database.module';
     GroupsModule,
     AddressModule,
     AuthModule,
+    HttpModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,9 @@
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpStatus,
+  HttpException,
+  HttpService,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { UsersEntity } from './users.entity';
@@ -7,14 +12,24 @@ import { getRepository } from 'typeorm';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UsersRO } from './ro/users.ro';
 import * as bcrypt from 'bcrypt';
+import { AxiosResponse } from 'axios';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersEntity)
     private readonly usersRepository: Repository<UsersEntity>,
+    private httpService: HttpService,
   ) {}
 
+  async getApi(): Promise<Observable<AxiosResponse<any>>> {
+    const response = await this.httpService
+      // .get('https://api.spacexdata.com/v4/launches/latest')
+      .get('http://localhost:5001/users')
+      .toPromise();
+    return response.data;
+  }
   async showAll(): Promise<UsersRO[]> {
     return await this.usersRepository.find();
   }

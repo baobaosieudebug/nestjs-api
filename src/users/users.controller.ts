@@ -10,6 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  HttpService,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
@@ -20,6 +21,7 @@ import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import axios from 'axios';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -31,7 +33,13 @@ export class UsersController {
 
   @Get()
   async showAllUsers() {
-    return await this.usersService.showAll();
+    const res = await axios.get('https://reqres.in/api/users');
+    return res;
+  }
+
+  @Get('callApi')
+  async findAll() {
+    return await this.usersService.getApi();
   }
 
   @Get(':idUser/getAllGroup')
