@@ -21,9 +21,8 @@ import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import axios from 'axios';
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -33,13 +32,17 @@ export class UsersController {
 
   @Get()
   async showAllUsers() {
-    const res = await axios.get('https://reqres.in/api/users');
-    return res;
+    return await this.usersService.showAll();
   }
 
   @Get('callApi')
-  async findAll() {
+  async getApi() {
     return await this.usersService.getApi();
+  }
+
+  @Post('callLoginApi')
+  async loginApi() {
+    return await this.usersService.loginApi();
   }
 
   @Get(':idUser/getAllGroup')
@@ -48,9 +51,8 @@ export class UsersController {
     return await this.usersService.getAllGroup(idUser);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getUser(@Param('id', ParseDataToIntPipe) id: number) {
+  async getUser(@Param('id') id: number) {
     return await this.usersService.getOneByIdOrFail(id);
   }
 

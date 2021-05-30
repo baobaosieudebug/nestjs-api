@@ -30,6 +30,18 @@ export class UsersService {
       .toPromise();
     return response.data;
   }
+
+  async loginApi(): Promise<Observable<AxiosResponse<any>>> {
+    const response = await this.httpService
+      // .get('https://api.spacexdata.com/v4/launches/latest')
+      .post('http://localhost:5001/auth/login', {
+        email: 'NgocTran@gmail.com',
+        password: 'baobao123',
+      })
+      .toPromise();
+    return response.data;
+  }
+
   async showAll(): Promise<UsersRO[]> {
     return await this.usersRepository.find();
   }
