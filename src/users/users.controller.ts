@@ -21,8 +21,10 @@ import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { TokenUserDTO } from './dto/token-user.dto';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -36,13 +38,13 @@ export class UsersController {
   }
 
   @Get('callApi')
-  async getApi() {
-    return await this.usersService.getApi();
+  async getApi(@Body() token: TokenUserDTO) {
+    return await this.usersService.getApi(token);
   }
 
   @Post('callLoginApi')
-  async loginApi() {
-    return await this.usersService.loginApi();
+  async loginApi(@Body() user: LoginUserDTO) {
+    return await this.usersService.loginApi(user);
   }
 
   @Get(':idUser/getAllGroup')

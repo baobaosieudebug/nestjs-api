@@ -3,6 +3,7 @@ import {
   HttpStatus,
   HttpException,
   HttpService,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
@@ -12,8 +13,11 @@ import { getRepository } from 'typeorm';
 import { AddUserDTO } from './dto/add-user.dto';
 import { UsersRO } from './ro/users.ro';
 import * as bcrypt from 'bcrypt';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { TokenUserDTO } from './dto/token-user.dto';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
@@ -23,23 +27,45 @@ export class UsersService {
     private httpService: HttpService,
   ) {}
 
-  async getApi(): Promise<Observable<AxiosResponse<any>>> {
-    const response = await this.httpService
-      // .get('https://api.spacexdata.com/v4/launches/latest')
-      .get('http://localhost:5001/users')
-      .toPromise();
-    return response.data;
+  async getApi(access_token: TokenUserDTO) {
+    const apiUrl = 'http://localhost:5001';
+    const authAxios = axios.create({
+      baseURL: apiUrl,
+      headers: {
+        Authorization: `Bearer ${access_token.token}`,
+      },
+    });
+    const result = authAxios.get(`${apiUrl}/users`);
+    if (!authAxios) {
+      throw new UnauthorizedException('Unauthorized!');
+    } else {
+      if (!result) {
+        throw new BadRequestException('Bad Request');
+      } else {
+        return (await result).data;
+      }
+    }
+
+    // const getApi = await this.httpService
+    //   // .get('https://api.spacexdata.com/v4/launches/latest')
+    //   .get('http://localhost:5001/users')
+    //   .toPromise();
   }
 
-  async loginApi(): Promise<Observable<AxiosResponse<any>>> {
+  async loginApi(user: LoginUserDTO) {
     const response = await this.httpService
-      // .get('https://api.spacexdata.com/v4/launches/latest')
       .post('http://localhost:5001/auth/login', {
-        email: 'NgocTran@gmail.com',
-        password: 'baobao123',
+        email: user.email,
+        password: user.password,
       })
       .toPromise();
-    return response.data;
+    if (!response) {
+      throw new BadRequestException(
+        'Bad Request ! Check My Email And Password !',
+      );
+    } else {
+      return response.data;
+    }
   }
 
   async showAll(): Promise<UsersRO[]> {
