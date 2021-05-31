@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
@@ -17,6 +17,10 @@ import { ConfigModule } from 'src/config/config.module';
     ConfigModule.forRoot(),
     PassportModule,
     UsersModule,
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],

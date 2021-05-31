@@ -20,7 +20,6 @@ import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
@@ -93,7 +92,6 @@ export class UsersController {
     return await this.usersService.groupJoinByUser(idUser, idGroup);
   }
 
-  // @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
