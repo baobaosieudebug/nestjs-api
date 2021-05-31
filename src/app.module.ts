@@ -17,6 +17,7 @@ import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     AddressModule,
     AuthModule,
     HttpModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,6 +10,7 @@ import { GroupsEntity } from '../group/group.entity';
 import { AddressEntity } from './address/address.entity';
 import * as crypto from 'crypto';
 import { Length, IsEmail } from 'class-validator';
+import { Role } from 'src/auth/roles/role.enum';
 
 @Entity('users')
 export class UsersEntity {
@@ -38,4 +39,6 @@ export class UsersEntity {
     cascade: ['insert'],
   })
   groups: GroupsEntity[];
+
+  roles: Role[];
 }

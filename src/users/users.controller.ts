@@ -23,6 +23,10 @@ import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/auth/roles/role.enum';
+import { CaslAbilityFactory } from 'src/article/casl-ability.factory';
+import { UsersEntity } from './users.entity';
 //Proeject mới
 @Controller('users')
 export class UsersController {
@@ -69,10 +73,11 @@ export class UsersController {
     return await this.usersService.getUserByEmail(email);
   }
 
-  @Post()
   @Public()
-  @UsePipes(ValidationPipe)
-  async createUsers(@Body() user: AddUserDTO) {
+  // @Roles(Role.Admin)
+  @Post()
+  // @UsePipes(ValidationPipe)
+  async createUsers(@Body() user: UsersEntity) {
     return await this.usersService.create(user);
   }
 

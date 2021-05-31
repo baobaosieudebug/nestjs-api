@@ -18,6 +18,9 @@ import { Observable } from 'rxjs';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
+import { CaslAbilityFactory } from 'src/article/casl-ability.factory';
+import { ArticleEntity } from 'src/article/article.entity';
+import { Action } from 'src/article/action/action.enum';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +28,7 @@ export class UsersService {
     @InjectRepository(UsersEntity)
     private readonly usersRepository: Repository<UsersEntity>,
     private httpService: HttpService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   async getListUserAndVerifyToken(access_token: TokenUserDTO) {
@@ -82,21 +86,44 @@ export class UsersService {
       return user;
     }
   }
-  async create(user: AddUserDTO) {
-    const hashPassword = await bcrypt.hash(user.password, 12);
-    const newUser = new UsersEntity();
-    newUser.name = user.name;
-    newUser.email = user.email;
-    newUser.password = hashPassword;
-    newUser.isAdmin = user.isAdmin;
-    if (
-      newUser.name == undefined ||
-      newUser.email == undefined ||
-      newUser.password == undefined
-    ) {
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+  async create(user: UsersEntity) {
+    // const hashPassword = await bcrypt.hash(user.password, 12);
+    // const newUser = new UsersEntity();
+    // newUser.name = user.name;
+    // newUser.email = user.email;
+    // newUser.password = hashPassword;
+    // newUser.isAdmin = user.isAdmin;
+    // if (
+    //   newUser.name == undefined ||
+    //   newUser.email == undefined ||
+    //   newUser.password == undefined
+    // ) {
+    //   throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    // } else {
+    //   return this.usersRepository.save(newUser);
+    // }
+
+    const users = new UsersEntity();
+    users.id = 55;
+
+    const article = new ArticleEntity();
+    article.authorId = String(user.id);
+
+    // const ability = this.caslAbilityFactory.createForUser(user);
+    // ability.can(Action.Update, article); // true
+
+    const ability = this.caslAbilityFactory.createForUser(user);
+    console.log(ability.can(Action.Update, article));
+    if (user.isAdmin == true) {
+      console.log(ability.can(Action.Read, ArticleEntity)); // true
+      console.log(ability.can(Action.Update, ArticleEntity)); // true
+      console.log(ability.can(Action.Delete, ArticleEntity)); // true
+      console.log(ability.can(Action.Create, ArticleEntity)); // true
     } else {
-      return this.usersRepository.save(newUser);
+      console.log(ability.can(Action.Read, ArticleEntity)); // true
+      console.log(ability.can(Action.Update, article)); // true
+      console.log(ability.can(Action.Delete, ArticleEntity)); // false
+      console.log(ability.can(Action.Create, ArticleEntity)); // false
     }
   }
 
