@@ -27,7 +27,7 @@ export class UsersService {
     private httpService: HttpService,
   ) {}
 
-  async getApi(access_token: TokenUserDTO) {
+  async getListUserAndVerifyToken(access_token: TokenUserDTO) {
     const apiUrl = 'http://localhost:5001';
     const authAxios = axios.create({
       baseURL: apiUrl,

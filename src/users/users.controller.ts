@@ -20,11 +20,11 @@ import { AddAddressDTO } from './dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
 import { EditAddressDTO } from './dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
-
-// @UseGuards(JwtAuthGuard)
+import { Public } from 'src/decorators/public.decorator';
+//Proeject mới
 @Controller('users')
 export class UsersController {
   constructor(
@@ -37,15 +37,17 @@ export class UsersController {
     return await this.usersService.showAll();
   }
 
-  @Get('callApi')
-  async getApi(@Body() token: TokenUserDTO) {
-    return await this.usersService.getApi(token);
+  @Get('getAListUserAndVerifyToken')
+  async getListUserAndVerifyToken(
+    @Body() token: TokenUserDTO,
+  ): Promise<unknown> {
+    return await this.usersService.getListUserAndVerifyToken(token);
   }
 
-  @Post('callLoginApi')
-  async loginApi(@Body() user: LoginUserDTO) {
-    return await this.usersService.loginApi(user);
-  }
+  // @Post('callLoginApi')
+  // async loginApi(@Body() user: LoginUserDTO) {
+  //   return await this.usersService.loginApi(user);
+  // }
 
   @Get(':idUser/getAllGroup')
   @UseFilters(new UserNotFoundExceptionFilter())
@@ -69,6 +71,7 @@ export class UsersController {
   }
 
   @Post()
+  @Public()
   @UsePipes(ValidationPipe)
   async createUsers(@Body() user: AddUserDTO) {
     return await this.usersService.create(user);
@@ -90,7 +93,7 @@ export class UsersController {
     return await this.usersService.groupJoinByUser(idUser, idGroup);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
