@@ -9,9 +9,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { CreateArticleDto } from 'src/dto/create-article.dto';
+import { CreateArticleDTO } from 'src/dto/create-article.dto';
 import { EditAddressDTO } from 'src/dto/edit-address.dto';
-import { EditArticleDto } from 'src/dto/edit-article.dto';
+import { EditArticleDTO } from 'src/dto/edit-article.dto';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { ArticleService } from './artice.service';
 import { ArticleEntity } from './article.entity';
@@ -37,13 +37,13 @@ export class ArticleController {
     type: ArticleEntity,
   })
   @Post()
-  async createArticle(@Body() article: CreateArticleDto) {
+  async createArticle(@Body() article: CreateArticleDTO) {
     return await this.articleService.createArticle(article);
   }
 
   @Public()
   @Put()
-  async editArticle(@Body() article: EditArticleDto) {
+  async editArticle(@Body() article: EditArticleDTO) {
     return await this.articleService.editArticle(article);
   }
 }
