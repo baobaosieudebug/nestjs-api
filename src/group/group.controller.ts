@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { GroupsService } from './group.service';
 import { GroupsEntity } from './group.entity';
-import { GroupNotFoundExceptionFilter } from 'src/exception filter/groupnotfound.filter';
+import { GroupNotFoundExceptionFilter } from 'src/auth/exception filter/groupnotfound.filter';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Group')

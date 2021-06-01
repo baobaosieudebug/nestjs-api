@@ -13,15 +13,15 @@ import {
   HttpService,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AddUserDTO } from './dto/add-user.dto';
-import { UserNotFoundExceptionFilter } from 'src/exception filter/usernotfound.filter';
+import { AddUserDTO } from '../dto/add-user.dto';
+import { UserNotFoundExceptionFilter } from 'src/auth/exception filter/usernotfound.filter';
 import { AddressService } from './address/address.service';
-import { AddAddressDTO } from './dto/add-address.dto';
+import { AddAddressDTO } from '../dto/add-address.dto';
 import { AddressEntity } from './address/address.entity';
-import { EditAddressDTO } from './dto/edit-address.dto';
-import { ParseDataToIntPipe } from 'src/pipe/parse-to-int.pipe';
-import { LoginUserDTO } from './dto/login-user.dto';
-import { TokenUserDTO } from './dto/token-user.dto';
+import { EditAddressDTO } from '../dto/edit-address.dto';
+import { ParseDataToIntPipe } from 'src/auth/pipe/parse-to-int.pipe';
+import { LoginUserDTO } from '../dto/login-user.dto';
+import { TokenUserDTO } from '../dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/roles/role.enum';

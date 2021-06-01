@@ -2,22 +2,24 @@ import { Get } from '@nestjs/common';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { LoginUserDTO } from 'src/users/dto/login-user.dto';
+import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { ArticleService } from './artice.service';
 import { ArticleEntity } from './article.entity';
 //Proeject mới
 @ApiTags('Article')
+@ApiBearerAuth()
 @Controller('article')
 export class ArticleController {
   constructor(private articleService: ArticleService) {}
 
-  // @Public()
+  @Public()
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
     type: ArticleEntity,

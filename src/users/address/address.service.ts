@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { AddAddressDTO } from '../dto/add-address.dto';
-import { EditAddressDTO } from '../dto/edit-address.dto';
+import { AddAddressDTO } from '../../dto/add-address.dto';
+import { EditAddressDTO } from '../../dto/edit-address.dto';
 import { AddressEntity } from './address.entity';
 
 @Injectable()
