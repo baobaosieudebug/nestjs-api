@@ -30,7 +30,7 @@ import { UsersEntity } from './users.entity';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 //Proeject mới
-@ApiTags('Users')
+@ApiTags('User')
 @Controller('users')
 export class UsersController {
   constructor(

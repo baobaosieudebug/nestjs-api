@@ -1,4 +1,4 @@
-import { Get } from '@nestjs/common';
+import { Get, Put } from '@nestjs/common';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -9,9 +9,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
+import { CreateArticleDto } from 'src/dto/create-article.dto';
+import { EditAddressDTO } from 'src/dto/edit-address.dto';
+import { EditArticleDto } from 'src/dto/edit-article.dto';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { ArticleService } from './artice.service';
 import { ArticleEntity } from './article.entity';
+
 //Proeject mới
 @ApiTags('Article')
 @ApiBearerAuth()
@@ -33,7 +37,13 @@ export class ArticleController {
     type: ArticleEntity,
   })
   @Post()
-  async createArticle(@Body() article: ArticleEntity) {
+  async createArticle(@Body() article: CreateArticleDto) {
     return await this.articleService.createArticle(article);
+  }
+
+  @Public()
+  @Put()
+  async editArticle(@Body() article: EditArticleDto) {
+    return await this.articleService.editArticle(article);
   }
 }
