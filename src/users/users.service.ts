@@ -11,7 +11,7 @@ import { UsersEntity } from './users.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { getRepository } from 'typeorm';
 import { AddUserDTO } from '../dto/add-user.dto';
-import { UsersRO } from '../ro/users.ro';
+import { AddUserRO } from '../ro/users.ro';
 import * as bcrypt from 'bcrypt';
 import axios, { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
@@ -21,6 +21,7 @@ import { BadRequestException } from '@nestjs/common';
 import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { ArticleEntity } from 'src/article/article.entity';
 import { Action } from 'src/article/action/action.enum';
+import { AddUsersRO } from 'src/dto/add-user.ro';
 
 @Injectable()
 export class UsersService {
@@ -72,12 +73,12 @@ export class UsersService {
     }
   }
 
-  async showAll(): Promise<UsersRO[]> {
+  async showAll(): Promise<AddUserRO[]> {
     return await this.usersRepository.find();
   }
 
   async getAllGroup(idUser: number) {
-    const user: UsersRO = await this.usersRepository.findOne(idUser, {
+    const user: AddUserRO = await this.usersRepository.findOne(idUser, {
       relations: ['groups'],
     });
     if (user === undefined) {
@@ -86,45 +87,13 @@ export class UsersService {
       return user;
     }
   }
-  async create(user: UsersEntity) {
-    // const hashPassword = await bcrypt.hash(user.password, 12);
-    // const newUser = new UsersEntity();
-    // newUser.name = user.name;
-    // newUser.email = user.email;
-    // newUser.password = hashPassword;
-    // newUser.isAdmin = user.isAdmin;
-    // if (
-    //   newUser.name == undefined ||
-    //   newUser.email == undefined ||
-    //   newUser.password == undefined
-    // ) {
-    //   throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    // } else {
-    //   return this.usersRepository.save(newUser);
-    // }
-
-    const users = new UsersEntity();
-    users.id = 55;
-
-    const article = new ArticleEntity();
-    article.authorId = String(user.id);
-
-    // const ability = this.caslAbilityFactory.createForUser(user);
-    // ability.can(Action.Update, article); // true
-
-    const ability = this.caslAbilityFactory.createForUser(user);
-    console.log(ability.can(Action.Update, article));
-    if (user.isAdmin == true) {
-      console.log(ability.can(Action.Read, ArticleEntity)); // true
-      console.log(ability.can(Action.Update, ArticleEntity)); // true
-      console.log(ability.can(Action.Delete, ArticleEntity)); // true
-      console.log(ability.can(Action.Create, ArticleEntity)); // true
-    } else {
-      console.log(ability.can(Action.Read, ArticleEntity)); // true
-      console.log(ability.can(Action.Update, article)); // true
-      console.log(ability.can(Action.Delete, ArticleEntity)); // false
-      console.log(ability.can(Action.Create, ArticleEntity)); // false
-    }
+  async create(user: AddUserDTO): Promise<AddUserRO> {
+    user.password = await bcrypt.hash(user.password, 12);
+    await this.usersRepository.create(user);
+    const userRO = new AddUserRO();
+    userRO.email = user.email;
+    userRO.name = user.name;
+    return userRO;
   }
 
   async update(id: number, user: AddUserDTO) {

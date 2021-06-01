@@ -27,7 +27,18 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/roles/role.enum';
 import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { UsersEntity } from './users.entity';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { response } from 'express';
 
 //Proeject mới
 @ApiTags('User')
@@ -38,9 +49,8 @@ export class UsersController {
     private addressService: AddressService,
   ) {}
 
-  @ApiBearerAuth()
-  // @Public()
   @Get()
+  @ApiOkResponse({ description: 'Get a list users success' })
   async showAllUsers() {
     return await this.usersService.showAll();
   }
@@ -74,14 +84,19 @@ export class UsersController {
   }
 
   @Public()
-  // @Roles(Role.Admin)
   @Post()
-  // @UsePipes(ValidationPipe)
-  async createUsers(@Body() user: UsersEntity) {
+  @UsePipes(ValidationPipe)
+  @ApiCreatedResponse({ description: 'Create user success' })
+  @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'The server is having error' })
+  @ApiBadRequestResponse({ description: 'One Of Params is incorrect' })
+  async createUsers(@Body() user: AddUserDTO) {
     return await this.usersService.create(user);
   }
 
   @Post(':idUser/userJoinGroup/:idGroup')
+  @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'The server is having error' })
   async userJoinGroup(
     @Param('idUser') idUser: number,
     @Param('idGroup') idGroup: number,
@@ -98,6 +113,9 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiOkResponse({ description: 'Update information of user success' })
+  @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'The server is having error' })
   async update(@Body() user: AddUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
   }
