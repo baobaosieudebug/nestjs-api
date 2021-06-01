@@ -27,7 +27,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/roles/role.enum';
 import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { UsersEntity } from './users.entity';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 //Proeject mới
 @ApiTags('User')
@@ -38,6 +38,8 @@ export class UsersController {
     private addressService: AddressService,
   ) {}
 
+  @ApiBearerAuth()
+  // @Public()
   @Get()
   async showAllUsers() {
     return await this.usersService.showAll();

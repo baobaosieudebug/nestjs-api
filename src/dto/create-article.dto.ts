@@ -6,7 +6,10 @@ export class CreateArticleDTO {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    example: 'Sample',
+  })
   name: string;
 
   @ApiProperty()

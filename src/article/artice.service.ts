@@ -22,4 +22,8 @@ export class ArticleService {
   async editArticle(article: EditArticleDTO): Promise<UpdateResult> {
     return await this.ArticleRepository.update(article.id, article);
   }
+
+  async findAll(): Promise<ArticleEntity[]> {
+    return await this.ArticleRepository.find();
+  }
 }

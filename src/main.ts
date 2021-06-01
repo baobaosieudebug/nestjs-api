@@ -5,15 +5,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   const config = new DocumentBuilder()
-    .setTitle('Blog Example')
-    .setDescription('The blog API Description')
-    .setVersion('1.0')
-    .addTag('App')
-    .addBearerAuth()
+    .setTitle('Get-started-project')
+    .setDescription('DBS Get started project for NestJS API')
+    .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const options = new DocumentBuilder().addBearerAuth();

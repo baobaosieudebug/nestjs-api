@@ -8,17 +8,20 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { PoliciesGuard } from 'src/auth/guards/policies.guard';
+import { CheckPolicies } from 'src/decorators/checkpolicy.decorator';
 import { Public } from 'src/decorators/public.decorator';
 import { CreateArticleDTO } from 'src/dto/create-article.dto';
 import { EditAddressDTO } from 'src/dto/edit-address.dto';
 import { EditArticleDTO } from 'src/dto/edit-article.dto';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
+import { Action } from './action/action.enum';
 import { ArticleService } from './artice.service';
 import { ArticleEntity } from './article.entity';
+import { AppAbility } from './casl/casl-ability.factory';
 
 //Proeject mới
 @ApiTags('Article')
-@ApiBearerAuth()
 @Controller('article')
 export class ArticleController {
   constructor(private articleService: ArticleService) {}
@@ -45,5 +48,15 @@ export class ArticleController {
   @Put()
   async editArticle(@Body() article: EditArticleDTO) {
     return await this.articleService.editArticle(article);
+  }
+
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Action.Read, ArticleEntity),
+  // )
+  // @Public()
+  @Get()
+  async getAllArticle() {
+    return await this.articleService.findAll();
   }
 }
