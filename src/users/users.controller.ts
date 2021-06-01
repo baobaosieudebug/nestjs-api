@@ -27,6 +27,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/roles/role.enum';
 import { CaslAbilityFactory } from 'src/article/casl-ability.factory';
 import { UsersEntity } from './users.entity';
+import { ApiBody } from '@nestjs/swagger';
 //Proeject mới
 @Controller('users')
 export class UsersController {
@@ -46,11 +47,6 @@ export class UsersController {
   ): Promise<unknown> {
     return await this.usersService.getListUserAndVerifyToken(token);
   }
-
-  // @Post('callLoginApi')
-  // async loginApi(@Body() user: LoginUserDTO) {
-  //   return await this.usersService.loginApi(user);
-  // }
 
   @Get(':idUser/getAllGroup')
   @UseFilters(new UserNotFoundExceptionFilter())
@@ -112,14 +108,19 @@ export class UsersController {
   async getAddress(@Param('id') id: number) {
     return await this.addressService.getAddressOrFail(id);
   }
+
   @Get('address')
   async getAll() {
     return await this.addressService.getAll();
   }
+
   @Get(':idUser/address')
   async getAddressByIdUser(@Param('idUser') idUser: number) {
     return await this.usersService.getAddressByIdUser(idUser);
   }
+
+  @Public()
+  @ApiBody({ type: AddAddressDTO })
   @Post('add-address')
   async createAddress(@Body() address: AddAddressDTO) {
     const newAddress = new AddressEntity();
@@ -132,10 +133,12 @@ export class UsersController {
     newAddress.author = user;
     return await this.addressService.createAddress(newAddress);
   }
+
   @Put('address/:id')
   async editAddress(@Param('id') id: number, @Body() address: EditAddressDTO) {
     return await this.addressService.updateAddress(id, address);
   }
+
   @Delete('address/:id')
   async removeAddress(@Param('id') id: number) {
     return await this.addressService.destroy(id);
