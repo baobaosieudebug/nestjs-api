@@ -11,7 +11,9 @@ import {
 import { GroupsService } from './group.service';
 import { GroupsEntity } from './group.entity';
 import { GroupNotFoundExceptionFilter } from 'src/exception filter/groupnotfound.filter';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Group')
 @Controller('groups')
 @UseFilters(new GroupNotFoundExceptionFilter())
 export class GroupsController {

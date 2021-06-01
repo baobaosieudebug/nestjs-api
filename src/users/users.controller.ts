@@ -25,10 +25,12 @@ import { TokenUserDTO } from './dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/roles/role.enum';
-import { CaslAbilityFactory } from 'src/article/casl-ability.factory';
+import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { UsersEntity } from './users.entity';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+
 //Proeject mới
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(

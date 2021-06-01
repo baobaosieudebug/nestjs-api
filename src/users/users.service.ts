@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { CaslAbilityFactory } from 'src/article/casl-ability.factory';
+import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { ArticleEntity } from 'src/article/article.entity';
 import { Action } from 'src/article/action/action.enum';
 
