@@ -1,9 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { GroupsEntity } from './group.entity';
 import { getRepository } from 'typeorm';
 import { UsersEntity } from 'src/users/users.entity';
+import { EditGroupDTO } from 'src/dto/edit-group.dto';
 
 @Injectable()
 export class GroupsService {
@@ -37,18 +43,20 @@ export class GroupsService {
       });
     }
   }
-  async update(idGroup, group: GroupsEntity): Promise<UpdateResult> {
+  async update(idGroup, group: EditGroupDTO) {
     if ((await this.getOneGroupById(idGroup)) == null) {
       throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.groupsRepository.update(idGroup, group);
+      await this.groupsRepository.update(idGroup, group);
+      return HttpStatus.OK;
     }
   }
-  async destroy(idGroup: number): Promise<DeleteResult> {
+  async destroy(idGroup: number) {
     if ((await this.getOneGroupById(idGroup)) == null) {
       throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.groupsRepository.delete(idGroup);
+      await this.groupsRepository.delete(idGroup);
+      return HttpStatus.OK;
     }
   }
   async deleteUserInGroup(idUser: number, idGroup: number) {
@@ -58,15 +66,15 @@ export class GroupsService {
       relations: ['users'],
     });
     if (group == undefined) {
-      throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('Group Not Found');
     } else {
       if (user == undefined) {
-        throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('User Not Found');
       } else {
         const filteredUser = group.users.filter((item) => item.id != idUser);
         group.users = filteredUser;
         await this.groupsRepository.save(group);
-        throw new HttpException('Delete User Successfully', HttpStatus.OK);
+        return HttpStatus.OK;
       }
     }
   }

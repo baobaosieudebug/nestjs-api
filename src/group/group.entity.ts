@@ -10,11 +10,11 @@ import { UsersEntity } from '../users/users.entity';
 
 @Entity('groups')
 export class GroupsEntity {
-  @ApiProperty()
+  @ApiProperty({ type: String, example: '1' })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, example: 'NodeJs' })
   @Column()
   nameGroup: string;
 
