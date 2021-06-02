@@ -1,20 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PrimaryGeneratedColumn } from 'typeorm';
 
 export class CreateArticleDTO {
-  @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @ApiProperty({
     type: String,
-    example: 'Sample',
+    example: 'Code Dao Ky Su',
   })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, example: '17' })
   authorId: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Boolean, example: 'true' })
   isPublished: boolean;
 }
