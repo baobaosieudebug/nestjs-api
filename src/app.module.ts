@@ -9,7 +9,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './group/group.module';
-import { AddressModule } from './users/address/address.module';
 import { LoggerMiddleware } from './auth/middleware/logger.middleware';
 import { UsersController } from './users/users.controller';
 import { AuthModule } from './auth/auth.module';
@@ -25,7 +24,6 @@ import { ArticleModule } from './article/article.module';
     ConfigModule.forRoot(),
     UsersModule,
     GroupsModule,
-    AddressModule,
     AuthModule,
     HttpModule,
     ArticleModule,

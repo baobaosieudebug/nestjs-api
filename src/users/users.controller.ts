@@ -15,10 +15,6 @@ import {
 import { UsersService } from './users.service';
 import { AddUserDTO } from '../dto/add-user.dto';
 import { UserNotFoundExceptionFilter } from 'src/auth/exception filter/usernotfound.filter';
-import { AddressService } from './address/address.service';
-import { AddAddressDTO } from '../dto/add-address.dto';
-import { AddressEntity } from './address/address.entity';
-import { EditAddressDTO } from '../dto/edit-address.dto';
 import { ParseDataToIntPipe } from 'src/auth/pipe/parse-to-int.pipe';
 import { LoginUserDTO } from '../dto/login-user.dto';
 import { TokenUserDTO } from '../dto/token-user.dto';
@@ -33,28 +29,27 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { response } from 'express';
+import { EditUserDTO } from 'src/dto/edit-user.dto';
 
 //Proeject mới
 @ApiTags('User')
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private addressService: AddressService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Get a list users success' })
   async showAllUsers() {
     return await this.usersService.showAll();
   }
 
+  @ApiOkResponse({ description: 'Verify Token Success' })
   @Get('getAListUserAndVerifyToken')
   async getListUserAndVerifyToken(
     @Body() token: TokenUserDTO,
@@ -62,12 +57,16 @@ export class UsersController {
     return await this.usersService.getListUserAndVerifyToken(token);
   }
 
+  @ApiOkResponse({ description: 'Get A List User In Group Success' })
+  @ApiNotFoundResponse({ description: 'User Not Found, Check Your ID' })
   @Get(':idUser/getAllGroup')
   @UseFilters(new UserNotFoundExceptionFilter())
   async getAllGroup(@Param('idUser', ParseDataToIntPipe) idUser: number) {
     return await this.usersService.getAllGroup(idUser);
   }
 
+  @ApiOkResponse({ description: 'Get User Success' })
+  @ApiNotFoundResponse({ description: 'User Not Found, Check Your ID' })
   @Get(':id')
   async getUser(@Param('id') id: number) {
     return await this.usersService.getOneByIdOrFail(id);
@@ -89,14 +88,15 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Create user success' })
   @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'The server is having error' })
-  @ApiBadRequestResponse({ description: 'One Of Params is incorrect' })
+  @ApiBadRequestResponse({ description: 'One Of Params is Incorrect or Empty' })
   async createUsers(@Body() user: AddUserDTO) {
     return await this.usersService.create(user);
   }
 
-  @Post(':idUser/userJoinGroup/:idGroup')
+  @ApiCreatedResponse({ description: 'User join group success' })
+  @ApiNotFoundResponse({ description: 'User or Group not found' })
   @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'The server is having error' })
+  @Post(':idUser/userJoinGroup/:idGroup')
   async userJoinGroup(
     @Param('idUser') idUser: number,
     @Param('idGroup') idGroup: number,
@@ -104,65 +104,31 @@ export class UsersController {
     return await this.usersService.userJoinGroup(idUser, idGroup);
   }
 
-  @Post(':idUser/groupJoinByUser/:idGroup')
-  async groupJoinByUser(
-    @Param('idUser') idUser: number,
-    @Param('idGroup') idGroup: number,
-  ) {
-    return await this.usersService.groupJoinByUser(idUser, idGroup);
-  }
+  // @ApiCreatedResponse({ description: 'Joined the group' })
+  // @ApiNotFoundResponse({ description: 'User or Group not found' })
+  // @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  // @Post(':idUser/groupJoinByUser/:idGroup')
+  // async groupJoinByUser(
+  //   @Param('idUser') idUser: number,
+  //   @Param('idGroup') idGroup: number,
+  // ) {
+  //   return await this.usersService.groupJoinByUser(idUser, idGroup);
+  // }
 
   @Put(':id')
   @ApiOkResponse({ description: 'Update information of user success' })
   @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Your request is Empty or ID incorrect' })
   @ApiInternalServerErrorResponse({ description: 'The server is having error' })
-  async update(@Body() user: AddUserDTO, @Param('id') id: number) {
+  async update(@Body() user: EditUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, user);
   }
 
+  @ApiOkResponse({ description: 'Delete user success' })
+  @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Your ID Incorrect' })
   @Delete(':id')
   async deleteUser(@Param('id') id: number) {
     return await this.usersService.destroy(id);
-  }
-
-  //Crud Address
-  @Get('address/:id')
-  async getAddress(@Param('id') id: number) {
-    return await this.addressService.getAddressOrFail(id);
-  }
-
-  @Get('address')
-  async getAll() {
-    return await this.addressService.getAll();
-  }
-
-  @Get(':idUser/address')
-  async getAddressByIdUser(@Param('idUser') idUser: number) {
-    return await this.usersService.getAddressByIdUser(idUser);
-  }
-
-  @Public()
-  @ApiBody({ type: AddAddressDTO })
-  @Post('add-address')
-  async createAddress(@Body() address: AddAddressDTO) {
-    const newAddress = new AddressEntity();
-    const user = await this.usersService.getOneByIdOrFail(address.userCreatead);
-    newAddress.id = user.id;
-    newAddress.city = address.city;
-    newAddress.district = address.district;
-    newAddress.ward = address.ward;
-    newAddress.nameAddress = address.nameAddress;
-    newAddress.author = user;
-    return await this.addressService.createAddress(newAddress);
-  }
-
-  @Put('address/:id')
-  async editAddress(@Param('id') id: number, @Body() address: EditAddressDTO) {
-    return await this.addressService.updateAddress(id, address);
-  }
-
-  @Delete('address/:id')
-  async removeAddress(@Param('id') id: number) {
-    return await this.addressService.destroy(id);
   }
 }

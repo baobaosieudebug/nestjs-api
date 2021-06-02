@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from } from 'rxjs';
 import { CreateArticleDTO } from 'src/dto/create-article.dto';
-import { EditAddressDTO } from 'src/dto/edit-address.dto';
 import { UsersEntity } from 'src/users/users.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { ArticleEntity } from './article.entity';

@@ -11,7 +11,6 @@ import { UsersEntity } from './users.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { getRepository } from 'typeorm';
 import { AddUserDTO } from '../dto/add-user.dto';
-import { AddUserRO } from '../ro/users.ro';
 import * as bcrypt from 'bcrypt';
 import axios, { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
@@ -21,7 +20,13 @@ import { BadRequestException } from '@nestjs/common';
 import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
 import { ArticleEntity } from 'src/article/article.entity';
 import { Action } from 'src/article/action/action.enum';
-import { AddUsersRO } from 'src/dto/add-user.ro';
+import { AddUsersRO } from 'src/ro/add-user.ro';
+import { EditUserDTO } from 'src/dto/edit-user.dto';
+import { EditUserRO } from 'src/ro/edit-user.ro';
+import { GetUserRO } from 'src/ro/get-user.ro';
+import { JoinGroupRO } from 'src/ro/join-group.ro';
+import { GetListUserRO } from 'src/ro/get-list-user.ro';
+import { GetAllGroupRO } from 'src/ro/get-all-group.ro';
 
 @Injectable()
 export class UsersService {
@@ -73,30 +78,35 @@ export class UsersService {
     }
   }
 
-  async showAll(): Promise<AddUserRO[]> {
+  async showAll(): Promise<GetListUserRO[]> {
     return await this.usersRepository.find();
   }
 
   async getAllGroup(idUser: number) {
-    const user: AddUserRO = await this.usersRepository.findOne(idUser, {
+    const user = await this.usersRepository.findOne(idUser, {
       relations: ['groups'],
     });
     if (user === undefined) {
       throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
     } else {
-      return user;
+      const response = new GetAllGroupRO();
+      response.email = user.email;
+      response.name = user.name;
+      response.groups = user.groups;
+      return response;
     }
   }
-  async create(user: AddUserDTO): Promise<AddUserRO> {
+  async create(user: AddUserDTO): Promise<AddUsersRO> {
     user.password = await bcrypt.hash(user.password, 12);
-    await this.usersRepository.create(user);
-    const userRO = new AddUserRO();
+    await this.usersRepository.save(user);
+    const userRO = new AddUsersRO();
     userRO.email = user.email;
     userRO.name = user.name;
     return userRO;
   }
 
-  async update(id: number, user: AddUserDTO) {
+  async update(id: number, user: EditUserDTO): Promise<EditUserRO> {
+    user.password = await bcrypt.hash(user.password, 12);
     if ((await this.getOneById(id)) == null) {
       throw new HttpException(
         'User not found in your param',
@@ -114,8 +124,10 @@ export class UsersService {
         );
       } else {
         await this.usersRepository.update(id, user);
-        const myUser = await this.usersRepository.findOne(id);
-        return myUser;
+        const userRO = new EditUserRO();
+        userRO.email = user.email;
+        userRO.name = user.name;
+        return userRO;
       }
     }
   }
@@ -132,7 +144,10 @@ export class UsersService {
       } else {
         group.users = [user];
         await groupRepository.save(group);
-        return group;
+        const groupRO = new JoinGroupRO();
+        groupRO.id = group.id;
+        groupRO.nameGroup = group.nameGroup;
+        return groupRO;
       }
     }
   }
@@ -146,11 +161,12 @@ export class UsersService {
     return user;
   }
 
-  async destroy(id: number): Promise<DeleteResult> {
+  async destroy(id: number) {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.usersRepository.delete(id);
+      await this.usersRepository.delete(id);
+      return HttpStatus.OK;
     }
   }
 
@@ -164,7 +180,11 @@ export class UsersService {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.getOneById(id);
+      const response = await this.getOneById(id);
+      const userRO = new GetUserRO();
+      userRO.name = response.name;
+      userRO.email = response.email;
+      return userRO;
     }
   }
 

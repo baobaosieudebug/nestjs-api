@@ -12,7 +12,6 @@ import { PoliciesGuard } from 'src/auth/guards/policies.guard';
 import { CheckPolicies } from 'src/decorators/checkpolicy.decorator';
 import { Public } from 'src/decorators/public.decorator';
 import { CreateArticleDTO } from 'src/dto/create-article.dto';
-import { EditAddressDTO } from 'src/dto/edit-address.dto';
 import { EditArticleDTO } from 'src/dto/edit-article.dto';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { Action } from './action/action.enum';

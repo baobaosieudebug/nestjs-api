@@ -7,7 +7,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
-import { AddressEntity } from './address/address.entity';
 import * as crypto from 'crypto';
 import { Length, IsEmail } from 'class-validator';
 import { Role } from 'src/auth/roles/role.enum';
@@ -38,9 +37,9 @@ export class UsersEntity {
   @Column()
   isAdmin: boolean;
 
-  @ApiProperty({ type: [AddressEntity] })
-  @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
-  addresses: AddressEntity[];
+  // @ApiProperty({ type: [AddressEntity] })
+  // @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
+  // addresses: AddressEntity[];
 
   @ApiProperty({ type: [GroupsEntity] })
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
