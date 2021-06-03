@@ -25,9 +25,7 @@ export class AuthController {
   }
 
   @Get('getAListUserAndVerifyToken')
-  async getListUserAndVerifyToken(
-    @Body() token: TokenUserDTO,
-  ): Promise<unknown> {
-    return await this.authService.getListUserAndVerifyToken(token);
+  async getListUserAndVerifyToken(@Body() user: LoginUserDTO) {
+    return await this.authService.getListUserAndVerifyToken(user);
   }
 }

@@ -19,9 +19,11 @@ import { RolesGuard } from './guards/roles.guard';
     ConfigModule.forRoot(),
     PassportModule,
     UsersModule,
-    HttpModule.register({
-      timeout: 5000,
-      maxRedirects: 5,
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 5000,
+        maxRedirects: 5,
+      }),
     }),
   ],
   providers: [
