@@ -64,7 +64,6 @@ export class AuthService {
         password: user.password,
       })
       .toPromise();
-      console.log(response.data)
     if (response.data == 400) {
       throw new BadRequestException(
         'Bad Request ! Check My Email And Password !',

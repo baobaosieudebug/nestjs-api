@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 import { ConfigModule } from 'src/config/config.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
+import { MulterModule } from '@nestjs/platform-express/multer';
 
 @Module({
   imports: [
@@ -23,6 +24,11 @@ import { RolesGuard } from './guards/roles.guard';
       useFactory: () => ({
         timeout: 5000,
         maxRedirects: 5,
+      }),
+    }),
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './upload',
       }),
     }),
   ],
