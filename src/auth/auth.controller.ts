@@ -1,4 +1,12 @@
-import { Get, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Get,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
@@ -13,9 +21,22 @@ import { Public } from 'src/decorators/public.decorator';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { TokenUserDTO } from 'src/dto/token-user.dto';
 import { AuthService } from './auth.service';
-
 import * as uuidv4 from 'uuidv4';
 //Proeject mới
+import * as dotenv from 'dotenv';
+import * as AWS from 'aws-sdk';
+import * as fs from 'fs';
+import * as util from 'util';
+import { imageFileFilter } from './exception filter/imagefile.filter';
+
+const readFile = util.promisify(fs.readFile);
+const BUCKET_NAME = 'abcd';
+dotenv.config();
+const s3 = new AWS.S3({
+  region: process.env.AWS_BUCKET_REGION,
+  secretAccessKey: process.env.AWS_S3_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+});
 
 export const storage = {
   storage: diskStorage({
@@ -29,19 +50,9 @@ export const storage = {
       cb(null, `${filename}${extension}`);
     },
   }),
+  limits: { fileSize: 50 },
 };
-import * as dotenv from 'dotenv';
-import * as AWS from 'aws-sdk';
-import * as fs from 'fs';
-import * as util from 'util';
-const readFile = util.promisify(fs.readFile);
-const BUCKET_NAME = 'abcd';
-dotenv.config();
-const s3 = new AWS.S3({
-  region: process.env.AWS_BUCKET_REGION,
-  secretAccessKey: process.env.AWS_S3_ACCESS_KEY,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-});
+
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -60,7 +71,7 @@ export class AuthController {
     return await this.authService.getListUserAndVerifyToken(user);
   }
 
-  @Post('upload')
+  @Post('uploadFile')
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 1024 * 1024 * 2 } }),
   )
@@ -69,12 +80,17 @@ export class AuthController {
       originalname: file.originalname,
       filename: file.filename,
     };
-    return response;
+    throw new HttpException('Upload File Successfully!', HttpStatus.OK);
   }
 
-  @Post('uploadimg')
+  @Post('uploadImg')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFileImg(@UploadedFile() file) {
-    return { imagePath: file.path };
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      throw new BadRequestException('Only images file is allowed!');
+    } else {
+      const imagePath = file.path;
+      throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
+    }
   }
 }
