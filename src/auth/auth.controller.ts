@@ -100,7 +100,7 @@ export class AuthController {
     const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
     s3client.upload(
       {
-        Bucket: 'mytestbucket',
+        Bucket: 'mytestbucket1',
         Key: fileName,
         Body: fileStream,
       },
@@ -117,20 +117,10 @@ export class AuthController {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       throw new BadRequestException('Only images file is allowed!');
     } else {
-      const filePath = path.resolve(
-        `D:/intern/get-started-project/upload`,
-        file.originalname,
-      );
-      const fileStream = fs.createReadStream(filePath);
-      const now = new Date();
-      const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
-      s3client.upload({
-        Bucket: 'mytestbucket',
-        Key: fileName,
-        Body: fileStream,
-      });
-      // const imagePath = file.path;
+      const imagePath = file.path;
+      this.upFileToS3(file);
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
+      // return file.originalname;
     }
   }
 }
