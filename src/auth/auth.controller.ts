@@ -40,12 +40,12 @@ export const storage = {
       cb(null, `${filename}${extension}`);
     },
   }),
-  limits: { fileSize: 50 }, //<50kb
+  limits: { fileSize: 1024 * 1024 }, //<1024kb
 };
 
 const credentials = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+  accessKeyId: 'temp',
+  secretAccessKey: 'temp',
 };
 const useLocal = process.env.NODE_ENV !== 'production';
 
@@ -88,11 +88,12 @@ export class AuthController {
   }
 
   @Post('uploadS3')
-  async upFileToS3() {
-    const filePath = path.resolve(__dirname, 'test-image.jpg');
+  @UseInterceptors(FileInterceptor('file'))
+  async upFileToS3(@UploadedFile() file: Express.Multer.File) {
+    const filePath = path.resolve(__dirname, '1113.jpg');
     const fileStream = fs.createReadStream(filePath);
     const now = new Date();
-    const fileName = `test-image-${now.toISOString()}.jpg`;
+    const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
     s3client.upload(
       {
         Bucket: 'mytestbucket',
@@ -114,6 +115,7 @@ export class AuthController {
     } else {
       const imagePath = file.path;
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
+      // return file.originalname;
     }
   }
 }
