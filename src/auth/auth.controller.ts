@@ -27,16 +27,6 @@ import * as dotenv from 'dotenv';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as util from 'util';
-import { imageFileFilter } from './exception filter/imagefile.filter';
-
-const readFile = util.promisify(fs.readFile);
-const BUCKET_NAME = 'abcd';
-dotenv.config();
-const s3 = new AWS.S3({
-  region: process.env.AWS_BUCKET_REGION,
-  secretAccessKey: process.env.AWS_S3_ACCESS_KEY,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-});
 
 export const storage = {
   storage: diskStorage({
@@ -50,8 +40,22 @@ export const storage = {
       cb(null, `${filename}${extension}`);
     },
   }),
-  limits: { fileSize: 50 },
+  limits: { fileSize: 50 }, //<50kb
 };
+
+const credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+};
+const useLocal = process.env.NODE_ENV !== 'production';
+
+const bucketName = process.env.AWS_BUCKET_NAME;
+
+const s3client = new AWS.S3({
+  credentials,
+  endpoint: useLocal ? 'http://localhost:4566' : undefined,
+  s3ForcePathStyle: true,
+});
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -81,6 +85,25 @@ export class AuthController {
       filename: file.filename,
     };
     throw new HttpException('Upload File Successfully!', HttpStatus.OK);
+  }
+
+  @Post('uploadS3')
+  async upFileToS3() {
+    const filePath = path.resolve(__dirname, 'test-image.jpg');
+    const fileStream = fs.createReadStream(filePath);
+    const now = new Date();
+    const fileName = `test-image-${now.toISOString()}.jpg`;
+    s3client.upload(
+      {
+        Bucket: 'mytestbucket',
+        Key: fileName,
+        Body: fileStream,
+      },
+      (err, response) => {
+        if (err) throw err;
+        return response;
+      },
+    );
   }
 
   @Post('uploadImg')
