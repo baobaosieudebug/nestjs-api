@@ -90,7 +90,11 @@ export class AuthController {
   @Post('uploadS3')
   @UseInterceptors(FileInterceptor('file'))
   async upFileToS3(@UploadedFile() file: Express.Multer.File) {
-    const filePath = path.resolve(__dirname, '1113.jpg');
+    // const filePath = path.resolve(__dirname + `/upload`, file.originalname);
+    const filePath = path.resolve(
+      `D:/intern/get-started-project/upload`,
+      file.originalname,
+    );
     const fileStream = fs.createReadStream(filePath);
     const now = new Date();
     const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
@@ -113,9 +117,20 @@ export class AuthController {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       throw new BadRequestException('Only images file is allowed!');
     } else {
-      const imagePath = file.path;
+      const filePath = path.resolve(
+        `D:/intern/get-started-project/upload`,
+        file.originalname,
+      );
+      const fileStream = fs.createReadStream(filePath);
+      const now = new Date();
+      const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
+      s3client.upload({
+        Bucket: 'mytestbucket',
+        Key: fileName,
+        Body: fileStream,
+      });
+      // const imagePath = file.path;
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
-      // return file.originalname;
     }
   }
 }
