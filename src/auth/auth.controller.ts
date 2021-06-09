@@ -3,11 +3,10 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  NotFoundException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
 import {
@@ -15,41 +14,19 @@ import {
   ApiInternalServerErrorResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
-import { Observable } from 'rxjs';
 import { Public } from 'src/decorators/public.decorator';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
-import { TokenUserDTO } from 'src/dto/token-user.dto';
 import { AuthService } from './auth.service';
-import * as uuidv4 from 'uuidv4';
-//Proeject mới
-import * as dotenv from 'dotenv';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
-import * as util from 'util';
-
-export const storage = {
-  storage: diskStorage({
-    destination: './upload',
-    filename: (req, file, cb) => {
-      const filename: string = path
-        .parse(file.originalname)
-        .name.replace(/\s/g, '');
-      const extension: string = path.parse(file.originalname).ext;
-
-      cb(null, `${filename}${extension}`);
-    },
-  }),
-  limits: { fileSize: 1024 * 1024 }, //<1024kb
-};
+import { awsConfig } from '../config/aws.config';
+import { storage } from '../config/storage.config';
 
 const credentials = {
-  accessKeyId: 'temp',
-  secretAccessKey: 'temp',
+  accessKeyId: awsConfig.AWS_ACCESS_ID,
+  secretAccessKey: awsConfig.AWS_SECRET_KEY,
 };
 const useLocal = process.env.NODE_ENV !== 'production';
-
-const bucketName = process.env.AWS_BUCKET_NAME;
 
 const s3client = new AWS.S3({
   credentials,
@@ -100,7 +77,7 @@ export class AuthController {
     const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
     s3client.upload(
       {
-        Bucket: 'mytestbucket1',
+        Bucket: awsConfig.BUCKET,
         Key: fileName,
         Body: fileStream,
       },
@@ -117,7 +94,6 @@ export class AuthController {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       throw new BadRequestException('Only images file is allowed!');
     } else {
-      const imagePath = file.path;
       this.upFileToS3(file);
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
     }
@@ -125,22 +101,18 @@ export class AuthController {
 
   @Get('signS3')
   @UseInterceptors(FileInterceptor('file'))
-  async signS3(@UploadedFile() file: Express.Multer.File, req, res) {
-    const filePath = path.resolve(
-      `D:/intern/get-started-project/upload`,
-      file.originalname,
-    );
-    const s3 = new AWS.S3();
-    const fileName = file.originalname;
+  async signS3(@UploadedFile() file: Express.Multer.File) {
+    const now = new Date();
+    const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
     const fileType = file.mimetype;
     const s3Params = {
-      Bucket: 'mytestbucket1',
+      Bucket: awsConfig.BUCKET,
       Key: fileName,
       Expires: 60,
       ContentType: fileType,
-      ACL: 'public-read',
+      ACL: 'public-write',
     };
-    const url = s3.getSignedUrl('putObject', s3Params);
+    const url = s3client.getSignedUrl('putObject', s3Params);
     return url;
   }
 }
