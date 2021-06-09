@@ -120,7 +120,27 @@ export class AuthController {
       const imagePath = file.path;
       this.upFileToS3(file);
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
-      // return file.originalname;
     }
+  }
+
+  @Get('signS3')
+  @UseInterceptors(FileInterceptor('file'))
+  async signS3(@UploadedFile() file: Express.Multer.File, req, res) {
+    const filePath = path.resolve(
+      `D:/intern/get-started-project/upload`,
+      file.originalname,
+    );
+    const s3 = new AWS.S3();
+    const fileName = file.originalname;
+    const fileType = file.mimetype;
+    const s3Params = {
+      Bucket: 'mytestbucket1',
+      Key: fileName,
+      Expires: 60,
+      ContentType: fileType,
+      ACL: 'public-read',
+    };
+    const url = s3.getSignedUrl('putObject', s3Params);
+    return url;
   }
 }
