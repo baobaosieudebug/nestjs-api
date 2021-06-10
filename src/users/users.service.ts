@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, getCustomRepository, Repository } from 'typeorm';
 import { UsersEntity } from './users.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { getRepository } from 'typeorm';
@@ -34,13 +34,11 @@ import { GroupRepository } from 'src/repo/group.repository';
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
-    private readonly groupRepo: GroupRepository,
     private readonly httpService: HttpService,
   ) {}
+  groupRepo = getCustomRepository(GroupRepository);
 
   /*---------------------------------------GET Method--------------------------------------- */
-
-  /*---USER--*/
   /**
    * @method Get
    * @param id ||  @param email || @param null
@@ -123,11 +121,7 @@ export class UsersService {
     }
   }
 
-  /*---GROUP--*/
-
   /*---------------------------------------POST Method--------------------------------------- */
-
-  /*---USER--*/
   /**
    * @method Post
    * @param user
@@ -160,7 +154,6 @@ export class UsersService {
   }
 
   async userJoinGroup(idUser: number, idGroup: number) {
-    const groupRepository = getRepository(GroupsEntity);
     const group = await this.groupRepo.getById(idGroup);
     const user = await this.userRepo.getById(idUser);
     if (group == undefined) {
@@ -170,7 +163,7 @@ export class UsersService {
         throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
       } else {
         group.users = [user];
-        await groupRepository.save(group);
+        await this.groupRepo.save(group);
         const groupRO = new JoinGroupRO();
         groupRO.id = group.id;
         groupRO.nameGroup = group.nameGroup;
@@ -208,8 +201,6 @@ export class UsersService {
   }
 
   /*---------------------------------------DELETE Method--------------------------------------- */
-
-  /*---USER--*/
   async destroy(id: number) {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

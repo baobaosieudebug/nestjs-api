@@ -63,6 +63,14 @@ export class UsersController {
     return await this.usersService.getAllUser();
   }
 
+  @ApiOkResponse({ description: 'Verify Token Success' })
+  @Get('getAListUserAndVerifyToken')
+  async getListUserAndVerifyToken(
+    @Body() token: TokenUserDTO,
+  ): Promise<unknown> {
+    return await this.usersService.getListUserAndVerifyToken(token);
+  }
+
   /*---------------------------------------Post Method--------------------------------------- */
 
   @Public()
@@ -107,14 +115,6 @@ export class UsersController {
   async deleteUser(@Param('id') id: number) {
     return await this.usersService.destroy(id);
   }
-
-  // @ApiOkResponse({ description: 'Verify Token Success' })
-  // @Get('getAListUserAndVerifyToken')
-  // async getListUserAndVerifyToken(
-  //   @Body() token: TokenUserDTO,
-  // ): Promise<unknown> {
-  //   return await this.usersService.getListUserAndVerifyToken(token);
-  // }
 
   @ApiOkResponse({ description: 'Get A List User In Group Success' })
   @ApiNotFoundResponse({ description: 'User Not Found, Check Your ID' })

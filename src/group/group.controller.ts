@@ -65,13 +65,13 @@ export class GroupsController {
   @ApiNotFoundResponse({
     description: ' Group Or User Not Found, Check Your ID Group Or User',
   })
-  @Delete(':idUser/deleteUser/:idGroup')
-  async deleteUserInGroup(
-    @Param('idUser') idUser: number,
-    @Param('idGroup') idGroup: number,
-  ) {
-    return await this.groupsService.deleteUserInGroup(idUser, idGroup);
-  }
+  // @Delete(':idUser/deleteUser/:idGroup')
+  // async deleteUserInGroup(
+  //   @Param('idUser') idUser: number,
+  //   @Param('idGroup') idGroup: number,
+  // ) {
+  //   return await this.groupsService.deleteUserInGroup(idUser, idGroup);
+  // }
 
   @ApiOkResponse({ description: ' Delete Group Success' })
   @ApiNotFoundResponse({ description: ' Group Not Found, Check Your ID' })

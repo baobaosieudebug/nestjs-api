@@ -29,7 +29,7 @@ export class UsersEntity {
   email: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ select: false })
   @Length(4, 20)
   password: string;
 

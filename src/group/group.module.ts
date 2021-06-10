@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupsController } from './group.controller';
 import { GroupsService } from './group.service';
-import { GroupsEntity } from './group.entity';
+import { GroupRepository } from 'src/repo/group.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GroupsEntity])],
+  imports: [TypeOrmModule.forFeature([GroupRepository])],
   controllers: [GroupsController],
   providers: [GroupsService],
 })

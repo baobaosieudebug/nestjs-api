@@ -12,7 +12,7 @@ export class GroupRepository extends Repository<GroupsEntity> {
     );
   }
 
-  getAllUser() {
+  getAllGroup() {
     return this.find({ relations: ['users'] });
   }
 }
