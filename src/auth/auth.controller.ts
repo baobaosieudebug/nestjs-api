@@ -52,21 +52,7 @@ export class AuthController {
     return await this.authService.getListUserAndVerifyToken(user);
   }
 
-  @Post('uploadFile')
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 1024 * 1024 * 2 } }),
-  )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const response = {
-      originalname: file.originalname,
-      filename: file.filename,
-    };
-    throw new HttpException('Upload File Successfully!', HttpStatus.OK);
-  }
-
-  @Post('uploadS3')
-  @UseInterceptors(FileInterceptor('file'))
-  async upFileToS3(@UploadedFile() file: Express.Multer.File) {
+  async uploadToS3(@UploadedFile() file: Express.Multer.File) {
     // const filePath = path.resolve(__dirname + `/upload`, file.originalname);
     const filePath = path.resolve(
       `D:/intern/get-started-project/upload`,
@@ -88,31 +74,71 @@ export class AuthController {
     );
   }
 
-  @Post('uploadImg')
+  @Post('uploadFileToS3')
   @UseInterceptors(FileInterceptor('file', storage))
-  uploadFileImg(@UploadedFile() file) {
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    const filePath = path.resolve(__dirname, '1113.jpg');
+    const fileStream = fs.createReadStream(filePath);
+    const fileName = file.originalname;
+    s3client.upload(
+      {
+        Bucket: awsConfig.BUCKET,
+        Key: fileName,
+        Body: fileStream,
+      },
+      (err, response) => {
+        if (err) throw err;
+        return response;
+      },
+    );
+    // this.uploadToS3(file);
+    throw new HttpException('Upload File Successfully!', HttpStatus.OK);
+  }
+
+  @Post('uploadImgToS3')
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadImg(@UploadedFile() file) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       throw new BadRequestException('Only images file is allowed!');
     } else {
-      this.upFileToS3(file);
+      this.uploadToS3(file);
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
     }
   }
 
-  @Get('signS3')
+  @Get('signUrl')
   @UseInterceptors(FileInterceptor('file'))
-  async signS3(@UploadedFile() file: Express.Multer.File) {
+  async signUrlFromS3(@UploadedFile() file: Express.Multer.File) {
     const now = new Date();
     const fileName = `updated-at:${now.toISOString()} ` + file.originalname;
     const fileType = file.mimetype;
     const s3Params = {
       Bucket: awsConfig.BUCKET,
       Key: fileName,
-      Expires: 60,
+      Expires: 300,
       ContentType: fileType,
       ACL: 'public-write',
     };
     const url = s3client.getSignedUrl('putObject', s3Params);
     return url;
+  }
+
+  @Get('readFile')
+  async readFileFromS3() {
+    const getParams = {
+      Bucket: awsConfig.BUCKET, // your bucket name,
+      Key: 'updated-at:2021-06-10T01:57:29.153Z 1111.jpg', // path to the object you're looking for
+    };
+    const data = await s3client.getObject(getParams).promise();
+
+    // Check for image payload and formats appropriately
+    if (data.ContentType === 'image/jpeg') {
+      return data.Body.toString('base64');
+    } else {
+      return data.Body.toString('utf-8');
+    }
+  }
+  catch(e) {
+    throw new Error(`Could not retrieve file from S3: ${e.message}`);
   }
 }
