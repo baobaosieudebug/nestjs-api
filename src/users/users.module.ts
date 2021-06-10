@@ -2,13 +2,11 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { UsersEntity } from './users.entity';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CaslModule } from 'src/article/casl/casl.module';
+import { UserRepository } from 'src/repo/user.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersEntity]), HttpModule, CaslModule],
+  imports: [TypeOrmModule.forFeature([UserRepository]), HttpModule, CaslModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

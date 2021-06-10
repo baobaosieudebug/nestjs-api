@@ -33,10 +33,6 @@ export class UsersEntity {
   @Length(4, 20)
   password: string;
 
-  @ApiProperty()
-  @Column()
-  isAdmin: boolean;
-
   // @ApiProperty({ type: [AddressEntity] })
   // @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
   // addresses: AddressEntity[];
@@ -47,6 +43,6 @@ export class UsersEntity {
   })
   groups: GroupsEntity[];
 
-  @ApiProperty({ type: [String] })
-  roles: Role[];
+  // @ApiProperty({ type: [String] })
+  // roles: Role[];
 }

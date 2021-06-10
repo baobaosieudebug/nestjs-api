@@ -123,7 +123,7 @@ export class AuthController {
     return url;
   }
 
-  @Get('readFile')
+  @Get('readFileFromS3')
   async readFileFromS3() {
     const getParams = {
       Bucket: awsConfig.BUCKET, // your bucket name,

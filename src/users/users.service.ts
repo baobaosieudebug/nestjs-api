@@ -27,14 +27,13 @@ import { GetUserRO } from 'src/ro/get-user.ro';
 import { JoinGroupRO } from 'src/ro/join-group.ro';
 import { GetListUserRO } from 'src/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/ro/get-all-group.ro';
+import { UserRepository } from 'src/repo/user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UsersEntity)
-    private readonly usersRepository: Repository<UsersEntity>,
-    private httpService: HttpService,
-    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly userRepo: UserRepository,
+    private readonly httpService: HttpService,
   ) {}
 
   async getListUserAndVerifyToken(access_token: TokenUserDTO) {
@@ -78,102 +77,100 @@ export class UsersService {
     }
   }
 
-  async showAll(): Promise<GetListUserRO[]> {
-    return await this.usersRepository.find();
-  }
+  // async showAll(): Promise<GetListUserRO[]> {
+  //   return await this.usersRepository.find();
+  // }
 
-  async getAllGroup(idUser: number) {
-    const user = await this.usersRepository.findOne(idUser, {
-      relations: ['groups'],
-    });
-    if (user === undefined) {
-      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-    } else {
-      const response = new GetAllGroupRO();
-      response.email = user.email;
-      response.name = user.name;
-      response.groups = user.groups;
-      return response;
-    }
-  }
-  async create(user: AddUserDTO): Promise<AddUsersRO> {
-    user.password = await bcrypt.hash(user.password, 12);
-    await this.usersRepository.save(user);
-    const userRO = new AddUsersRO();
-    userRO.email = user.email;
-    userRO.name = user.name;
-    return userRO;
-  }
+  // async getAllGroup(idUser: number) {
+  //   const user = await this.usersRepository.findOne(idUser, {
+  //     relations: ['groups'],
+  //   });
+  //   if (user === undefined) {
+  //     throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     const response = new GetAllGroupRO();
+  //     response.email = user.email;
+  //     response.name = user.name;
+  //     response.groups = user.groups;
+  //     return response;
+  //   }
+  // }
+  // async create(user: AddUserDTO): Promise<AddUsersRO> {
+  //   user.password = await bcrypt.hash(user.password, 12);
+  //   await this.usersRepository.save(user);
+  //   const userRO = new AddUsersRO();
+  //   userRO.email = user.email;
+  //   userRO.name = user.name;
+  //   return userRO;
+  // }
 
-  async update(id: number, user: EditUserDTO): Promise<EditUserRO> {
-    user.password = await bcrypt.hash(user.password, 12);
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException(
-        'User not found in your param',
-        HttpStatus.NOT_FOUND,
-      );
-    } else {
-      if (
-        (await user.name) == undefined ||
-        (await user.email) == undefined ||
-        (await user.password) == undefined
-      ) {
-        throw new HttpException(
-          'User not found in your body',
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        await this.usersRepository.update(id, user);
-        const userRO = new EditUserRO();
-        userRO.email = user.email;
-        userRO.name = user.name;
-        return userRO;
-      }
-    }
-  }
+  // async update(id: number, user: EditUserDTO): Promise<EditUserRO> {
+  //   user.password = await bcrypt.hash(user.password, 12);
+  //   if ((await this.getOneById(id)) == null) {
+  //     throw new HttpException(
+  //       'User not found in your param',
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   } else {
+  //     if (
+  //       (await user.name) == undefined ||
+  //       (await user.email) == undefined ||
+  //       (await user.password) == undefined
+  //     ) {
+  //       throw new HttpException(
+  //         'User not found in your body',
+  //         HttpStatus.NOT_FOUND,
+  //       );
+  //     } else {
+  //       await this.usersRepository.update(id, user);
+  //       const userRO = new EditUserRO();
+  //       userRO.email = user.email;
+  //       userRO.name = user.name;
+  //       return userRO;
+  //     }
+  //   }
+  // }
 
-  async userJoinGroup(idUser: number, idGroup: number) {
-    const groupRepository = getRepository(GroupsEntity);
-    const group: GroupsEntity = await groupRepository.findOne({ id: idGroup });
-    const user = await this.usersRepository.findOne({ id: idUser });
-    if (group == undefined) {
-      throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
-    } else {
-      if (user == undefined) {
-        throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-      } else {
-        group.users = [user];
-        await groupRepository.save(group);
-        const groupRO = new JoinGroupRO();
-        groupRO.id = group.id;
-        groupRO.nameGroup = group.nameGroup;
-        return groupRO;
-      }
-    }
-  }
+  // async userJoinGroup(idUser: number, idGroup: number) {
+  //   const groupRepository = getRepository(GroupsEntity);
+  //   const group: GroupsEntity = await groupRepository.findOne({ id: idGroup });
+  //   const user = await this.usersRepository.findOne({ id: idUser });
+  //   if (group == undefined) {
+  //     throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     if (user == undefined) {
+  //       throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+  //     } else {
+  //       group.users = [user];
+  //       await groupRepository.save(group);
+  //       const groupRO = new JoinGroupRO();
+  //       groupRO.id = group.id;
+  //       groupRO.nameGroup = group.nameGroup;
+  //       return groupRO;
+  //     }
+  //   }
+  // }
 
-  async groupJoinByUser(idUser: number, idGroup: number) {
-    const groupRepository = getRepository(GroupsEntity);
-    const group: GroupsEntity = await groupRepository.findOne({ id: idGroup });
-    const user = await this.usersRepository.findOne({ id: idUser });
-    user.groups = [group];
-    await this.usersRepository.save(user);
-    return user;
-  }
+  // async groupJoinByUser(idUser: number, idGroup: number) {
+  //   const groupRepository = getRepository(GroupsEntity);
+  //   const group: GroupsEntity = await groupRepository.findOne({ id: idGroup });
+  //   const user = await this.usersRepository.findOne({ id: idUser });
+  //   user.groups = [group];
+  //   await this.usersRepository.save(user);
+  //   return user;
+  // }
 
-  async destroy(id: number) {
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    } else {
-      await this.usersRepository.delete(id);
-      return HttpStatus.OK;
-    }
-  }
+  // async destroy(id: number) {
+  //   if ((await this.getOneById(id)) == null) {
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //   } else {
+  //     await this.usersRepository.delete(id);
+  //     return HttpStatus.OK;
+  //   }
+  // }
 
   async getOneById(id: number) {
-    return await this.usersRepository.findOne(id, {
-      relations: ['groups'],
-    });
+    return await this.userRepo.getById(id);
   }
 
   async getOneByIdOrFail(id: number) {
@@ -184,17 +181,31 @@ export class UsersService {
       const userRO = new GetUserRO();
       userRO.name = response.name;
       userRO.email = response.email;
+      userRO.groups = response.groups;
       return userRO;
     }
   }
 
-  async getAddressByIdUser(id: number) {
-    return await this.usersRepository.findOne(id, {
-      relations: ['addresses'],
-    });
-  }
+  // async getAddressByIdUser(id: number) {
+  //   return await this.usersRepository.findOne(id, {
+  //     relations: ['addresses'],
+  //   });
+  // }
 
   async getUserByEmail(email: string) {
-    return await this.usersRepository.findOne({ email: email });
+    return await this.userRepo.getByEmail(email);
+  }
+
+  async getUserByEmailOrFail(email) {
+    if ((await this.getUserByEmail(email)) == null) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    } else {
+      const response = await this.getUserByEmail(email);
+      const userRO = new GetUserRO();
+      userRO.name = response.name;
+      userRO.email = response.email;
+      userRO.groups = response.groups;
+      return userRO;
+    }
   }
 }
