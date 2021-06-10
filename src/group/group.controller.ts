@@ -25,6 +25,8 @@ import { EditGroupDTO } from 'src/dto/edit-group.dto';
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
+  /*---------------------------------------GET Method--------------------------------------- */
+
   @ApiOkResponse({ description: ' Get Group Success' })
   @ApiNotFoundResponse({ description: ' Group Not Found, Check Your ID' })
   @Get(':id')
@@ -34,7 +36,7 @@ export class GroupsController {
 
   @Get()
   async getManyGroup() {
-    return await this.groupsService.showAll();
+    return await this.groupsService.getAllGroup();
   }
 
   @ApiOkResponse({ description: ' Get User In Group Success' })
@@ -46,6 +48,8 @@ export class GroupsController {
     return await this.groupsService.getAllUserOfOneGroup(idGroup);
   }
 
+  /*---------------------------------------POST Method--------------------------------------- */
+
   @ApiCreatedResponse({ description: ' Create  Group Success' })
   @Post()
   async createGroup(@Body() group: GroupsEntity) {
@@ -56,22 +60,26 @@ export class GroupsController {
   @ApiNotFoundResponse({
     description: ' Group Not Found, Check Your ID Or Body Request',
   })
+
+  /*---------------------------------------PUT Method--------------------------------------- */
   @Put(':id')
   async update(@Body() group: EditGroupDTO, @Param('id') id: number) {
     return await this.groupsService.update(id, group);
   }
 
+  /*---------------------------------------DELETE Method--------------------------------------- */
+
   @ApiOkResponse({ description: ' Delete User In Group Success' })
   @ApiNotFoundResponse({
     description: ' Group Or User Not Found, Check Your ID Group Or User',
   })
-  // @Delete(':idUser/deleteUser/:idGroup')
-  // async deleteUserInGroup(
-  //   @Param('idUser') idUser: number,
-  //   @Param('idGroup') idGroup: number,
-  // ) {
-  //   return await this.groupsService.deleteUserInGroup(idUser, idGroup);
-  // }
+  @Delete(':idUser/deleteUser/:idGroup')
+  async deleteUserInGroup(
+    @Param('idUser') idUser: number,
+    @Param('idGroup') idGroup: number,
+  ) {
+    return await this.groupsService.deleteUserInGroup(idUser, idGroup);
+  }
 
   @ApiOkResponse({ description: ' Delete Group Success' })
   @ApiNotFoundResponse({ description: ' Group Not Found, Check Your ID' })

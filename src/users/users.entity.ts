@@ -33,10 +33,6 @@ export class UsersEntity {
   @Length(4, 20)
   password: string;
 
-  // @ApiProperty({ type: [AddressEntity] })
-  // @OneToMany(() => AddressEntity, (address: AddressEntity) => address.author)
-  // addresses: AddressEntity[];
-
   @ApiProperty({ type: [GroupsEntity] })
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
     cascade: ['insert'],
