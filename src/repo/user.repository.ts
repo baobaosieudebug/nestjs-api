@@ -20,4 +20,8 @@ export class UserRepository extends Repository<UsersEntity> {
       },
     );
   }
+
+  getAllUser() {
+    return this.find({ relations: ['groups'] });
+  }
 }
