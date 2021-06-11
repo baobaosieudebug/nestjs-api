@@ -34,11 +34,11 @@ export class ProjectController {
     return await this.projectService.getAllProject();
   }
 
-  //   @Get(':idGroup/getAllProject')
-  //   @ApiOkResponse({ description: 'Get List Project Success' })
-  //   async getAllProjectByIdGroup(@Param('idGroup') idGroup: number) {
-  //     return await this.ProjectService.getAllProjectByIdGroup(idGroup);
-  //   }
+  // @Get(':idGroup/getAllProject')
+  // @ApiOkResponse({ description: 'Get List Project Success' })
+  // async getAllProjectByIdGroup(@Param('idGroup') idGroup: number) {
+  //   return await this.projectService.getAllProjectByIdGroup(idGroup);
+  // }
 
   @ApiOkResponse({ description: 'Get Project Success' })
   @ApiNotFoundResponse({ description: 'ID Not Found' })
@@ -54,6 +54,14 @@ export class ProjectController {
   @Post()
   async createProject(@Body() project: AddProjectDTO) {
     return await this.projectService.createProject(project);
+  }
+
+  @Post(':codeId/addGroup/:idGroup')
+  async addGroup(
+    @Param('codeId') codeId: number,
+    @Param('idGroup') idGroup: number,
+  ) {
+    return await this.projectService.addGroup(codeId, idGroup);
   }
 
   @ApiOkResponse({ description: 'Edit Project Success' })

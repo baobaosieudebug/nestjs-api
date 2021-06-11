@@ -25,7 +25,9 @@ export class ProjectEntity {
   @Length(10, 20)
   codeId: string;
 
-  @ManyToMany(() => GroupsEntity)
+  @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.projects, {
+    cascade: ['insert'],
+  })
   @JoinTable()
   groups: GroupsEntity[];
 }

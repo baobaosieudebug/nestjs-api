@@ -7,7 +7,7 @@ export class GroupRepository extends Repository<GroupsEntity> {
     return this.findOne(
       { id },
       {
-        relations: ['users', 'tasks'],
+        relations: ['users', 'tasks', 'projects'],
       },
     );
   }

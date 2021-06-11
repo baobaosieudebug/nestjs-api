@@ -32,4 +32,9 @@ export class GroupsEntity {
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.group)
   tasks: TaskEntity[];
+
+  @ManyToMany(() => ProjectEntity, (project: ProjectEntity) => project.groups, {
+    cascade: ['insert'],
+  })
+  projects: ProjectEntity[];
 }

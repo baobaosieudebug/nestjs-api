@@ -2,13 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProjectRepository } from 'src/repo/project.repository';
 import { AddProjectDTO } from 'src/dto/add-project.dto';
 import { EditProjectDTO } from 'src/dto/edit-project.dto';
+import { getCustomRepository } from 'typeorm';
+import { GroupRepository } from 'src/repo/group.repository';
 
 @Injectable()
 export class ProjectService {
   constructor(private readonly projectRepo: ProjectRepository) {}
 
   //   userRepo = getCustomRepository(UserRepository);
-  //   groupRepo = getCustomRepository(GroupRepository);
+  groupRepo = getCustomRepository(GroupRepository);
 
   async getOneById(id: number) {
     return await this.projectRepo.getById(id);
@@ -27,13 +29,20 @@ export class ProjectService {
     return await this.projectRepo.getAllProject();
   }
 
-  //   async getAllProjectByIdGroup(idGroup) {
-  //     return this.ProjectRepo.getAllProjectByIdGroup(idGroup);
-  //   }
-
+  // async getAllProjectByIdGroup(idGroup) {
+  //   return await this.projectRepo.getAllProjectByIdGroup()
+  // }
   async createProject(project: AddProjectDTO) {
     const newProject = await this.projectRepo.create(project);
     return await this.projectRepo.save(newProject);
+  }
+
+  async addGroup(codeId, idGroup) {
+    const project = this.projectRepo.getByCodeId(codeId);
+    const group = this.groupRepo.getById(idGroup);
+    (await group).projects.push(await project);
+    await this.groupRepo.save(await group);
+    return new HttpException('Add Group Success', HttpStatus.OK);
   }
 
   async editProject(project: EditProjectDTO) {
