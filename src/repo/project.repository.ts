@@ -7,13 +7,13 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     return this.findOne({ id });
   }
 
-  //   getAllTask() {
-  //     return this.find();
-  //   }
+  getAllProject() {
+    return this.find();
+  }
 
-  //   getByCodeId(codeId) {
-  //     return this.findOne({ codeId });
-  //   }
+  getByCodeId(codeId) {
+    return this.findOne({ codeId });
+  }
 
   //   getAllTaskByIdGroup(id) {
   //     return this.findOne({ id }, { relations: ['tasks'] });

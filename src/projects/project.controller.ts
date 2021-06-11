@@ -18,6 +18,8 @@ import {
 } from '@nestjs/swagger';
 import { from } from 'rxjs';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
+import { AddProjectDTO } from 'src/dto/add-project.dto';
+import { EditProjectDTO } from 'src/dto/edit-project.dto';
 import { ProjectService } from './project.service';
 
 //Proeject mới
@@ -27,45 +29,44 @@ export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Get List Article Success' })
-  async getAllTask() {
-    //   return await this.taskService.getAllTask();
-    return 'hello';
+  @ApiOkResponse({ description: 'Get List Project Success' })
+  async getAllProject() {
+    return await this.projectService.getAllProject();
   }
 
-  //   @Get(':idGroup/getAllTask')
-  //   @ApiOkResponse({ description: 'Get List Article Success' })
-  //   async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
-  //     return await this.taskService.getAllTaskByIdGroup(idGroup);
+  //   @Get(':idGroup/getAllProject')
+  //   @ApiOkResponse({ description: 'Get List Project Success' })
+  //   async getAllProjectByIdGroup(@Param('idGroup') idGroup: number) {
+  //     return await this.ProjectService.getAllProjectByIdGroup(idGroup);
   //   }
 
-  //   @ApiOkResponse({ description: 'Get Task Success' })
-  //   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
-  //   @Get(':id')
-  //   async getArticleByIdOrFail(@Param('id') id: number) {
-  //     return await this.taskService.getOneByIdOrFail(id);
-  //   }
+  @ApiOkResponse({ description: 'Get Project Success' })
+  @ApiNotFoundResponse({ description: 'ID Not Found' })
+  @Get(':id')
+  async getProjectByIdOrFail(@Param('id') id: number) {
+    return await this.projectService.getOneByIdOrFail(id);
+  }
 
-  //   @ApiCreatedResponse({
-  //     description: 'The record has been successfully created.',
-  //   })
-  //   @ApiUnauthorizedResponse({ description: 'You need to login ' })
-  //   @Post()
-  //   async createTask(@Body() task: EditTaskDTO) {
-  //     return await this.taskService.editTask(task);
-  //   }
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'You need to login ' })
+  @Post()
+  async createProject(@Body() project: AddProjectDTO) {
+    return await this.projectService.createProject(project);
+  }
 
-  //   @ApiOkResponse({ description: 'Edit Task Success' })
-  //   @Put()
-  //   async editArticle(@Body() task: EditTaskDTO) {
-  //     return await this.taskService.editTask(task);
-  //   }
+  @ApiOkResponse({ description: 'Edit Project Success' })
+  @Put()
+  async editProject(@Body() project: EditProjectDTO) {
+    return await this.projectService.editProject(project);
+  }
 
-  //   @ApiOkResponse({ description: 'Get Task Success' })
-  //   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
-  //   @UseFilters(NotFoundExceptionFilter)
-  //   @Delete(':id')
-  //   async removeArticle(@Param('id') id: number) {
-  //     return await this.taskService.removeTask(id);
-  //   }
+  @ApiOkResponse({ description: 'Get Project Success' })
+  @ApiNotFoundResponse({ description: 'ID Project Not Found' })
+  @UseFilters(NotFoundExceptionFilter)
+  @Delete(':id')
+  async removeProject(@Param('id') id: number) {
+    return await this.projectService.removeProject(id);
+  }
 }

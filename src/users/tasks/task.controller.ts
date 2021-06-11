@@ -17,6 +17,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
+import { AddTaskDTO } from 'src/dto/add-task.dto';
 import { EditTaskDTO } from 'src/dto/edit-task.dto';
 import { TaskService } from './task.service';
 
@@ -27,13 +28,13 @@ export class TaskController {
   constructor(private taskService: TaskService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Get List Article Success' })
+  @ApiOkResponse({ description: 'Get List Task Success' })
   async getAllTask() {
     return await this.taskService.getAllTask();
   }
 
   @Get(':idGroup/getAllTask')
-  @ApiOkResponse({ description: 'Get List Article Success' })
+  @ApiOkResponse({ description: 'Get List Task Success' })
   async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
     return await this.taskService.getAllTaskByIdGroup(idGroup);
   }
@@ -41,7 +42,7 @@ export class TaskController {
   @ApiOkResponse({ description: 'Get Task Success' })
   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @Get(':id')
-  async getArticleByIdOrFail(@Param('id') id: number) {
+  async getTaskByIdOrFail(@Param('id') id: number) {
     return await this.taskService.getOneByIdOrFail(id);
   }
 
@@ -50,13 +51,13 @@ export class TaskController {
   })
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
-  async createTask(@Body() task: EditTaskDTO) {
-    return await this.taskService.editTask(task);
+  async createTask(@Body() task: AddTaskDTO) {
+    return await this.taskService.createTask(task);
   }
 
   @ApiOkResponse({ description: 'Edit Task Success' })
   @Put()
-  async editArticle(@Body() task: EditTaskDTO) {
+  async editTask(@Body() task: EditTaskDTO) {
     return await this.taskService.editTask(task);
   }
 
@@ -64,7 +65,7 @@ export class TaskController {
   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
-  async removeArticle(@Param('id') id: number) {
+  async removeTask(@Param('id') id: number) {
     return await this.taskService.removeTask(id);
   }
 }

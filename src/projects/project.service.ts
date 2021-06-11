@@ -1,10 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AddTaskDTO } from 'src/dto/add-task.dto';
-import { EditTaskDTO } from 'src/dto/edit-task.dto';
-import { GroupRepository } from 'src/repo/group.repository';
-import { UserRepository } from 'src/repo/user.repository';
-import { getCustomRepository } from 'typeorm';
 import { ProjectRepository } from 'src/repo/project.repository';
+import { AddProjectDTO } from 'src/dto/add-project.dto';
+import { EditProjectDTO } from 'src/dto/edit-project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -13,39 +10,40 @@ export class ProjectService {
   //   userRepo = getCustomRepository(UserRepository);
   //   groupRepo = getCustomRepository(GroupRepository);
 
-  //   async getOneById(id: number) {
-  //     return await this.taskRepo.getById(id);
-  //   }
+  async getOneById(id: number) {
+    return await this.projectRepo.getById(id);
+  }
 
-  //   async getOneByIdOrFail(id: number) {
-  //     if ((await this.getOneById(id)) == null) {
-  //       throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
-  //     } else {
-  //       const response = await this.getOneById(id);
-  //       return response;
-  //     }
-  //   }
-
-  async getAllTask() {
-    return await this.projectRepo.getById(1);
+  async getOneByIdOrFail(id: number) {
+    if ((await this.getOneById(id)) == null) {
+      throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
+    } else {
+      const response = await this.getOneById(id);
+      return response;
     }
+  }
 
-  //   async getAllTaskByIdGroup(idGroup) {
-  //     return this.taskRepo.getAllTaskByIdGroup(idGroup);
-  //   }
-  //   async createTask(task: AddTaskDTO) {
-  //     const newTask = await this.taskRepo.create(task);
-  //     return await this.taskRepo.save(newTask);
-  //   }
+  async getAllProject() {
+    return await this.projectRepo.getAllProject();
+  }
 
-  //   async editTask(task: EditTaskDTO) {
-  //     const findTask = this.taskRepo.getByCodeId(task.codeId);
-  //     await this.taskRepo.update((await findTask).id, task);
+  //   async getAllProjectByIdGroup(idGroup) {
+  //     return this.ProjectRepo.getAllProjectByIdGroup(idGroup);
   //   }
 
-  //   async removeTask(id: number) {
-  //     const user = this.getOneByIdOrFail(id);
-  //     await this.taskRepo.delete((await user).id);
-  //     return new HttpException('Delete Successfully!', HttpStatus.OK);
-  //   }
+  async createProject(project: AddProjectDTO) {
+    const newProject = await this.projectRepo.create(project);
+    return await this.projectRepo.save(newProject);
+  }
+
+  async editProject(project: EditProjectDTO) {
+    const findProject = this.projectRepo.getByCodeId(project.codeId);
+    await this.projectRepo.update((await findProject).id, project);
+  }
+
+  async removeProject(id: number) {
+    const user = this.getOneByIdOrFail(id);
+    await this.projectRepo.delete((await user).id);
+    return new HttpException('Delete Successfully!', HttpStatus.OK);
+  }
 }
