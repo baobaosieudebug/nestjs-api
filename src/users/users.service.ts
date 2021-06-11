@@ -22,6 +22,8 @@ import { GetListUserRO } from 'src/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/ro/get-all-group.ro';
 import { UserRepository } from 'src/repo/user.repository';
 import { GroupRepository } from 'src/repo/group.repository';
+import { getCustomRepository } from 'typeorm';
+import { TaskRepository } from 'src/repo/task.respository';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +32,7 @@ export class UsersService {
     private readonly httpService: HttpService,
   ) {}
   groupRepo = getCustomRepository(GroupRepository);
+  taskRepo = getCustomRepository(TaskRepository);
 
   /*---------------------------------------GET Method--------------------------------------- */
   /**
@@ -171,6 +174,13 @@ export class UsersService {
     }
   }
 
+  async addTask(idUser: number, codeId: number) {
+    const newTask = await this.taskRepo.getByCodeId(codeId);
+    const user = await this.userRepo.getById(idUser);
+    user.tasks = [newTask];
+    await this.userRepo.save(user);
+    return new HttpException('Add Task Success', HttpStatus.OK);
+  }
   /*---------------------------------------PUT Method--------------------------------------- */
   async update(id: number, user: EditUserDTO): Promise<EditUserRO> {
     user.password = await bcrypt.hash(user.password, 12);

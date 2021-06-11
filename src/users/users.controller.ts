@@ -84,6 +84,18 @@ export class UsersController {
     return await this.usersService.userJoinGroup(idUser, idGroup);
   }
 
+  /*----Task--*/
+  @Get(':idUser/getTaskByUser')
+  async getTaskByUser(@Param('idUser') idUser: number) {
+    return await this.usersService.getAllTaskByIdUser(idUser);
+  }
+  @Post(':idUser/addTaskByUser/:codeId')
+  async addTaskByUser(
+    @Param('idUser') idUser: number,
+    @Param('codeId') codeId: number,
+  ) {
+    return await this.usersService.addTask(idUser, codeId);
+  }
   /*---------------------------------------Put Method--------------------------------------- */
 
   @Put(':id')
