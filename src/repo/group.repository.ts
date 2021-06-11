@@ -15,4 +15,8 @@ export class GroupRepository extends Repository<GroupsEntity> {
   getAllGroup() {
     return this.find({ relations: ['users'] });
   }
+
+  getAllTask(id) {
+    return this.findOne({ id }, { relations: ['tasks'] });
+  }
 }

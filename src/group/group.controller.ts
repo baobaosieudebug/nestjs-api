@@ -48,6 +48,10 @@ export class GroupsController {
     return await this.groupsService.getAllUserOfOneGroup(idGroup);
   }
 
+  @Get(':idGroup/getTask')
+  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
+    return await this.groupsService.getAllTaskByIdGroup(idGroup);
+  }
   /*---------------------------------------POST Method--------------------------------------- */
 
   @ApiCreatedResponse({ description: ' Create  Group Success' })
@@ -56,12 +60,18 @@ export class GroupsController {
     return await this.groupsService.createGroup(group);
   }
 
+  @Post(':idGroup/addTaskByGroup/:codeId')
+  async addTask(
+    @Param('idGroup') idGroup: number,
+    @Param('codeId') codeId: number,
+  ) {
+    return await this.groupsService.addTask(idGroup, codeId);
+  }
+  /*---------------------------------------PUT Method--------------------------------------- */
   @ApiOkResponse({ description: ' Update Group Success' })
   @ApiNotFoundResponse({
     description: ' Group Not Found, Check Your ID Or Body Request',
   })
-
-  /*---------------------------------------PUT Method--------------------------------------- */
   @Put(':id')
   async update(@Body() group: EditGroupDTO, @Param('id') id: number) {
     return await this.groupsService.update(id, group);

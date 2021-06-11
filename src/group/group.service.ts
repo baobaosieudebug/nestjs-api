@@ -1,19 +1,23 @@
 import {
+  Get,
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
+  Param,
 } from '@nestjs/common';
 import { getCustomRepository } from 'typeorm';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from 'src/dto/edit-group.dto';
 import { GroupRepository } from 'src/repo/group.repository';
 import { UserRepository } from 'src/repo/user.repository';
+import { TaskRepository } from 'src/repo/task.respository';
 
 @Injectable()
 export class GroupsService {
   constructor(private readonly groupRepo: GroupRepository) {}
   userRepo = getCustomRepository(UserRepository);
+  taskRepo = getCustomRepository(TaskRepository);
 
   /*---------------------------------------GET Method--------------------------------------- */
 
@@ -41,10 +45,23 @@ export class GroupsService {
     }
   }
 
-  /*---------------------------------------POST Method--------------------------------------- */
+  /*---Task----*/
+  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
+    return await this.groupRepo.getAllTask(idGroup);
+  }
 
+  /*---------------------------------------POST Method--------------------------------------- */
   async createGroup(group: GroupsEntity): Promise<any> {
     return await this.groupRepo.save(group);
+  }
+
+  /*---Task----*/
+  async addTask(idGroup: number, codeId: number) {
+    const newTask = await this.taskRepo.getByCodeId(codeId);
+    const group = await this.groupRepo.getById(idGroup);
+    group.tasks = [newTask];
+    await this.groupRepo.save(group);
+    return new HttpException('Add Task Success', HttpStatus.OK);
   }
 
   /*---------------------------------------PUT Method--------------------------------------- */

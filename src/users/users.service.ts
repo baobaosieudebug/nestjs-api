@@ -118,7 +118,7 @@ export class UsersService {
   }
 
   /*---Task----*/
-  @Get(':idUser/task')
+  @Get(':idUser/getTask')
   async getAllTaskByIdUser(@Param('idUser') idUser: number) {
     return await this.userRepo.getAllTask(idUser);
   }
@@ -174,6 +174,7 @@ export class UsersService {
     }
   }
 
+  /*---Task----*/
   async addTask(idUser: number, codeId: number) {
     const newTask = await this.taskRepo.getByCodeId(codeId);
     const user = await this.userRepo.getById(idUser);

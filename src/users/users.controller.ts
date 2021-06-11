@@ -85,10 +85,12 @@ export class UsersController {
   }
 
   /*----Task--*/
+
   @Get(':idUser/getTaskByUser')
   async getTaskByUser(@Param('idUser') idUser: number) {
     return await this.usersService.getAllTaskByIdUser(idUser);
   }
+
   @Post(':idUser/addTaskByUser/:codeId')
   async addTaskByUser(
     @Param('idUser') idUser: number,
