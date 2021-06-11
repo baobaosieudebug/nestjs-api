@@ -49,7 +49,7 @@ export class GroupsController {
   }
 
   @Get(':idGroup/getTask')
-  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
+  async getAllTask(@Param('idGroup') idGroup: number) {
     return await this.groupsService.getAllTaskByIdGroup(idGroup);
   }
   /*---------------------------------------POST Method--------------------------------------- */
