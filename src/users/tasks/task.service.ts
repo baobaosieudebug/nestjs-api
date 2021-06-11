@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AddTaskDTO } from 'src/dto/add-task.dto';
 import { EditTaskDTO } from 'src/dto/edit-task.dto';
+import { GroupRepository } from 'src/repo/group.repository';
 import { TaskRepository } from 'src/repo/task.respository';
 import { UserRepository } from 'src/repo/user.repository';
 import { getCustomRepository } from 'typeorm';
@@ -10,6 +11,7 @@ export class TaskService {
   constructor(private readonly taskRepo: TaskRepository) {}
 
   userRepo = getCustomRepository(UserRepository);
+  groupRepo = getCustomRepository(GroupRepository);
 
   async getOneById(id: number) {
     return await this.taskRepo.getById(id);
@@ -28,6 +30,9 @@ export class TaskService {
     return await this.taskRepo.getAllTask();
   }
 
+  async getAllTaskByIdGroup(idGroup) {
+    return this.taskRepo.getAllTaskByIdGroup(idGroup);
+  }
   async createTask(task: AddTaskDTO) {
     const newTask = await this.taskRepo.create(task);
     return await this.taskRepo.save(newTask);

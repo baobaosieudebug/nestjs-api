@@ -14,4 +14,8 @@ export class TaskRepository extends Repository<TaskEntity> {
   getByCodeId(codeId) {
     return this.findOne({ codeId });
   }
+
+  getAllTaskByIdGroup(id) {
+    return this.findOne({ id }, { relations: ['tasks'] });
+  }
 }

@@ -220,12 +220,11 @@ export class UsersService {
     }
   }
 
-  // async groupJoinByUser(idUser: number, idGroup: number) {
-  //   const groupRepository = getRepository(GroupsEntity);
-  //   const group: GroupsEntity = await groupRepository.findOne({ id: idGroup });
-  //   const user = await this.usersRepository.findOne({ id: idUser });
-  //   user.groups = [group];
-  //   await this.usersRepository.save(user);
-  //   return user;
-  // }
+  async groupJoinByUser(idUser: number, idGroup: number) {
+    const group = await this.groupRepo.getById(idGroup);
+    const user = await this.userRepo.getById(idUser);
+    user.groups = [group];
+    await this.userRepo.save(user);
+    return user;
+  }
 }

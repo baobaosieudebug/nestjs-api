@@ -32,6 +32,12 @@ export class TaskController {
     return await this.taskService.getAllTask();
   }
 
+  @Get(':idGroup/getAllTask')
+  @ApiOkResponse({ description: 'Get List Article Success' })
+  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
+    return await this.taskService.getAllTaskByIdGroup(idGroup);
+  }
+
   @ApiOkResponse({ description: 'Get Task Success' })
   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @Get(':id')

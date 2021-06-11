@@ -127,14 +127,14 @@ export class UsersController {
     return await this.usersService.getAllGroupOfUser(idUser);
   }
 
-  // @ApiCreatedResponse({ description: 'Joined the group' })
-  // @ApiNotFoundResponse({ description: 'User or Group not found' })
-  // @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
-  // @Post(':idUser/groupJoinByUser/:idGroup')
-  // async groupJoinByUser(
-  //   @Param('idUser') idUser: number,
-  //   @Param('idGroup') idGroup: number,
-  // ) {
-  //   return await this.usersService.groupJoinByUser(idUser, idGroup);
-  // }
+  @ApiCreatedResponse({ description: 'Joined the group' })
+  @ApiNotFoundResponse({ description: 'User or Group not found' })
+  @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
+  @Post(':idUser/groupJoinByUser/:idGroup')
+  async groupJoinByUser(
+    @Param('idUser') idUser: number,
+    @Param('idGroup') idGroup: number,
+  ) {
+    return await this.usersService.groupJoinByUser(idUser, idGroup);
+  }
 }
