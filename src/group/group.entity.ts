@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TaskEntity } from 'src/users/tasks/task.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { UsersEntity } from '../users/users.entity';
 
@@ -26,4 +28,7 @@ export class GroupsEntity {
   })
   @JoinTable()
   users: UsersEntity[];
+
+  @OneToMany(() => TaskEntity, (task: TaskEntity) => task.group)
+  tasks: TaskEntity[];
 }

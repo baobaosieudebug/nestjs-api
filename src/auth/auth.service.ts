@@ -1,17 +1,8 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
 import { HttpService } from '@nestjs/common';
-import axios from 'axios';
-import { UnauthorizedException } from '@nestjs/common';
-import { TokenUserDTO } from 'src/dto/token-user.dto';
-import { Observable } from 'rxjs';
-import { AxiosResponse } from 'axios';
-import { UsersEntity } from 'src/users/users.entity';
-import { GetUserRO } from 'src/ro/get-user.ro';
-import { isString } from 'class-validator';
 
 @Injectable()
 export class AuthService {

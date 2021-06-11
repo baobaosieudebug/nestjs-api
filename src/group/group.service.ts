@@ -4,16 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DeleteResult,
-  getCustomRepository,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 import { GroupsEntity } from './group.entity';
-import { getRepository } from 'typeorm';
-import { UsersEntity } from 'src/users/users.entity';
 import { EditGroupDTO } from 'src/dto/edit-group.dto';
 import { GroupRepository } from 'src/repo/group.repository';
 import { UserRepository } from 'src/repo/user.repository';

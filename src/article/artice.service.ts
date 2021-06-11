@@ -1,9 +1,7 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from } from 'rxjs';
-import { CreateArticleDTO } from 'src/dto/create-article.dto';
-import { UsersEntity } from 'src/users/users.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { CreateArticleDTO } from 'src/dto/add-article.dto';
+import { Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { EditArticleDTO } from '../dto/edit-article.dto';
 

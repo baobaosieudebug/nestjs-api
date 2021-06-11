@@ -4,22 +4,15 @@ import {
   HttpException,
   HttpService,
   UnauthorizedException,
+  Get,
+  Param,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, getCustomRepository, Repository } from 'typeorm';
-import { UsersEntity } from './users.entity';
-import { GroupsEntity } from '../group/group.entity';
-import { getRepository } from 'typeorm';
 import { AddUserDTO } from '../dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
-import axios, { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
+import axios from 'axios';
 import { LoginUserDTO } from '../dto/login-user.dto';
 import { TokenUserDTO } from '../dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { CaslAbilityFactory } from 'src/article/casl/casl-ability.factory';
-import { ArticleEntity } from 'src/article/article.entity';
-import { Action } from 'src/article/action/action.enum';
 import { AddUsersRO } from 'src/ro/add-user.ro';
 import { EditUserDTO } from 'src/dto/edit-user.dto';
 import { EditUserRO } from 'src/ro/edit-user.ro';
@@ -119,6 +112,12 @@ export class UsersService {
         return (await result).data;
       }
     }
+  }
+
+  /*---Task----*/
+  @Get(':idUser/task')
+  async getAllTaskByIdUser(@Param('idUser') idUser: number) {
+    return await this.userRepo.getAllTask(idUser);
   }
 
   /*---------------------------------------POST Method--------------------------------------- */

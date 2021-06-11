@@ -2,15 +2,13 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  BeforeInsert,
   ManyToMany,
   OneToMany,
 } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
-import * as crypto from 'crypto';
 import { Length, IsEmail } from 'class-validator';
-import { Role } from 'src/auth/roles/role.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { TaskEntity } from './tasks/task.entity';
 
 @Entity('users')
 export class UsersEntity {
@@ -39,6 +37,8 @@ export class UsersEntity {
   })
   groups: GroupsEntity[];
 
+  @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
+  tasks: TaskEntity[];
   // @ApiProperty({ type: [String] })
   // roles: Role[];
 }

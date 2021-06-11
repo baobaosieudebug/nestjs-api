@@ -1,9 +1,24 @@
 // import { Delete, Get, Param, Put } from '@nestjs/common';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseFilters,
+} from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
+import { EditTaskDTO } from 'src/dto/edit-task.dto';
 import { TaskService } from './task.service';
-// import { ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-// import { Public } from 'src/decorators/public.decorator';
 
 //Proeject mới
 @ApiTags('Task')
@@ -11,40 +26,39 @@ import { TaskService } from './task.service';
 export class TaskController {
   constructor(private taskService: TaskService) {}
 
-  //   @Public()
-  //   @Get()
-  //   @ApiOkResponse({ description: 'Get List Article Success' })
-  //   async getAllArticle() {
-  //     return await this.articleService.findAll();
-  //   }
+  @Get()
+  @ApiOkResponse({ description: 'Get List Article Success' })
+  async getAllTask() {
+    return await this.taskService.getAllTask();
+  }
 
-  //   @ApiOkResponse({ description: 'Get Article Success' })
-  //   @ApiNotFoundResponse({ description: 'ID Article Not Found' })
-  //   @Get(':id')
-  //   async getArticleByIdOrFail(@Param('id') id: number) {
-  //     return await this.articleService.getArticleByIdOrFail(id);
-  //   }
-  //   @ApiCreatedResponse({
-  //     description: 'The record has been successfully created.',
-  //   })
-  //   @ApiUnauthorizedResponse({ description: 'You need to login ' })
-  //   @Post()
-  //   async createArticle(@Body() article: CreateArticleDTO) {
-  //     return await this.articleService.createArticle(article);
-  //   }
+  @ApiOkResponse({ description: 'Get Task Success' })
+  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  @Get(':id')
+  async getArticleByIdOrFail(@Param('id') id: number) {
+    return await this.taskService.getOneByIdOrFail(id);
+  }
 
-  //   @ApiOkResponse({ description: 'Get Article Success' })
-  //   @ApiNotFoundResponse({ description: 'ID Article Not Found' })
-  //   @Public()
-  //   @Put(':id')
-  //   async editArticle(@Body() article: EditArticleDTO, @Param('id') id: number) {
-  //     return await this.articleService.editArticle(article, id);
-  //   }
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+  })
+  @ApiUnauthorizedResponse({ description: 'You need to login ' })
+  @Post()
+  async createTask(@Body() task: EditTaskDTO) {
+    return await this.taskService.editTask(task);
+  }
 
-  //   @ApiOkResponse({ description: 'Get Article Success' })
-  //   @ApiNotFoundResponse({ description: 'ID Article Not Found' })
-  //   @Delete(':id')
-  //   async removeArticle(@Param('id') id: number) {
-  //     return await this.articleService.removeArticle(id);
-  //   }
+  @ApiOkResponse({ description: 'Edit Task Success' })
+  @Put()
+  async editArticle(@Body() task: EditTaskDTO) {
+    return await this.taskService.editTask(task);
+  }
+
+  @ApiOkResponse({ description: 'Get Task Success' })
+  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  @UseFilters(NotFoundExceptionFilter)
+  @Delete(':id')
+  async removeArticle(@Param('id') id: number) {
+    return await this.taskService.removeTask(id);
+  }
 }

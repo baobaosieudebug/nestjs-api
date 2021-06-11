@@ -1,27 +1,16 @@
 import { Delete, Get, Param, Put } from '@nestjs/common';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { get } from 'http';
-import { PoliciesGuard } from 'src/auth/guards/policies.guard';
-import { CheckPolicies } from 'src/decorators/checkpolicy.decorator';
 import { Public } from 'src/decorators/public.decorator';
-import { CreateArticleDTO } from 'src/dto/create-article.dto';
+import { CreateArticleDTO } from 'src/dto/add-article.dto';
 import { EditArticleDTO } from 'src/dto/edit-article.dto';
-import { LoginUserDTO } from 'src/dto/login-user.dto';
-import { Action } from './action/action.enum';
 import { ArticleService } from './artice.service';
-import { ArticleEntity } from './article.entity';
-import { AppAbility } from './casl/casl-ability.factory';
 
 //Proeject mới
 @ApiTags('Article')

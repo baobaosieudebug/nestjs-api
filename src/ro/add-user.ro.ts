@@ -1,5 +1,4 @@
-import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
-import { AddUserDTO } from 'src/dto/add-user.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AddUsersRO {
   @ApiProperty()
