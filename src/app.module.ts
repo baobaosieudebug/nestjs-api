@@ -15,6 +15,7 @@ import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { ArticleModule } from './article/article.module';
 import { TaskModule } from './users/tasks/task.module';
+import { ProjectModule } from './projects/project.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TaskModule } from './users/tasks/task.module';
     HttpModule,
     ArticleModule,
     TaskModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
