@@ -7,7 +7,7 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.findOne(
       { id },
       {
-        relations: ['groups'],
+        relations: ['groups', 'tasks'],
       },
     );
   }

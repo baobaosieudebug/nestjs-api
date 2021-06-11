@@ -118,7 +118,6 @@ export class UsersService {
   }
 
   /*---Task----*/
-  @Get(':idUser/getTask')
   async getAllTaskByIdUser(@Param('idUser') idUser: number) {
     return await this.userRepo.getAllTask(idUser);
   }
@@ -178,7 +177,7 @@ export class UsersService {
   async addTask(idUser: number, codeId: number) {
     const newTask = await this.taskRepo.getByCodeId(codeId);
     const user = await this.userRepo.getById(idUser);
-    user.tasks = [newTask];
+    user.tasks.push(newTask);
     await this.userRepo.save(user);
     return new HttpException('Add Task Success', HttpStatus.OK);
   }
