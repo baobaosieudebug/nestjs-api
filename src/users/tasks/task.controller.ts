@@ -43,7 +43,7 @@ export class TaskController {
   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @Get(':id')
   async getTaskByIdOrFail(@Param('id') id: number) {
-    return await this.taskService.getOneByIdOrFail(id);
+    return await this.taskService.getOneByIdForUser(id);
   }
 
   @ApiCreatedResponse({
@@ -66,6 +66,6 @@ export class TaskController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
-    return await this.taskService.removeTask(id);
+    return await this.taskService.softDelte(id);
   }
 }

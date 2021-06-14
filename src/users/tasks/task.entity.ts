@@ -20,6 +20,10 @@ export class TaskEntity {
   @Length(10, 20)
   codeId: string;
 
+  @Column({ default: null })
+  @Length(10, 20)
+  isDelete: string;
+
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   user: UsersEntity;
 

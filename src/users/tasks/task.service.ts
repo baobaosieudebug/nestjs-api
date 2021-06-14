@@ -4,6 +4,7 @@ import { EditTaskDTO } from 'src/dto/edit-task.dto';
 import { GroupRepository } from 'src/repo/group.repository';
 import { TaskRepository } from 'src/repo/task.respository';
 import { UserRepository } from 'src/repo/user.repository';
+import { GetTaskRO } from 'src/ro/get-task.ro';
 import { getCustomRepository } from 'typeorm';
 
 @Injectable()
@@ -12,6 +13,16 @@ export class TaskService {
 
   userRepo = getCustomRepository(UserRepository);
   groupRepo = getCustomRepository(GroupRepository);
+
+  async getOneByIdForUser(id: number) {
+    const task = await this.taskRepo.getById(id);
+    const taskRO = new GetTaskRO();
+    taskRO.name = (await task).name;
+    taskRO.codeId = (await task).codeId;
+    taskRO.user = (await task).user;
+    taskRO.group = (await task).group;
+    return taskRO;
+  }
 
   async getOneById(id: number) {
     return await this.taskRepo.getById(id);
@@ -35,7 +46,8 @@ export class TaskService {
   }
   async createTask(task: AddTaskDTO) {
     const newTask = await this.taskRepo.create(task);
-    return await this.taskRepo.save(newTask);
+    await this.taskRepo.save(newTask);
+    return new HttpException('Create Task Success', HttpStatus.CREATED);
   }
 
   async editTask(task: EditTaskDTO) {
@@ -43,9 +55,15 @@ export class TaskService {
     await this.taskRepo.update((await findTask).id, task);
   }
 
+  async softDelte(id: number) {
+    const task = this.taskRepo.getById(id);
+    (await task).isDelete = (await task).codeId;
+    this.taskRepo.save(await task);
+    return new HttpException('Delete Successfully!', HttpStatus.OK);
+  }
   async removeTask(id: number) {
-    const user = this.getOneByIdOrFail(id);
-    await this.taskRepo.delete((await user).id);
+    const task = this.getOneByIdOrFail(id);
+    await this.taskRepo.delete((await task).id);
     return new HttpException('Delete Successfully!', HttpStatus.OK);
   }
 }
