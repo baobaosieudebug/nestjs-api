@@ -16,9 +16,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
-import { AddProjectDTO } from 'src/dto/add-project.dto';
-import { EditProjectDTO } from 'src/dto/edit-project.dto';
-import { ProjectService } from './project.service';
+import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
+import { EditProjectDTO } from 'src/projects/dto/edit-project.dto';
+import { ProjectService } from '../service/project.service';
 
 //Proeject mới
 @ApiTags('Project')

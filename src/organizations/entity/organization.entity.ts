@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectEntity } from 'src/projects/project.entity';
+import { ProjectEntity } from 'src/projects/entity/project.entity';
 
 @Entity('organization')
 export class OrganizationEntity {

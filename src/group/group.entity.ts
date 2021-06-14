@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectEntity } from 'src/projects/project.entity';
+import { ProjectEntity } from 'src/projects/entity/project.entity';
 import { TaskEntity } from 'src/tasks/task.entity';
 import {
   Entity,

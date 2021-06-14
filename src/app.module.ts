@@ -5,7 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { TaskModule } from './tasks/task.module';
-import { ProjectModule } from './projects/project.module';
+import { ProjectModule } from './projects/module/project.module';
 import { OrganizationModule } from './organizations/module/organization.module';
 
 @Module({

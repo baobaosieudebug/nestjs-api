@@ -3,7 +3,7 @@ import { getCustomRepository } from 'typeorm';
 import { OrganizationRepository } from 'src/organizations/repo/organization.repositor';
 import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
-import { ProjectRepository } from 'src/repo/project.repository';
+import { ProjectRepository } from 'src/projects/repo/project.repository';
 
 @Injectable()
 export class OrganizationService {

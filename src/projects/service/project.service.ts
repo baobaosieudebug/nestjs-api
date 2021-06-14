@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ProjectRepository } from 'src/repo/project.repository';
-import { AddProjectDTO } from 'src/dto/add-project.dto';
-import { EditProjectDTO } from 'src/dto/edit-project.dto';
+import { ProjectRepository } from 'src/projects/repo/project.repository';
+import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
+import { EditProjectDTO } from 'src/projects/dto/edit-project.dto';
 import { getCustomRepository } from 'typeorm';
 import { GroupRepository } from 'src/repo/group.repository';
 
