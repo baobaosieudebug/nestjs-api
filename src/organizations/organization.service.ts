@@ -23,7 +23,7 @@ export class OrganizationService {
   }
 
   async getOneById(id: number) {
-    return await this.organizationRepo.getByCodeId(id);
+    return await this.organizationRepo.getById(id);
   }
 
   async getOneByIdOrFail(id: number) {
@@ -33,6 +33,12 @@ export class OrganizationService {
       const response = await this.getOneById(id);
       return response;
     }
+  }
+
+  async restoreOganization(id: number) {
+    const organization = this.organizationRepo.getByIdWithDelete(id);
+    await this.organizationRepo.restore(await organization);
+    return new HttpException('Restore Successfully!', HttpStatus.OK);
   }
 
   async createOrganization(organazation: AddOrganizationDTO) {
@@ -59,6 +65,12 @@ export class OrganizationService {
       organization,
     );
     return new HttpException('Update Organization Sucess', HttpStatus.OK);
+  }
+
+  async softDelete(id: number) {
+    const organazation = this.organizationRepo.getByIdWithDelete(id);
+    await this.organizationRepo.softDelete(await organazation);
+    return new HttpException('Delete Successfully!', HttpStatus.OK);
   }
 
   async removeOrganization(id: number) {

@@ -105,7 +105,7 @@ export class TaskService {
     await this.taskRepo.update((await findTask).id, task);
   }
 
-  async softDelte(id: number) {
+  async softDelete(id: number) {
     const task = this.getOneByIdOrFail(id);
     await this.taskRepo.softDelete(await task);
     return new HttpException('Delete Successfully!', HttpStatus.OK);

@@ -77,6 +77,6 @@ export class TaskController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
-    return await this.taskService.softDelte(id);
+    return await this.taskService.softDelete(id);
   }
 }

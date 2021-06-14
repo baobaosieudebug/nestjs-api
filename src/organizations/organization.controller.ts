@@ -31,6 +31,11 @@ export class OrganizationController {
     return await this.organizationService.getOneByIdOrFail(id);
   }
 
+  @Get('restore/:id')
+  async restoreOganization(@Param('id') id: number) {
+    return await this.organizationService.restoreOganization(id);
+  }
+
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
   async createArticle(@Body() organization: AddOrganizationDTO) {
@@ -59,6 +64,6 @@ export class OrganizationController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeOrganization(@Param('id') id: number) {
-    return await this.organizationService.removeOrganization(id);
+    return await this.organizationService.softDelete(id);
   }
 }

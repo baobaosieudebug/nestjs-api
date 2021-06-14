@@ -12,7 +12,7 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   }
 
   getByCodeId(codeId) {
-    return this.findOne({ codeId }, { relations: ['groups'] });
+    return this.findOne({ codeId }, { relations: ['groups', 'organization'] });
   }
 
   // getAllProjectByIdGroup(id) {

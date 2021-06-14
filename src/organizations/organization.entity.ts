@@ -1,5 +1,11 @@
 import { Length } from 'class-validator';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectEntity } from 'src/projects/project.entity';
 
@@ -18,6 +24,9 @@ export class OrganizationEntity {
   @Column()
   @Length(4, 20)
   codeId: string;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(
     () => ProjectEntity,
