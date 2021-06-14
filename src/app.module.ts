@@ -16,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
 import { ArticleModule } from './article/article.module';
 import { TaskModule } from './users/tasks/task.module';
 import { ProjectModule } from './projects/project.module';
+import { OrganizationModule } from './organizations/organization.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProjectModule } from './projects/project.module';
     ArticleModule,
     TaskModule,
     ProjectModule,
+    OrganizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

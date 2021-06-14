@@ -4,10 +4,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { GroupsEntity } from 'src/group/group.entity';
+import { OrganizationEntity } from 'src/organizations/organization.entity';
 
 @Entity('project')
 export class ProjectEntity {
@@ -30,4 +32,7 @@ export class ProjectEntity {
   })
   @JoinTable()
   groups: GroupsEntity[];
+
+  @ManyToOne(() => OrganizationEntity, organization => organization.projects)
+  organization: OrganizationEntity;
 }
