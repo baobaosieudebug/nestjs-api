@@ -1,14 +1,5 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateArticleDTO } from 'src/dto/add-article.dto';
-import { getCustomRepository, Repository } from 'typeorm';
-import { OrganizationEntity } from './organization.entity';
-import { EditArticleDTO } from '../dto/edit-article.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { getCustomRepository } from 'typeorm';
 import { OrganizationRepository } from 'src/repo/organazation.repositor';
 import { AddOrganizationDTO } from 'src/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/dto/edit-organization.dto';
@@ -43,7 +34,7 @@ export class OrganizationService {
 
   async createOrganization(organazation: AddOrganizationDTO) {
     await this.organizationRepo.save(organazation);
-    return new HttpException('Add Organization Sucess', HttpStatus.OK);
+    return new HttpException('Add Organization Success', HttpStatus.OK);
   }
 
   async addProject(codeIdOrga: number, codeIdProject: number) {
@@ -64,12 +55,12 @@ export class OrganizationService {
       ).id,
       organization,
     );
-    return new HttpException('Update Organization Sucess', HttpStatus.OK);
+    return new HttpException('Update Organization Success', HttpStatus.OK);
   }
 
   async softDelete(id: number) {
-    const organazation = this.organizationRepo.getByIdWithDelete(id);
-    await this.organizationRepo.softDelete(await organazation);
+    const organization = this.organizationRepo.getByIdWithDelete(id);
+    await this.organizationRepo.softDelete(await organization);
     return new HttpException('Delete Successfully!', HttpStatus.OK);
   }
 

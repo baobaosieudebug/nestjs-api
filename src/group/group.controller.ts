@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { GroupsService } from './group.service';
 import { GroupsEntity } from './group.entity';
-import { GroupNotFoundExceptionFilter } from 'src/auth/exception filter/groupnotfound.filter';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -18,10 +17,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EditGroupDTO } from 'src/dto/edit-group.dto';
+import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
 
 @ApiTags('Group')
 @Controller('groups')
-@UseFilters(new GroupNotFoundExceptionFilter())
+@UseFilters(new NotFoundExceptionFilter())
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 

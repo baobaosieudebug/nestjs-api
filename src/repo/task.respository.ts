@@ -1,6 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
-import { GetTaskRO } from 'src/ro/get-task.ro';
-import { TaskEntity } from 'src/users/tasks/task.entity';
+import { TaskEntity } from 'src/tasks/task.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(TaskEntity)

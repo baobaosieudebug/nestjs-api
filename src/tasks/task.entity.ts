@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UsersEntity } from '../users.entity';
+import { UsersEntity } from '../users/users.entity';
 import { GroupsEntity } from 'src/group/group.entity';
 
 @Entity('task')
@@ -31,7 +31,7 @@ export class TaskEntity {
   isDelete: string;
 
   @DeleteDateColumn()
-  deletedAt?: Date;
+  deletedAt?: number;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   user: UsersEntity;

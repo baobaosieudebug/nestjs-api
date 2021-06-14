@@ -26,7 +26,7 @@ export class OrganizationEntity {
   codeId: string;
 
   @DeleteDateColumn()
-  deletedAt?: Date;
+  isDelete: number;
 
   @OneToMany(
     () => ProjectEntity,

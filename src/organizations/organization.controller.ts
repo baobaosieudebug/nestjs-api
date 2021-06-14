@@ -1,7 +1,6 @@
 import { Delete, Get, Param, Put, UseFilters } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -32,7 +31,7 @@ export class OrganizationController {
   }
 
   @Get('restore/:id')
-  async restoreOganization(@Param('id') id: number) {
+  async restoreOrganization(@Param('id') id: number) {
     return await this.organizationService.restoreOganization(id);
   }
 

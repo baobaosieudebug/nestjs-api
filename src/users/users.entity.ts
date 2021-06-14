@@ -8,7 +8,7 @@ import {
 import { GroupsEntity } from '../group/group.entity';
 import { Length, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskEntity } from './tasks/task.entity';
+import { TaskEntity } from '../tasks/task.entity';
 
 @Entity('users')
 export class UsersEntity {

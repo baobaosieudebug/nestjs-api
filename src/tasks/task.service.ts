@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Number } from 'aws-sdk/clients/iot';
 import { AddTaskDTO } from 'src/dto/add-task.dto';
 import { EditTaskDTO } from 'src/dto/edit-task.dto';
 import { GroupRepository } from 'src/repo/group.repository';
@@ -12,7 +11,6 @@ import { TaskRepository } from 'src/repo/task.respository';
 import { UserRepository } from 'src/repo/user.repository';
 import { GetTaskRO } from 'src/ro/get-task.ro';
 import { getCustomRepository } from 'typeorm';
-import { TaskEntity } from './task.entity';
 
 @Injectable()
 export class TaskService {

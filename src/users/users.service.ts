@@ -4,7 +4,6 @@ import {
   HttpException,
   HttpService,
   UnauthorizedException,
-  Get,
   Param,
 } from '@nestjs/common';
 import { AddUserDTO } from '../dto/add-user.dto';
@@ -24,7 +23,6 @@ import { UserRepository } from 'src/repo/user.repository';
 import { GroupRepository } from 'src/repo/group.repository';
 import { getCustomRepository } from 'typeorm';
 import { TaskRepository } from 'src/repo/task.respository';
-import { report } from 'process';
 
 @Injectable()
 export class UsersService {

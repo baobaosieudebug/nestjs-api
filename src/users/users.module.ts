@@ -2,11 +2,10 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { CaslModule } from 'src/article/casl/casl.module';
 import { UserRepository } from 'src/repo/user.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository]), HttpModule, CaslModule],
+  imports: [TypeOrmModule.forFeature([UserRepository]), HttpModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
