@@ -46,6 +46,11 @@ export class TaskController {
     return await this.taskService.getOneByIdForUser(id);
   }
 
+  @Get('restore/:id')
+  async restoreTask(@Param('id') id: number) {
+    return await this.taskService.restoreTask(id);
+  }
+
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
   })

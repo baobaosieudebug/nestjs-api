@@ -7,16 +7,13 @@ import { EntityRepository, Repository } from 'typeorm';
 export class TaskRepository extends Repository<TaskEntity> {
   async getById(id) {
     return this.findOne({ id }, { relations: ['user', 'group'] });
-    // if ((await task).id ) {
-    //   throw new NotFoundException('Task ID Not Found');
-    // } else {
-    //   return task;
-    // }
-    // if ((await task).deletedAt != null) {
-    //   return task;
-    // } else {
-    //   throw new NotFoundException('Task ID Not Found');
-    // }
+  }
+
+  async getByIdWithDelete(id) {
+    return this.findOne(
+      { id },
+      { relations: ['user', 'group'], withDeleted: true },
+    );
   }
 
   getAllTask() {

@@ -53,6 +53,13 @@ export class TaskService {
   async getAllTaskByIdGroup(idGroup) {
     return this.taskRepo.getAllTaskByIdGroup(idGroup);
   }
+
+  async restoreTask(id: number) {
+    const task = this.taskRepo.getByIdWithDelete(id);
+    await this.taskRepo.restore(await task);
+    return new HttpException('Restore Successfully!', HttpStatus.OK);
+  }
+
   async createTask(task: AddTaskDTO) {
     const newTask = await this.taskRepo.create(task);
     await this.taskRepo.save(newTask);
@@ -65,12 +72,11 @@ export class TaskService {
   }
 
   async softDelte(id: number) {
-    const task = this.taskRepo.getById(id);
-    // (await task).isDelete = (await task).codeId;
-    // this.taskRepo.save(await task);
-    return await this.taskRepo.softDelete(await task);
-    // return new HttpException('Delete Successfully!', HttpStatus.OK);
+    const task = this.getOneByIdOrFail(id);
+    await this.taskRepo.softDelete(await task);
+    return new HttpException('Delete Successfully!', HttpStatus.OK);
   }
+
   async removeTask(id: number) {
     const task = this.getOneByIdOrFail(id);
     await this.taskRepo.delete((await task).id);
