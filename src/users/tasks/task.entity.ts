@@ -1,5 +1,11 @@
 import { Length } from 'class-validator';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UsersEntity } from '../users.entity';
 import { GroupsEntity } from 'src/group/group.entity';
@@ -23,6 +29,9 @@ export class TaskEntity {
   @Column({ default: null })
   @Length(10, 20)
   isDelete: string;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   user: UsersEntity;

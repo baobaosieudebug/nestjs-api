@@ -6,16 +6,21 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
   async getById(id) {
-    const task = this.findOne({ id }, { relations: ['user', 'group'] });
-    if ((await task).isDelete == null) {
-      return task;
-    } else {
-      throw new NotFoundException('Task ID Not Found');
-    }
+    return this.findOne({ id }, { relations: ['user', 'group'] });
+    // if ((await task).id ) {
+    //   throw new NotFoundException('Task ID Not Found');
+    // } else {
+    //   return task;
+    // }
+    // if ((await task).deletedAt != null) {
+    //   return task;
+    // } else {
+    //   throw new NotFoundException('Task ID Not Found');
+    // }
   }
 
   getAllTask() {
-    return this.find();
+    return this.find({ isDelete: null });
   }
 
   getByCodeId(codeId) {

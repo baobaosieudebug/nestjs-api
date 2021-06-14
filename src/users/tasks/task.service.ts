@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AddTaskDTO } from 'src/dto/add-task.dto';
 import { EditTaskDTO } from 'src/dto/edit-task.dto';
 import { GroupRepository } from 'src/repo/group.repository';
@@ -16,12 +21,16 @@ export class TaskService {
 
   async getOneByIdForUser(id: number) {
     const task = await this.taskRepo.getById(id);
-    const taskRO = new GetTaskRO();
-    taskRO.name = (await task).name;
-    taskRO.codeId = (await task).codeId;
-    taskRO.user = (await task).user;
-    taskRO.group = (await task).group;
-    return taskRO;
+    if (!task) {
+      throw new NotFoundException('Task ID Not Found');
+    } else {
+      const taskRO = new GetTaskRO();
+      taskRO.name = (await task).name;
+      taskRO.codeId = (await task).codeId;
+      taskRO.user = (await task).user;
+      taskRO.group = (await task).group;
+      return taskRO;
+    }
   }
 
   async getOneById(id: number) {
@@ -57,9 +66,10 @@ export class TaskService {
 
   async softDelte(id: number) {
     const task = this.taskRepo.getById(id);
-    (await task).isDelete = (await task).codeId;
-    this.taskRepo.save(await task);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
+    // (await task).isDelete = (await task).codeId;
+    // this.taskRepo.save(await task);
+    return await this.taskRepo.softDelete(await task);
+    // return new HttpException('Delete Successfully!', HttpStatus.OK);
   }
   async removeTask(id: number) {
     const task = this.getOneByIdOrFail(id);
