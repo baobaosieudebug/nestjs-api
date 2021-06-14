@@ -3,7 +3,7 @@ import { ProjectRepository } from 'src/projects/repo/project.repository';
 import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
 import { EditProjectDTO } from 'src/projects/dto/edit-project.dto';
 import { getCustomRepository } from 'typeorm';
-import { GroupRepository } from 'src/repo/group.repository';
+import { GroupRepository } from 'src/group/repo/group.repository';
 
 @Injectable()
 export class ProjectService {

@@ -8,15 +8,15 @@ import {
   Param,
   UseFilters,
 } from '@nestjs/common';
-import { GroupsService } from './group.service';
-import { GroupsEntity } from './group.entity';
+import { GroupsService } from '../service/group.service';
+import { GroupsEntity } from '../entity/group.entity';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { EditGroupDTO } from 'src/dto/edit-group.dto';
+import { EditGroupDTO } from '../dto/edit-group.dto';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
 
 @ApiTags('Group')

@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { GroupsEntity } from 'src/group/group.entity';
+import { GroupsEntity } from 'src/group/entity/group.entity';
 import { OrganizationEntity } from 'src/organizations/entity/organization.entity';
 
 @Entity('project')

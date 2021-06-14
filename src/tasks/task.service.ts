@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AddTaskDTO } from 'src/dto/add-task.dto';
 import { EditTaskDTO } from 'src/dto/edit-task.dto';
-import { GroupRepository } from 'src/repo/group.repository';
+import { GroupRepository } from 'src/group/repo/group.repository';
 import { TaskRepository } from 'src/repo/task.respository';
 import { UserRepository } from 'src/repo/user.repository';
 import { GetTaskRO } from 'src/ro/get-task.ro';

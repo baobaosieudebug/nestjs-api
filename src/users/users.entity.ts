@@ -5,7 +5,7 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { GroupsEntity } from '../group/group.entity';
+import { GroupsEntity } from '../group/entity/group.entity';
 import { Length, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskEntity } from '../tasks/task.entity';

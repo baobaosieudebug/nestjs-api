@@ -16,11 +16,11 @@ import { AddUsersRO } from 'src/ro/add-user.ro';
 import { EditUserDTO } from 'src/dto/edit-user.dto';
 import { EditUserRO } from 'src/ro/edit-user.ro';
 import { GetUserRO } from 'src/ro/get-user.ro';
-import { JoinGroupRO } from 'src/ro/join-group.ro';
+import { JoinGroupRO } from 'src/group/ro/join-group.ro';
 import { GetListUserRO } from 'src/ro/get-list-user.ro';
-import { GetAllGroupRO } from 'src/ro/get-all-group.ro';
+import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
 import { UserRepository } from 'src/repo/user.repository';
-import { GroupRepository } from 'src/repo/group.repository';
+import { GroupRepository } from 'src/group/repo/group.repository';
 import { getCustomRepository } from 'typeorm';
 import { TaskRepository } from 'src/repo/task.respository';
 

@@ -1,6 +1,6 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
-import { GroupsModule } from './group/group.module';
+import { GroupsModule } from './group/module/group.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';

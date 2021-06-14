@@ -9,7 +9,7 @@ import {
   JoinTable,
   OneToMany,
 } from 'typeorm';
-import { UsersEntity } from '../users/users.entity';
+import { UsersEntity } from '../../users/users.entity';
 
 @Entity('groups')
 export class GroupsEntity {
