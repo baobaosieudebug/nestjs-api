@@ -6,7 +6,7 @@ import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { TaskModule } from './tasks/task.module';
 import { ProjectModule } from './projects/project.module';
-import { OrganizationModule } from './organizations/organization.module';
+import { OrganizationModule } from './organizations/module/organization.module';
 
 @Module({
   imports: [

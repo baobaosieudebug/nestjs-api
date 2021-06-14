@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { getCustomRepository } from 'typeorm';
-import { OrganizationRepository } from 'src/repo/organazation.repositor';
-import { AddOrganizationDTO } from 'src/dto/add-organization.dto';
-import { EditOrganizationDTO } from 'src/dto/edit-organization.dto';
+import { OrganizationRepository } from 'src/organizations/repo/organization.repositor';
+import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
+import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
 import { ProjectRepository } from 'src/repo/project.repository';
 
 @Injectable()

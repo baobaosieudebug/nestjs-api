@@ -7,9 +7,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
-import { AddOrganizationDTO } from 'src/dto/add-organization.dto';
-import { EditOrganizationDTO } from 'src/dto/edit-organization.dto';
-import { OrganizationService } from './organization.service';
+import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
+import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
+import { OrganizationService } from '../service/organization.service';
 
 //Proeject mới
 @ApiTags('Organization')

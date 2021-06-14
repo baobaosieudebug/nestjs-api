@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { GroupsEntity } from 'src/group/group.entity';
-import { OrganizationEntity } from 'src/organizations/organization.entity';
+import { OrganizationEntity } from 'src/organizations/entity/organization.entity';
 
 @Entity('project')
 export class ProjectEntity {
