@@ -34,11 +34,11 @@ export class ProjectController {
     return await this.projectService.getAllProject();
   }
 
-  // @Get(':idGroup/getAllProject')
-  // @ApiOkResponse({ description: 'Get List Project Success' })
-  // async getAllProjectByIdGroup(@Param('idGroup') idGroup: number) {
-  //   return await this.projectService.getAllProjectByIdGroup(idGroup);
-  // }
+  @Get(':id')
+  @ApiOkResponse({ description: 'Get Project Success' })
+  async getByCodeId(@Param('id') codeId: number) {
+    return await this.projectService.getOneByCodeIdOrFail(codeId);
+  }
 
   @ApiOkResponse({ description: 'Get Project Success' })
   @ApiNotFoundResponse({ description: 'ID Not Found' })

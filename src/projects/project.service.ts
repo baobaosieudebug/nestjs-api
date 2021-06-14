@@ -25,6 +25,19 @@ export class ProjectService {
     }
   }
 
+  async getOneByCodeId(codeId: number) {
+    return await this.projectRepo.getByCodeId(codeId);
+  }
+
+  async getOneByCodeIdOrFail(codeId: number) {
+    if ((await this.getOneByCodeId(codeId)) == null) {
+      throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
+    } else {
+      const response = await this.getOneByCodeId(codeId);
+      return response;
+    }
+  }
+
   async getAllProject() {
     return await this.projectRepo.getAllProject();
   }
