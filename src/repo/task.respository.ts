@@ -4,7 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
   getById(id) {
-    return this.findOne({ id });
+    return this.findOne({ id }, { relations: ['user', 'group'] });
   }
 
   getAllTask() {

@@ -29,9 +29,6 @@ export class ProjectService {
     return await this.projectRepo.getAllProject();
   }
 
-  // async getAllProjectByIdGroup(idGroup) {
-  //   return await this.projectRepo.getAllProjectByIdGroup()
-  // }
   async createProject(project: AddProjectDTO) {
     const newProject = await this.projectRepo.create(project);
     return await this.projectRepo.save(newProject);

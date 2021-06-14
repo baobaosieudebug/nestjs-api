@@ -24,6 +24,7 @@ import { UserRepository } from 'src/repo/user.repository';
 import { GroupRepository } from 'src/repo/group.repository';
 import { getCustomRepository } from 'typeorm';
 import { TaskRepository } from 'src/repo/task.respository';
+import { report } from 'process';
 
 @Injectable()
 export class UsersService {
@@ -54,6 +55,7 @@ export class UsersService {
       userRO.name = response.name;
       userRO.email = response.email;
       userRO.groups = response.groups;
+      userRO.tasks = response.tasks;
       return userRO;
     }
   }

@@ -6,23 +6,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleDTO } from 'src/dto/add-article.dto';
-import { Repository } from 'typeorm';
+import { getCustomRepository, Repository } from 'typeorm';
 import { OrganizationEntity } from './organization.entity';
 import { EditArticleDTO } from '../dto/edit-article.dto';
 import { OrganizationRepository } from 'src/repo/organazation.repositor';
 import { AddOrganizationDTO } from 'src/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/dto/edit-organization.dto';
+import { ProjectRepository } from 'src/repo/project.repository';
 
 @Injectable()
 export class OrganizationService {
   constructor(private readonly organizationRepo: OrganizationRepository) {}
-
+  projectRepo = getCustomRepository(ProjectRepository);
   async getAllOrganization() {
     return await this.organizationRepo.getAllOrganization();
   }
 
   async getOneById(id: number) {
-    return await this.organizationRepo.getById(id);
+    return await this.organizationRepo.getByCodeId(id);
   }
 
   async getOneByIdOrFail(id: number) {
@@ -37,6 +38,14 @@ export class OrganizationService {
   async createOrganization(organazation: AddOrganizationDTO) {
     await this.organizationRepo.save(organazation);
     return new HttpException('Add Organization Sucess', HttpStatus.OK);
+  }
+
+  async addProject(codeIdOrga: number, codeIdProject: number) {
+    const organazation = await this.organizationRepo.getByCodeId(codeIdOrga);
+    const project = await this.projectRepo.getByCodeId(codeIdProject);
+    project.organization = organazation;
+    await this.projectRepo.save(project);
+    return new HttpException('Add Project Success', HttpStatus.OK);
   }
 
   async editOrganization(organization: EditOrganizationDTO) {

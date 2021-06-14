@@ -33,6 +33,9 @@ export class ProjectEntity {
   @JoinTable()
   groups: GroupsEntity[];
 
-  @ManyToOne(() => OrganizationEntity, organization => organization.projects)
+  @ManyToOne(
+    () => OrganizationEntity,
+    (organization: OrganizationEntity) => organization.projects,
+  )
   organization: OrganizationEntity;
 }

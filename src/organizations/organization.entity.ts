@@ -1,4 +1,3 @@
-
 import { Length } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
@@ -14,15 +13,15 @@ export class OrganizationEntity {
   @Column()
   @Length(10, 20)
   name: string;
-  
+
   @ApiProperty()
   @Column()
   @Length(4, 20)
   codeId: string;
-  
-  @OneToMany(() => ProjectEntity, project => project.organization)
+
+  @OneToMany(
+    () => ProjectEntity,
+    (project: ProjectEntity) => project.organization,
+  )
   projects: ProjectEntity[];
-
-
-  
 }

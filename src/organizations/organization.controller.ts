@@ -37,6 +37,17 @@ export class OrganizationController {
     return await this.organizationService.createOrganization(organization);
   }
 
+  @Post(':codeIdOrganization/addProject/:codeIdProject')
+  async addProject(
+    @Param('codeIdOrganization') codeIdOrganization: number,
+    @Param('codeIdProject') codeIdProject: number,
+  ) {
+    return await this.organizationService.addProject(
+      codeIdOrganization,
+      codeIdProject,
+    );
+  }
+
   @ApiOkResponse({ description: 'Edit Organization Success' })
   @Put()
   async editOrganization(@Body() organization: EditOrganizationDTO) {

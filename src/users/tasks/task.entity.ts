@@ -20,21 +20,6 @@ export class TaskEntity {
   @Length(10, 20)
   codeId: string;
 
-  // @ApiProperty()
-  // @Column()
-  // @Length(4, 20)
-  // userId: string;
-
-  // @ApiProperty()
-  // @Column()
-  // @Length(4, 20)
-  // groupId: string;
-
-  @ApiProperty()
-  @Column()
-  @Length(4, 20)
-  projectId: string;
-
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   user: UsersEntity;
 
