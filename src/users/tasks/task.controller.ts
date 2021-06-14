@@ -46,6 +46,12 @@ export class TaskController {
     return await this.taskService.getOneByIdForUser(id);
   }
 
+  @ApiOkResponse({ description: 'Get Task Success' })
+  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  @Get('getByCode/:codeId')
+  async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: number) {
+    return await this.taskService.getOneTaskByCodeIdOrFail(codeId);
+  }
   @Get('restore/:id')
   async restoreTask(@Param('id') id: number) {
     return await this.taskService.restoreTask(id);
