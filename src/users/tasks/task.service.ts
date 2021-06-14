@@ -43,8 +43,22 @@ export class TaskService {
     if ((await this.getOneById(id)) == null) {
       throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
     } else {
-      const response = await this.getOneById(id);
-      return response;
+      const task = await this.getOneById(id);
+      return task;
+    }
+  }
+
+  async getOneByIdOrFailForUser(id: number) {
+    if ((await this.getOneById(id)) == null) {
+      throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+    } else {
+      const task = await this.getOneById(id);
+      const taskRO = new GetTaskRO();
+      taskRO.name = (await task).name;
+      taskRO.codeId = (await task).codeId;
+      taskRO.user = (await task).user;
+      taskRO.group = (await task).group;
+      return taskRO;
     }
   }
 
@@ -64,8 +78,13 @@ export class TaskService {
     if ((await this.getOneByCodeId(codeId)) == null) {
       throw new HttpException('Task Not Found', HttpStatus.NOT_FOUND);
     } else {
-      const response = await this.getOneByCodeId(codeId);
-      return response;
+      const task = await this.getOneByCodeId(codeId);
+      const taskRO = new GetTaskRO();
+      taskRO.name = (await task).name;
+      taskRO.codeId = (await task).codeId;
+      taskRO.user = (await task).user;
+      taskRO.group = (await task).group;
+      return taskRO;
     }
   }
 
