@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
@@ -11,6 +12,7 @@ import { TaskRepository } from 'src/tasks/repo/task.respository';
 import { UserRepository } from 'src/users/repo/user.repository';
 import { GetTaskRO } from 'src/tasks/ro/get-task.ro';
 import { getCustomRepository } from 'typeorm';
+import { TaskEntity } from '../entity/task.entity';
 
 @Injectable()
 export class TaskService {
@@ -19,17 +21,21 @@ export class TaskService {
   userRepo = getCustomRepository(UserRepository);
   groupRepo = getCustomRepository(GroupRepository);
 
+  async dataTransfer(task: TaskEntity) {
+    const taskRO = new GetTaskRO();
+    taskRO.name = (await task).name;
+    taskRO.codeId = (await task).codeId;
+    taskRO.user = (await task).user;
+    taskRO.group = (await task).group;
+    return taskRO;
+  }
+
   async getOneByIdForUser(id: number) {
     const task = await this.taskRepo.getById(id);
     if (!task) {
       throw new NotFoundException('Task ID Not Found');
     } else {
-      const taskRO = new GetTaskRO();
-      taskRO.name = (await task).name;
-      taskRO.codeId = (await task).codeId;
-      taskRO.user = (await task).user;
-      taskRO.group = (await task).group;
-      return taskRO;
+      return await this.dataTransfer(task);
     }
   }
 
@@ -38,26 +44,19 @@ export class TaskService {
   }
 
   async getOneByIdOrFail(id: number) {
-    if ((await this.getOneById(id)) == null) {
+    const task = await this.getOneById(id);
+    if (!task) {
       throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
-    } else {
-      const task = await this.getOneById(id);
-      return task;
     }
+    return task;
   }
 
   async getOneByIdOrFailForUser(id: number) {
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
-    } else {
-      const task = await this.getOneById(id);
-      const taskRO = new GetTaskRO();
-      taskRO.name = (await task).name;
-      taskRO.codeId = (await task).codeId;
-      taskRO.user = (await task).user;
-      taskRO.group = (await task).group;
-      return taskRO;
+    const task = await this.getOneById(id);
+    if (!task) {
+      throw new HttpException('Task Not Found', HttpStatus.NOT_FOUND);
     }
+    return await this.dataTransfer(task);
   }
 
   async getAllTask() {
@@ -73,45 +72,37 @@ export class TaskService {
   }
 
   async getOneTaskByCodeIdOrFail(codeId: number) {
-    if ((await this.getOneByCodeId(codeId)) == null) {
+    const task = await this.getOneByCodeId(codeId);
+    if (!task) {
       throw new HttpException('Task Not Found', HttpStatus.NOT_FOUND);
-    } else {
-      const task = await this.getOneByCodeId(codeId);
-      const taskRO = new GetTaskRO();
-      taskRO.name = (await task).name;
-      taskRO.codeId = (await task).codeId;
-      taskRO.user = (await task).user;
-      taskRO.group = (await task).group;
-      return taskRO;
+    }
+    return await this.dataTransfer(task);
+  }
+
+  async createTask(dto: AddTaskDTO) {
+    try {
+      const newTask = await this.taskRepo.create(dto);
+      return await this.taskRepo.save(newTask);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 
-  async restoreTask(id: number) {
-    const task = this.taskRepo.getByIdWithDelete(id);
-    await this.taskRepo.restore(await task);
-    return new HttpException('Restore Successfully!', HttpStatus.OK);
-  }
-
-  async createTask(task: AddTaskDTO) {
-    const newTask = await this.taskRepo.create(task);
-    await this.taskRepo.save(newTask);
-    return new HttpException('Create Task Success', HttpStatus.CREATED);
-  }
-
-  async editTask(task: EditTaskDTO) {
-    const findTask = this.taskRepo.getByCodeId(task.codeId);
-    await this.taskRepo.update((await findTask).id, task);
-  }
-
-  async softDelete(id: number) {
-    const task = this.getOneByIdOrFail(id);
-    await this.taskRepo.softDelete(await task);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
+  async editTask(dto: EditTaskDTO) {
+    try {
+      const task = this.taskRepo.getByCodeId(dto.codeId);
+      return await this.taskRepo.update((await task).id, await task);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 
   async removeTask(id: number) {
-    const task = this.getOneByIdOrFail(id);
-    await this.taskRepo.delete((await task).id);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
+    try {
+      const task = this.getOneByIdOrFail(id);
+      return await this.taskRepo.delete((await task).id);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 }

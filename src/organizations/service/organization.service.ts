@@ -32,8 +32,8 @@ export class OrganizationService {
 
   async createOrganization(dto: AddOrganizationDTO) {
     try {
-      const response = this.organizationRepo.create(dto);
-      return await this.organizationRepo.save(response);
+      const organization = this.organizationRepo.create(dto);
+      return await this.organizationRepo.save(organization);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
@@ -49,8 +49,8 @@ export class OrganizationService {
 
   async editOrganization(dto: EditOrganizationDTO) {
     try {
-      const response = this.organizationRepo.getByCodeId(dto.codeId);
-      return await this.organizationRepo.update((await response).id, dto);
+      const organization = this.organizationRepo.getByCodeId(dto.codeId);
+      return await this.organizationRepo.update((await organization).id, dto);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
@@ -58,7 +58,7 @@ export class OrganizationService {
 
   async deleteOrganization(id: number) {
     try {
-      // const response = this.organizationRepo.getByIdWithDelete(id);
+      // const organization = this.organizationRepo.getByIdWithDelete(id);
       return await this.organizationRepo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');

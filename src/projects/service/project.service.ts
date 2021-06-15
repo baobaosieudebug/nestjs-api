@@ -46,8 +46,8 @@ export class ProjectService {
 
   async createProject(dto: AddProjectDTO) {
     try {
-      const response = this.projectRepo.create(dto);
-      return await this.projectRepo.save(response);
+      const project = this.projectRepo.create(dto);
+      return await this.projectRepo.save(project);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
@@ -63,8 +63,8 @@ export class ProjectService {
 
   async editProject(dto: EditProjectDTO) {
     try {
-      const response = this.projectRepo.getByCodeId(dto.codeId);
-      return await this.projectRepo.update((await response).id, dto);
+      const project = this.projectRepo.getByCodeId(dto.codeId);
+      return await this.projectRepo.update((await project).id, await project);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }

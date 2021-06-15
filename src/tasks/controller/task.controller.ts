@@ -51,24 +51,20 @@ export class TaskController {
   async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: number) {
     return await this.taskService.getOneTaskByCodeIdOrFail(codeId);
   }
-  @Get('restore/:id')
-  async restoreTask(@Param('id') id: number) {
-    return await this.taskService.restoreTask(id);
-  }
 
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',
   })
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
-  async createTask(@Body() task: AddTaskDTO) {
-    return await this.taskService.createTask(task);
+  async createTask(@Body() dto: AddTaskDTO) {
+    return await this.taskService.createTask(dto);
   }
 
   @ApiOkResponse({ description: 'Edit Task Success' })
   @Put()
-  async editTask(@Body() task: EditTaskDTO) {
-    return await this.taskService.editTask(task);
+  async editTask(@Body() dto: EditTaskDTO) {
+    return await this.taskService.editTask(dto);
   }
 
   @ApiOkResponse({ description: 'Get Task Success' })
@@ -76,6 +72,6 @@ export class TaskController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
-    return await this.taskService.softDelete(id);
+    return await this.taskService.removeTask(id);
   }
 }
