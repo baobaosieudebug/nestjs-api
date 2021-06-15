@@ -6,7 +6,7 @@ export const databaseConfigSchema = {
   DATABASE_TYPE: Joi.string().default('mysql'),
   DATABASE_USERNAME: Joi.string().default('root'),
   DATABASE_PASSWORD: Joi.string().default('secret'),
-  DATABASE_DB: Joi.string().default('blogdb'),
+  DATABASE_DB: Joi.string().default('nestjs'),
   DATABASE_LOGGING: Joi.boolean().default(true),
 };
 

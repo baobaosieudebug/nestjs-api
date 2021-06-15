@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ProjectRepository } from 'src/projects/repo/project.repository';
 import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
 import { EditProjectDTO } from 'src/projects/dto/edit-project.dto';
@@ -8,8 +13,6 @@ import { GroupRepository } from 'src/group/repo/group.repository';
 @Injectable()
 export class ProjectService {
   constructor(private readonly projectRepo: ProjectRepository) {}
-
-  //   userRepo = getCustomRepository(UserRepository);
   groupRepo = getCustomRepository(GroupRepository);
 
   async getOneById(id: number) {
@@ -30,21 +33,24 @@ export class ProjectService {
   }
 
   async getOneByCodeIdOrFail(codeId: number) {
-    if ((await this.getOneByCodeId(codeId)) == null) {
+    const response = await this.getOneByCodeId(codeId);
+    if (!response) {
       throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
-    } else {
-      const response = await this.getOneByCodeId(codeId);
-      return response;
     }
+    return response;
   }
 
   async getAllProject() {
     return await this.projectRepo.getAllProject();
   }
 
-  async createProject(project: AddProjectDTO) {
-    const newProject = await this.projectRepo.create(project);
-    return await this.projectRepo.save(newProject);
+  async createProject(dto: AddProjectDTO) {
+    try {
+      const response = this.projectRepo.create(dto);
+      return await this.projectRepo.save(response);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 
   async addGroup(codeId, idGroup) {
@@ -55,14 +61,21 @@ export class ProjectService {
     return new HttpException('Add Group Success', HttpStatus.OK);
   }
 
-  async editProject(project: EditProjectDTO) {
-    const findProject = this.projectRepo.getByCodeId(project.codeId);
-    await this.projectRepo.update((await findProject).id, project);
+  async editProject(dto: EditProjectDTO) {
+    try {
+      const response = this.projectRepo.getByCodeId(dto.codeId);
+      return await this.projectRepo.update((await response).id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 
   async removeProject(id: number) {
-    const user = this.getOneByIdOrFail(id);
-    await this.projectRepo.delete((await user).id);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
+    try {
+      const user = this.getOneByIdOrFail(id);
+      return await this.projectRepo.delete((await user).id);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 }

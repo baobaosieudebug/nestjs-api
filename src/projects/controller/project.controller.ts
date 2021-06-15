@@ -49,8 +49,8 @@ export class ProjectController {
   })
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
-  async createProject(@Body() project: AddProjectDTO) {
-    return await this.projectService.createProject(project);
+  async createProject(@Body() dto: AddProjectDTO) {
+    return await this.projectService.createProject(dto);
   }
 
   @Post(':codeId/addGroup/:idGroup')
@@ -63,8 +63,8 @@ export class ProjectController {
 
   @ApiOkResponse({ description: 'Edit Project Success' })
   @Put()
-  async editProject(@Body() project: EditProjectDTO) {
-    return await this.projectService.editProject(project);
+  async editProject(@Body() dto: EditProjectDTO) {
+    return await this.projectService.editProject(dto);
   }
 
   @ApiOkResponse({ description: 'Get Project Success' })

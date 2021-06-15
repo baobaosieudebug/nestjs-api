@@ -31,7 +31,7 @@ export class OrganizationController {
 
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
-  async createArticle(@Body() dto: AddOrganizationDTO) {
+  async createOrganization(@Body() dto: AddOrganizationDTO) {
     return await this.organizationService.createOrganization(dto);
   }
 
