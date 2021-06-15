@@ -4,12 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AddTaskDTO } from 'src/dto/add-task.dto';
-import { EditTaskDTO } from 'src/dto/edit-task.dto';
+import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
+import { EditTaskDTO } from 'src/tasks/dto/edit-task.dto';
 import { GroupRepository } from 'src/group/repo/group.repository';
-import { TaskRepository } from 'src/repo/task.respository';
-import { UserRepository } from 'src/repo/user.repository';
-import { GetTaskRO } from 'src/ro/get-task.ro';
+import { TaskRepository } from 'src/tasks/repo/task.respository';
+import { UserRepository } from 'src/users/repo/user.repository';
+import { GetTaskRO } from 'src/tasks/ro/get-task.ro';
 import { getCustomRepository } from 'typeorm';
 
 @Injectable()

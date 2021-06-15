@@ -15,7 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { LoginUserDTO } from 'src/dto/login-user.dto';
+import { LoginUserDTO } from '../users/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';

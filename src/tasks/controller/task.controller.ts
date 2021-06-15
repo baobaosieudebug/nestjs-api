@@ -17,9 +17,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
-import { AddTaskDTO } from 'src/dto/add-task.dto';
-import { EditTaskDTO } from 'src/dto/edit-task.dto';
-import { TaskService } from './task.service';
+import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
+import { EditTaskDTO } from 'src/tasks/dto/edit-task.dto';
+import { TaskService } from '../task.service';
 
 //Proeject mới
 @ApiTags('Task')

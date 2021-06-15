@@ -12,17 +12,17 @@ import axios from 'axios';
 import { LoginUserDTO } from '../dto/login-user.dto';
 import { TokenUserDTO } from '../dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { AddUsersRO } from 'src/ro/add-user.ro';
-import { EditUserDTO } from 'src/dto/edit-user.dto';
-import { EditUserRO } from 'src/ro/edit-user.ro';
-import { GetUserRO } from 'src/ro/get-user.ro';
+import { AddUsersRO } from 'src/users/ro/add-user.ro';
+import { EditUserDTO } from '../dto/edit-user.dto';
+import { EditUserRO } from 'src/users/ro/edit-user.ro';
+import { GetUserRO } from 'src/users/ro/get-user.ro';
 import { JoinGroupRO } from 'src/group/ro/join-group.ro';
-import { GetListUserRO } from 'src/ro/get-list-user.ro';
+import { GetListUserRO } from 'src/users/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
-import { UserRepository } from 'src/repo/user.repository';
+import { UserRepository } from 'src/users/repo/user.repository';
 import { GroupRepository } from 'src/group/repo/group.repository';
 import { getCustomRepository } from 'typeorm';
-import { TaskRepository } from 'src/repo/task.respository';
+import { TaskRepository } from 'src/tasks/repo/task.respository';
 
 @Injectable()
 export class UsersService {

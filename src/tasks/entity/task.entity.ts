@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UsersEntity } from '../users/users.entity';
+import { UsersEntity } from 'src/users/entity/users.entity';
 import { GroupsEntity } from 'src/group/entity/group.entity';
 
 @Entity('task')

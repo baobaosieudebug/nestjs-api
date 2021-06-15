@@ -10,7 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from '../service/users.service';
 import { AddUserDTO } from '../dto/add-user.dto';
 import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
 import { ParseDataToIntPipe } from 'src/auth/pipe/parse-to-int.pipe';
@@ -25,7 +25,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { EditUserDTO } from 'src/dto/edit-user.dto';
+import { EditUserDTO } from '../dto/edit-user.dto';
 
 //Proeject mới
 @ApiTags('User')
