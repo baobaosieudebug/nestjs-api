@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../service/users.service';
 import { AddUserDTO } from '../dto/add-user.dto';
-import { NotFoundExceptionFilter } from 'src/auth/exception filter/not-found.filter';
-import { ParseDataToIntPipe } from 'src/auth/pipe/parse-to-int.pipe';
+import { NotFoundExceptionFilter } from 'src/common/exception filter/not-found.filter';
+import { ParseDataToIntPipe } from 'src/common/pipe/parse-to-int.pipe';
 import { TokenUserDTO } from '../dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
 import {

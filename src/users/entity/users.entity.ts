@@ -6,7 +6,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { GroupsEntity } from 'src/group/entity/group.entity';
-import { Length, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskEntity } from 'src/tasks/entity/task.entity';
 
@@ -17,18 +16,15 @@ export class UsersEntity {
   id: number;
 
   @ApiProperty()
-  @Column()
-  @Length(10, 20)
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @ApiProperty()
-  @Column()
-  @IsEmail()
+  @Column({ type: 'varchar', length: 255, nullable: true })
   email: string;
 
   @ApiProperty()
-  @Column({ select: false })
-  @Length(4, 20)
+  @Column({ type: 'varchar', length: 255, select: false })
   password: string;
 
   @ApiProperty({ type: [GroupsEntity] })
@@ -39,6 +35,4 @@ export class UsersEntity {
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
   tasks: TaskEntity[];
-  // @ApiProperty({ type: [String] })
-  // roles: Role[];
 }

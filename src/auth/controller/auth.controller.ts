@@ -15,12 +15,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { LoginUserDTO } from '../users/dto/login-user.dto';
-import { AuthService } from './auth.service';
+import { LoginUserDTO } from '../../users/dto/login-user.dto';
+import { AuthService } from '../service/auth.service';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
-import { awsConfig } from '../config/aws.config';
-import { storage } from '../config/storage.config';
+import { awsConfig } from '../../config/aws.config';
+import { storage } from '../../config/storage.config';
 
 const credentials = {
   accessKeyId: awsConfig.AWS_ACCESS_ID,

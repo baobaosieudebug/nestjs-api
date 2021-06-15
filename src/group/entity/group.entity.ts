@@ -18,11 +18,9 @@ export class GroupsEntity {
   id: number;
 
   @ApiProperty({ type: String, example: 'NodeJs' })
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   nameGroup: string;
 
-  // @ManyToOne(type => UsersEntity, user => user.groups) // note: we will create author property in the Photo class below
-  // userCretead: UsersEntity;
   @ApiProperty({ type: [UsersEntity] })
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.groups, {
     cascade: ['insert'],

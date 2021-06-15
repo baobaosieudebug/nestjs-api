@@ -1,9 +1,9 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/module/users.module';
+import { AuthService } from '../service/auth.service';
+import { UsersModule } from '../../users/module/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './auth.controller';
+import { AuthController } from '../controller/auth.controller';
 import { ConfigModule } from 'src/config/config.module';
 import { MulterModule } from '@nestjs/platform-express/multer';
 

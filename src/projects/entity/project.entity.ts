@@ -1,4 +1,3 @@
-import { Length } from 'class-validator';
 import {
   Column,
   Entity,
@@ -18,13 +17,11 @@ export class ProjectEntity {
   id: number;
 
   @ApiProperty()
-  @Column()
-  @Length(10, 20)
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @ApiProperty()
-  @Column()
-  @Length(10, 20)
+  @Column({ type: 'varchar', length: 255 })
   codeId: string;
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.projects, {
