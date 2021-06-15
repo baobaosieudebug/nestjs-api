@@ -30,7 +30,7 @@ export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
-    private readonly taskRepo: TaskRepository,
+    // private readonly taskRepo: TaskRepository,
     private readonly groupRepo: GroupRepository,
   ) {}
 
@@ -173,13 +173,13 @@ export class UsersService {
   }
 
   /*---Task----*/
-  async addTask(idUser: number, codeId: number) {
-    const newTask = await this.taskRepo.getByCodeId(codeId);
-    const user = await this.userRepo.getById(idUser);
-    user.tasks.push(newTask);
-    await this.userRepo.save(user);
-    return new HttpException('Add Task Success', HttpStatus.OK);
-  }
+  // async addTask(idUser: number, codeId: number) {
+  //   const newTask = await this.taskRepo.getByCodeId(codeId);
+  //   const user = await this.userRepo.getById(idUser);
+  //   user.tasks.push(newTask);
+  //   await this.userRepo.save(user);
+  //   return new HttpException('Add Task Success', HttpStatus.OK);
+  // }
   /*---------------------------------------PUT Method--------------------------------------- */
   async update(id: number, dto: EditUserDTO) {
     const user = this.getOneByIdOrFail(id);

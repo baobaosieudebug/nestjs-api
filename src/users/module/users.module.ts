@@ -10,7 +10,7 @@ import { GroupsModule } from 'src/group/module/group.module';
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
     HttpModule,
-    TaskModule,
+    // TaskModule,
     GroupsModule,
   ],
   controllers: [UsersController],

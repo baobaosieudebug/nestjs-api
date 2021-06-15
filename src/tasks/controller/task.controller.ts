@@ -29,49 +29,56 @@ export class TaskController {
   @Get()
   @ApiOkResponse({ description: 'Get List Task Success' })
   async getAllTask() {
-    return await this.taskService.getAllTask();
+    return await this.taskService.getAll();
   }
 
-  @Get(':idGroup/getAllTask')
-  @ApiOkResponse({ description: 'Get List Task Success' })
-  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
-    return await this.taskService.getAllTaskByIdGroup(idGroup);
-  }
+  // @Get(':idGroup/getAllTask')
+  // @ApiOkResponse({ description: 'Get List Task Success' })
+  // async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
+  //   return await this.taskService.getAllTaskByIdGroup(idGroup);
+  // }
 
-  @ApiOkResponse({ description: 'Get Task Success' })
+  // @ApiOkResponse({ description: 'Get Task Success' })
+  // @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  // @Get(':id')
+  // async getTaskByIdOrFail(@Param('id') id: number) {
+  //   return await this.taskService.getOneByIdForUser(id);
+  // }
+
+   @ApiOkResponse({ description: 'Get Task Success' })
   @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @Get(':id')
   async getTaskByIdOrFail(@Param('id') id: number) {
-    return await this.taskService.getOneByIdForUser(id);
+    return await this.taskService.getOneByIdOrFail(id);
   }
 
-  @ApiOkResponse({ description: 'Get Task Success' })
-  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
-  @Get('getByCode/:codeId')
-  async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: number) {
-    return await this.taskService.getOneTaskByCodeIdOrFail(codeId);
-  }
+  // @ApiOkResponse({ description: 'Get Task Success' })
+  // @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  // @Get('getByCode/:codeId')
+  // async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: number) {
+  //   return await this.taskService.getOneTaskByCodeIdOrFail(codeId);
+  // }
 
-  @ApiCreatedResponse({
-    description: 'The record has been successfully created.',
-  })
-  @ApiUnauthorizedResponse({ description: 'You need to login ' })
-  @Post()
-  async createTask(@Body() dto: AddTaskDTO) {
-    return await this.taskService.createTask(dto);
-  }
+  // @ApiCreatedResponse({
+  //   description: 'The record has been successfully created.',
+  // })
+  // @ApiUnauthorizedResponse({ description: 'You need to login ' })
+  // @Post()
+  // async createTask(@Body() dto: AddTaskDTO) {
+  //   return await this.taskService.createTask(dto);
+  // }
 
-  @ApiOkResponse({ description: 'Edit Task Success' })
-  @Put(':id')
-  async editTask(@Param('id') id: number, @Body() dto: EditTaskDTO) {
-    return await this.taskService.editTask(id, dto);
-  }
+  // @ApiOkResponse({ description: 'Edit Task Success' })
+  // @Put(':id')
+  // async editTask(@Param('id') id: number, @Body() dto: EditTaskDTO) {
+  //   return await this.taskService.editTask(id, dto);
+  // }
 
-  @ApiOkResponse({ description: 'Get Task Success' })
-  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
-  @UseFilters(NotFoundExceptionFilter)
-  @Delete(':id')
-  async removeTask(@Param('id') id: number) {
-    return await this.taskService.removeTask(id);
-  }
+  // @ApiOkResponse({ description: 'Get Task Success' })
+  // @ApiNotFoundResponse({ description: 'ID Task Not Found' })
+  // @UseFilters(NotFoundExceptionFilter)
+  // @Delete(':id')
+  // async removeTask(@Param('id') id: number) {
+  //   return await this.taskService.removeTask(id);
+  // }
 }
