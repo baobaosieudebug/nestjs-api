@@ -5,16 +5,17 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { getCustomRepository } from 'typeorm';
-import { OrganizationRepository } from 'src/organizations/repo/organization.repositor';
+import { OrganizationRepository } from 'src/organizations/repo/organization.repository';
 import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
 import { ProjectRepository } from 'src/projects/repo/project.repository';
 
 @Injectable()
 export class OrganizationService {
-  constructor(private readonly organizationRepo: OrganizationRepository) {}
-  projectRepo = getCustomRepository(ProjectRepository);
+  constructor(
+    private readonly organizationRepo: OrganizationRepository,
+    private readonly projectRepo: ProjectRepository,
+  ) {}
   async getAllOrganization() {
     return await this.organizationRepo.getAllOrganization();
   }
@@ -44,8 +45,7 @@ export class OrganizationService {
     const organization = await this.organizationRepo.getByCodeId(codeIdOrga);
     const project = await this.projectRepo.getByCodeId(codeIdProject);
     project.organization = organization;
-    await this.projectRepo.save(project);
-    return new HttpException('Add Project Success', HttpStatus.OK);
+    return await this.projectRepo.save(project);
   }
 
   async editOrganization(id: number, dto: EditOrganizationDTO) {
