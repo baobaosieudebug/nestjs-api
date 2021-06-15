@@ -69,7 +69,9 @@ export class ProjectService {
   async removeProject(id: number) {
     const project = this.getOneByIdOrFail(id);
     try {
-      return await this.projectRepo.delete(await project);
+      // return await this.projectRepo.delete(await project);
+      (await project).isDelete = (await project).id;
+      return this.projectRepo.save(await project);
     } catch (e) {
       if ((await project).id == undefined) {
         throw new NotFoundException();

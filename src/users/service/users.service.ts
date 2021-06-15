@@ -202,7 +202,9 @@ export class UsersService {
   async destroy(id: number) {
     const user = this.getOneByIdOrFail(id);
     try {
-      return await this.userRepo.delete(await user);
+      // return await this.userRepo.delete(await user);
+      (await user).isDelete = (await user).id;
+      return this.userRepo.save(await user);
     } catch (e) {
       if ((await user).id == undefined) {
         throw new NotFoundException();
