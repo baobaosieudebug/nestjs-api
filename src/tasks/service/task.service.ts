@@ -7,19 +7,13 @@ import {
 } from '@nestjs/common';
 import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
 import { EditTaskDTO } from 'src/tasks/dto/edit-task.dto';
-import { GroupRepository } from 'src/group/repo/group.repository';
 import { TaskRepository } from 'src/tasks/repo/task.respository';
-import { UserRepository } from 'src/users/repo/user.repository';
 import { GetTaskRO } from 'src/tasks/ro/get-task.ro';
-import { getCustomRepository } from 'typeorm';
 import { TaskEntity } from '../entity/task.entity';
 
 @Injectable()
 export class TaskService {
   constructor(private readonly taskRepo: TaskRepository) {}
-
-  userRepo = getCustomRepository(UserRepository);
-  groupRepo = getCustomRepository(GroupRepository);
 
   async dataTransfer(task: TaskEntity) {
     const taskRO = new GetTaskRO();

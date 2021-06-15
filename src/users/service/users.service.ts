@@ -22,7 +22,6 @@ import { GetListUserRO } from 'src/users/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
 import { UserRepository } from 'src/users/repo/user.repository';
 import { GroupRepository } from 'src/group/repo/group.repository';
-import { getCustomRepository } from 'typeorm';
 import { TaskRepository } from 'src/tasks/repo/task.respository';
 import { UsersEntity } from '../entity/users.entity';
 
@@ -31,9 +30,9 @@ export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
+    private readonly taskRepo: TaskRepository,
+    private readonly groupRepo: GroupRepository,
   ) {}
-  groupRepo = getCustomRepository(GroupRepository);
-  taskRepo = getCustomRepository(TaskRepository);
 
   /*---------------------------------------GET Method--------------------------------------- */
   /**

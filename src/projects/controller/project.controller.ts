@@ -53,14 +53,6 @@ export class ProjectController {
     return await this.projectService.createProject(dto);
   }
 
-  @Post(':codeId/addGroup/:idGroup')
-  async addGroup(
-    @Param('codeId') codeId: number,
-    @Param('idGroup') idGroup: number,
-  ) {
-    return await this.projectService.addGroup(codeId, idGroup);
-  }
-
   @ApiOkResponse({ description: 'Edit Project Success' })
   @Put(':id')
   async editProject(@Body() dto: EditProjectDTO, @Param('id') id: number) {
