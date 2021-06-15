@@ -4,14 +4,11 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
   async getById(id) {
-    return this.findOne({ id }, { relations: ['user', 'group'] });
+    return this.findOne({ id }, { relations: ['user'] });
   }
 
   async getByIdWithDelete(id) {
-    return this.findOne(
-      { id },
-      { relations: ['user', 'group'], withDeleted: true },
-    );
+    return this.findOne({ id }, { relations: ['user'], withDeleted: true });
   }
 
   getAllTask() {
@@ -19,7 +16,7 @@ export class TaskRepository extends Repository<TaskEntity> {
   }
 
   getByCodeId(codeId) {
-    return this.findOne({ codeId }, { relations: ['user', 'group'] });
+    return this.findOne({ codeId }, { relations: ['user'] });
   }
 
   getAllTaskByIdGroup(id) {

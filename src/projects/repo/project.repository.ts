@@ -4,7 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(ProjectEntity)
 export class ProjectRepository extends Repository<ProjectEntity> {
   getById(id) {
-    return this.findOne({ id }, { relations: ['groups'] });
+    return this.findOne({ id }, { relations: ['organization'] });
   }
 
   getAllProject() {
@@ -12,10 +12,6 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   }
 
   getByCodeId(codeId) {
-    return this.findOne({ codeId }, { relations: ['groups', 'organization'] });
+    return this.findOne({ codeId }, { relations: ['organization'] });
   }
-
-  // getAllProjectByIdGroup(id) {
-  //   return this.findOne({ id }, { relations: ['groups'] });
-  // }
 }

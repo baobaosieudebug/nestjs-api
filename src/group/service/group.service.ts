@@ -54,14 +54,6 @@ export class GroupsService {
     return await this.groupRepo.save(group);
   }
 
-  /*---Task----*/
-  async addTask(idGroup: number, codeId: number) {
-    const newTask = await this.taskRepo.getByCodeId(codeId);
-    const group = await this.groupRepo.getById(idGroup);
-    group.tasks.push(newTask);
-    await this.groupRepo.save(group);
-    return new HttpException('Add Task Success', HttpStatus.OK);
-  }
   /*---------------------------------------PUT Method--------------------------------------- */
 
   async update(idGroup, group: EditGroupDTO) {

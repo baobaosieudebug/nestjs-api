@@ -60,14 +60,6 @@ export class GroupsController {
     return await this.groupsService.createGroup(group);
   }
 
-  @Post(':idGroup/addTaskByGroup/:codeId')
-  async addTask(
-    @Param('idGroup') idGroup: number,
-    @Param('codeId') codeId: number,
-  ) {
-    return await this.groupsService.addTask(idGroup, codeId);
-  }
-
   /*---------------------------------------PUT Method--------------------------------------- */
   @ApiOkResponse({ description: ' Update Group Success' })
   @ApiNotFoundResponse({

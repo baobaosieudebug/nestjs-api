@@ -1,7 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UsersEntity } from 'src/users/entity/users.entity';
-import { GroupsEntity } from 'src/group/entity/group.entity';
 
 @Entity('task')
 export class TaskEntity {
@@ -22,7 +21,4 @@ export class TaskEntity {
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   user: UsersEntity;
-
-  @ManyToOne(() => GroupsEntity, (group: GroupsEntity) => group.tasks)
-  group: GroupsEntity;
 }

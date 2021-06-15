@@ -1,13 +1,5 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { GroupsEntity } from 'src/group/entity/group.entity';
 import { OrganizationEntity } from 'src/organizations/entity/organization.entity';
 
 @Entity('project')
@@ -26,12 +18,6 @@ export class ProjectEntity {
 
   @Column({ type: 'varchar', length: 255, default: null })
   isDelete: number;
-
-  @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.projects, {
-    cascade: ['insert'],
-  })
-  @JoinTable()
-  groups: GroupsEntity[];
 
   @ManyToOne(
     () => OrganizationEntity,

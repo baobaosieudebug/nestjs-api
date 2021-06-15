@@ -20,7 +20,6 @@ export class TaskService {
     taskRO.name = (await task).name;
     taskRO.codeId = (await task).codeId;
     taskRO.user = (await task).user;
-    taskRO.group = (await task).group;
     return taskRO;
   }
 
