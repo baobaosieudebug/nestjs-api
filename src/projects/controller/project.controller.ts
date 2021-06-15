@@ -20,7 +20,6 @@ import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
 import { EditProjectDTO } from 'src/projects/dto/edit-project.dto';
 import { ProjectService } from '../service/project.service';
 
-//Proeject mới
 @ApiTags('Project')
 @Controller('project')
 export class ProjectController {

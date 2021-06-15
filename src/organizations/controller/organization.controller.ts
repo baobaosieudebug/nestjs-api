@@ -11,7 +11,6 @@ import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
 import { OrganizationService } from '../service/organization.service';
 
-//Proeject mới
 @ApiTags('Organization')
 @Controller('organization')
 export class OrganizationController {
@@ -30,15 +29,10 @@ export class OrganizationController {
     return await this.organizationService.getOneByIdOrFail(id);
   }
 
-  @Get('restore/:id')
-  async restoreOrganization(@Param('id') id: number) {
-    return await this.organizationService.restoreOganization(id);
-  }
-
   @ApiUnauthorizedResponse({ description: 'You need to login ' })
   @Post()
-  async createArticle(@Body() organization: AddOrganizationDTO) {
-    return await this.organizationService.createOrganization(organization);
+  async createArticle(@Body() dto: AddOrganizationDTO) {
+    return await this.organizationService.createOrganization(dto);
   }
 
   @Post(':codeIdOrganization/addProject/:codeIdProject')
@@ -54,8 +48,8 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Edit Organization Success' })
   @Put()
-  async editOrganization(@Body() organization: EditOrganizationDTO) {
-    return await this.organizationService.editOrganization(organization);
+  async editOrganization(@Body() dto: EditOrganizationDTO) {
+    return await this.organizationService.editOrganization(dto);
   }
 
   @ApiOkResponse({ description: 'Get Organization Success' })
@@ -63,6 +57,6 @@ export class OrganizationController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeOrganization(@Param('id') id: number) {
-    return await this.organizationService.softDelete(id);
+    return await this.organizationService.deleteOrganization(id);
   }
 }

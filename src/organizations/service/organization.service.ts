@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { getCustomRepository } from 'typeorm';
 import { OrganizationRepository } from 'src/organizations/repo/organization.repositor';
 import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
@@ -18,55 +23,45 @@ export class OrganizationService {
   }
 
   async getOneByIdOrFail(id: number) {
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
-    } else {
-      const response = await this.getOneById(id);
-      return response;
+    const response = await this.getOneById(id);
+    if (!response) {
+      throw new HttpException('Organization Not Found', HttpStatus.NOT_FOUND);
+    }
+    return response;
+  }
+
+  async createOrganization(dto: AddOrganizationDTO) {
+    try {
+      const response = this.organizationRepo.create(dto);
+      return await this.organizationRepo.save(response);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 
-  async restoreOganization(id: number) {
-    const organization = this.organizationRepo.getByIdWithDelete(id);
-    await this.organizationRepo.restore(await organization);
-    return new HttpException('Restore Successfully!', HttpStatus.OK);
-  }
-
-  async createOrganization(organazation: AddOrganizationDTO) {
-    await this.organizationRepo.save(organazation);
-    return new HttpException('Add Organization Success', HttpStatus.OK);
-  }
-
   async addProject(codeIdOrga: number, codeIdProject: number) {
-    const organazation = await this.organizationRepo.getByCodeId(codeIdOrga);
+    const organization = await this.organizationRepo.getByCodeId(codeIdOrga);
     const project = await this.projectRepo.getByCodeId(codeIdProject);
-    project.organization = organazation;
+    project.organization = organization;
     await this.projectRepo.save(project);
     return new HttpException('Add Project Success', HttpStatus.OK);
   }
 
-  async editOrganization(organization: EditOrganizationDTO) {
-    const findOrganization = this.organizationRepo.getByCodeId(
-      organization.codeId,
-    );
-    await this.organizationRepo.update(
-      (
-        await findOrganization
-      ).id,
-      organization,
-    );
-    return new HttpException('Update Organization Success', HttpStatus.OK);
+  async editOrganization(dto: EditOrganizationDTO) {
+    try {
+      const response = this.organizationRepo.getByCodeId(dto.codeId);
+      return await this.organizationRepo.update((await response).id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 
-  async softDelete(id: number) {
-    const organization = this.organizationRepo.getByIdWithDelete(id);
-    await this.organizationRepo.softDelete(await organization);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
-  }
-
-  async removeOrganization(id: number) {
-    const user = this.getOneByIdOrFail(id);
-    await this.organizationRepo.delete((await user).id);
-    return new HttpException('Delete Successfully!', HttpStatus.OK);
+  async deleteOrganization(id: number) {
+    try {
+      // const response = this.organizationRepo.getByIdWithDelete(id);
+      return await this.organizationRepo.delete(id);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 }

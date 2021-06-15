@@ -27,7 +27,6 @@ import {
 } from '@nestjs/swagger';
 import { EditUserDTO } from '../dto/edit-user.dto';
 
-//Proeject mới
 @ApiTags('User')
 @Controller('users')
 export class UsersController {

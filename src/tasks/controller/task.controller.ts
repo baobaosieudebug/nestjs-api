@@ -19,9 +19,8 @@ import {
 import { NotFoundExceptionFilter } from 'src/common/exception filter/not-found.filter';
 import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
 import { EditTaskDTO } from 'src/tasks/dto/edit-task.dto';
-import { TaskService } from '../task.service';
+import { TaskService } from '../service/task.service';
 
-//Proeject mới
 @ApiTags('Task')
 @Controller('task')
 export class TaskController {
