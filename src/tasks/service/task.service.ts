@@ -100,7 +100,9 @@ export class TaskService {
   async removeTask(id: number) {
     const task = this.getOneByIdOrFail(id);
     try {
-      return await this.taskRepo.delete((await task).id);
+      // return await this.taskRepo.delete((await task).id);
+      (await task).isDelete = (await task).id;
+      return this.taskRepo.save(await task);
     } catch (e) {
       if ((await task).id == undefined) {
         throw new NotFoundException();

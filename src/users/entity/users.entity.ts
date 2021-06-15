@@ -27,6 +27,9 @@ export class UsersEntity {
   @Column({ type: 'varchar', length: 255, select: false })
   password: string;
 
+  @Column({ type: 'varchar', length: 255, default: null })
+  isDelete: number;
+
   @ApiProperty({ type: [GroupsEntity] })
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
     cascade: ['insert'],

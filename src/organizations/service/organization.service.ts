@@ -66,7 +66,9 @@ export class OrganizationService {
   async deleteOrganization(id: number) {
     const organization = this.getOneByIdOrFail(id);
     try {
-      return await this.organizationRepo.delete(await organization);
+      // return await this.organizationRepo.delete(await organization);
+      (await organization).isDelete = (await organization).id;
+      return this.organizationRepo.save(await organization);
     } catch (e) {
       if ((await organization).id == undefined) {
         throw new NotFoundException();

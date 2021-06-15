@@ -24,6 +24,9 @@ export class ProjectEntity {
   @Column({ type: 'varchar', length: 255 })
   codeId: string;
 
+  @Column({ type: 'varchar', length: 255, default: null })
+  isDelete: number;
+
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.projects, {
     cascade: ['insert'],
   })
