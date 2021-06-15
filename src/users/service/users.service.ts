@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   Param,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AddUserDTO } from '../dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -56,7 +57,7 @@ export class UsersService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
     }
     return response;
   }
@@ -183,10 +184,18 @@ export class UsersService {
   /*---------------------------------------PUT Method--------------------------------------- */
   async update(id: number, dto: EditUserDTO) {
     const user = this.getOneByIdOrFail(id);
+    (await dto).password = await bcrypt.hash((await dto).password, 12);
+
     try {
       return await this.userRepo.update((await user).id, dto);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await user).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 
@@ -196,7 +205,13 @@ export class UsersService {
     try {
       return await this.userRepo.delete(await user);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await user).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 

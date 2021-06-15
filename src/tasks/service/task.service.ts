@@ -46,7 +46,7 @@ export class TaskService {
   async getOneByIdOrFail(id: number) {
     const task = await this.getOneById(id);
     if (!task) {
-      throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Task Not Found', HttpStatus.NOT_FOUND);
     }
     return task;
   }
@@ -93,7 +93,13 @@ export class TaskService {
     try {
       return await this.taskRepo.update((await task).id, dto);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await task).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 
@@ -102,7 +108,13 @@ export class TaskService {
     try {
       return await this.taskRepo.delete((await task).id);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await task).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 }

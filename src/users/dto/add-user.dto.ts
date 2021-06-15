@@ -16,8 +16,4 @@ export class AddUserDTO {
   @Length(4, 20)
   @IsNotEmpty()
   password: string;
-
-  @ApiProperty({ type: Boolean, example: false })
-  @IsNotEmpty()
-  isAdmin: boolean;
 }

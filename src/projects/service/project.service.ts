@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProjectRepository } from 'src/projects/repo/project.repository';
 import { AddProjectDTO } from 'src/projects/dto/add-project.dto';
@@ -66,7 +67,13 @@ export class ProjectService {
     try {
       return await this.projectRepo.update((await project).id, dto);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await project).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 
@@ -75,7 +82,13 @@ export class ProjectService {
     try {
       return await this.projectRepo.delete(await project);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await project).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 }

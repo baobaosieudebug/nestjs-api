@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { getCustomRepository } from 'typeorm';
 import { OrganizationRepository } from 'src/organizations/repo/organization.repositor';
@@ -52,7 +53,13 @@ export class OrganizationService {
     try {
       return await this.organizationRepo.update((await organization).id, dto);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await organization).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 
@@ -61,7 +68,13 @@ export class OrganizationService {
     try {
       return await this.organizationRepo.delete(await organization);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      if ((await organization).id == undefined) {
+        throw new NotFoundException();
+      } else {
+        throw new InternalServerErrorException(
+          'Sorry, Server is being problem',
+        );
+      }
     }
   }
 }
