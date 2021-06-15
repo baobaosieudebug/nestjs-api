@@ -68,8 +68,8 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'The server is having error' })
   @ApiBadRequestResponse({ description: 'One Of Params is Incorrect or Empty' })
-  async createUsers(@Body() user: AddUserDTO) {
-    return await this.usersService.create(user);
+  async createUsers(@Body() dto: AddUserDTO) {
+    return await this.usersService.create(dto);
   }
 
   @ApiCreatedResponse({ description: 'User join group success' })
@@ -104,8 +104,8 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'You are Unauthorized' })
   @ApiNotFoundResponse({ description: 'Your request is Empty or ID incorrect' })
   @ApiInternalServerErrorResponse({ description: 'The server is having error' })
-  async update(@Body() user: EditUserDTO, @Param('id') id: number) {
-    return await this.usersService.update(id, user);
+  async update(@Body() dto: EditUserDTO, @Param('id') id: number) {
+    return await this.usersService.update(id, dto);
   }
 
   /*---------------------------------------Delete Method--------------------------------------- */

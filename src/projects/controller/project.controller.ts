@@ -62,9 +62,9 @@ export class ProjectController {
   }
 
   @ApiOkResponse({ description: 'Edit Project Success' })
-  @Put()
-  async editProject(@Body() dto: EditProjectDTO) {
-    return await this.projectService.editProject(dto);
+  @Put(':id')
+  async editProject(@Body() dto: EditProjectDTO, @Param('id') id: number) {
+    return await this.projectService.editProject(id, dto);
   }
 
   @ApiOkResponse({ description: 'Get Project Success' })

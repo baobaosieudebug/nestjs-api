@@ -5,6 +5,7 @@ import {
   HttpService,
   UnauthorizedException,
   Param,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AddUserDTO } from '../dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -14,7 +15,6 @@ import { TokenUserDTO } from '../dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { AddUsersRO } from 'src/users/ro/add-user.ro';
 import { EditUserDTO } from '../dto/edit-user.dto';
-import { EditUserRO } from 'src/users/ro/edit-user.ro';
 import { GetUserRO } from 'src/users/ro/get-user.ro';
 import { JoinGroupRO } from 'src/group/ro/join-group.ro';
 import { GetListUserRO } from 'src/users/ro/get-list-user.ro';
@@ -23,6 +23,7 @@ import { UserRepository } from 'src/users/repo/user.repository';
 import { GroupRepository } from 'src/group/repo/group.repository';
 import { getCustomRepository } from 'typeorm';
 import { TaskRepository } from 'src/tasks/repo/task.respository';
+import { UsersEntity } from '../entity/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -44,18 +45,20 @@ export class UsersService {
     return await this.userRepo.getById(id);
   }
 
+  async dataTransfer(dto: UsersEntity) {
+    const userRO = new GetUserRO();
+    userRO.name = dto.name;
+    userRO.email = dto.email;
+    userRO.groups = dto.groups;
+    userRO.tasks = dto.tasks;
+    return userRO;
+  }
   async getOneByIdOrFail(id: number) {
-    if ((await this.getOneById(id)) == null) {
+    const response = await this.getOneById(id);
+    if (!response) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    } else {
-      const response = await this.getOneById(id);
-      const userRO = new GetUserRO();
-      userRO.name = response.name;
-      userRO.email = response.email;
-      userRO.groups = response.groups;
-      userRO.tasks = response.tasks;
-      return userRO;
     }
+    return response;
   }
 
   async getUserByEmail(email: string) {
@@ -63,16 +66,11 @@ export class UsersService {
   }
 
   async getUserByEmailOrFail(email) {
-    if ((await this.getUserByEmail(email)) == null) {
+    const response = await this.getUserByEmail(email);
+    if (!response) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    } else {
-      const response = await this.getUserByEmail(email);
-      const userRO = new GetUserRO();
-      userRO.name = response.name;
-      userRO.email = response.email;
-      userRO.groups = response.groups;
-      return userRO;
     }
+    return await this.dataTransfer(response);
   }
 
   async getAllUser(): Promise<GetListUserRO[]> {
@@ -146,12 +144,13 @@ export class UsersService {
   }
 
   async create(user: AddUserDTO): Promise<AddUsersRO> {
-    user.password = await bcrypt.hash(user.password, 12);
-    await this.userRepo.save(user);
-    const userRO = new AddUsersRO();
-    userRO.email = user.email;
-    userRO.name = user.name;
-    return userRO;
+    try {
+      user.password = await bcrypt.hash(user.password, 12);
+      await this.userRepo.create(user);
+      return await this.userRepo.save(user);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
+    }
   }
 
   async userJoinGroup(idUser: number, idGroup: number) {
@@ -182,40 +181,22 @@ export class UsersService {
     return new HttpException('Add Task Success', HttpStatus.OK);
   }
   /*---------------------------------------PUT Method--------------------------------------- */
-  async update(id: number, user: EditUserDTO): Promise<EditUserRO> {
-    user.password = await bcrypt.hash(user.password, 12);
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException(
-        'User not found in your param',
-        HttpStatus.NOT_FOUND,
-      );
-    } else {
-      if (
-        (await user.name) == undefined ||
-        (await user.email) == undefined ||
-        (await user.password) == undefined
-      ) {
-        throw new HttpException(
-          'User not found in your body',
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        await this.userRepo.update(id, user);
-        const userRO = new EditUserRO();
-        userRO.email = user.email;
-        userRO.name = user.name;
-        return userRO;
-      }
+  async update(id: number, dto: EditUserDTO) {
+    const user = this.getOneByIdOrFail(id);
+    try {
+      return await this.userRepo.update((await user).id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 
   /*---------------------------------------DELETE Method--------------------------------------- */
   async destroy(id: number) {
-    if ((await this.getOneById(id)) == null) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    } else {
-      await this.userRepo.delete(id);
-      return new HttpException('Delete User Successfully', HttpStatus.OK);
+    const user = this.getOneByIdOrFail(id);
+    try {
+      return await this.userRepo.delete(await user);
+    } catch (e) {
+      throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 

@@ -62,9 +62,9 @@ export class TaskController {
   }
 
   @ApiOkResponse({ description: 'Edit Task Success' })
-  @Put()
-  async editTask(@Body() dto: EditTaskDTO) {
-    return await this.taskService.editTask(dto);
+  @Put(':id')
+  async editTask(@Param('id') id: number, @Body() dto: EditTaskDTO) {
+    return await this.taskService.editTask(id, dto);
   }
 
   @ApiOkResponse({ description: 'Get Task Success' })

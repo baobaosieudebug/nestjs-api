@@ -47,9 +47,12 @@ export class OrganizationController {
   }
 
   @ApiOkResponse({ description: 'Edit Organization Success' })
-  @Put()
-  async editOrganization(@Body() dto: EditOrganizationDTO) {
-    return await this.organizationService.editOrganization(dto);
+  @Put(':id')
+  async editOrganization(
+    @Body() dto: EditOrganizationDTO,
+    @Param('id') id: number,
+  ) {
+    return await this.organizationService.editOrganization(id, dto);
   }
 
   @ApiOkResponse({ description: 'Get Organization Success' })

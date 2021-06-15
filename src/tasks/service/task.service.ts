@@ -88,18 +88,18 @@ export class TaskService {
     }
   }
 
-  async editTask(dto: EditTaskDTO) {
+  async editTask(id: number, dto: EditTaskDTO) {
+    const task = this.getOneByIdOrFail(id);
     try {
-      const task = this.taskRepo.getByCodeId(dto.codeId);
-      return await this.taskRepo.update((await task).id, await task);
+      return await this.taskRepo.update((await task).id, dto);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 
   async removeTask(id: number) {
+    const task = this.getOneByIdOrFail(id);
     try {
-      const task = this.getOneByIdOrFail(id);
       return await this.taskRepo.delete((await task).id);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');

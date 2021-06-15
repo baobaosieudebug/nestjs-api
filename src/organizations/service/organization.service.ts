@@ -47,9 +47,9 @@ export class OrganizationService {
     return new HttpException('Add Project Success', HttpStatus.OK);
   }
 
-  async editOrganization(dto: EditOrganizationDTO) {
+  async editOrganization(id: number, dto: EditOrganizationDTO) {
+    const organization = this.getOneByIdOrFail(id);
     try {
-      const organization = this.organizationRepo.getByCodeId(dto.codeId);
       return await this.organizationRepo.update((await organization).id, dto);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
@@ -57,9 +57,9 @@ export class OrganizationService {
   }
 
   async deleteOrganization(id: number) {
+    const organization = this.getOneByIdOrFail(id);
     try {
-      // const organization = this.organizationRepo.getByIdWithDelete(id);
-      return await this.organizationRepo.delete(id);
+      return await this.organizationRepo.delete(await organization);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }

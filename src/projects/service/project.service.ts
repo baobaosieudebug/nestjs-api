@@ -61,19 +61,19 @@ export class ProjectService {
     return new HttpException('Add Group Success', HttpStatus.OK);
   }
 
-  async editProject(dto: EditProjectDTO) {
+  async editProject(id: number, dto: EditProjectDTO) {
+    const project = this.getOneByIdOrFail(id);
     try {
-      const project = this.projectRepo.getByCodeId(dto.codeId);
-      return await this.projectRepo.update((await project).id, await project);
+      return await this.projectRepo.update((await project).id, dto);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
 
   async removeProject(id: number) {
+    const project = this.getOneByIdOrFail(id);
     try {
-      const user = this.getOneByIdOrFail(id);
-      return await this.projectRepo.delete((await user).id);
+      return await this.projectRepo.delete(await project);
     } catch (e) {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
