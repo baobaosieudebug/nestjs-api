@@ -1,4 +1,12 @@
-import { Delete, Get, Param, Put, UseFilters } from '@nestjs/common';
+import {
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
@@ -22,6 +30,7 @@ export class OrganizationController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createOrganization(@Body() dto: AddOrganizationDTO) {
     return await this.organizationService.createOrganization(dto);
   }
@@ -38,6 +47,7 @@ export class OrganizationController {
   }
 
   @Put(':id')
+  @UsePipes(ValidationPipe)
   async editOrganization(
     @Body() dto: EditOrganizationDTO,
     @Param('id') id: number,

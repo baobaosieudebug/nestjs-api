@@ -1,6 +1,4 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -19,7 +17,7 @@ export class ProjectService {
 
   async getOneByIdOrFail(id: number) {
     if ((await this.getOneById(id)) == null) {
-      throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('ID Incorrect');
     } else {
       const response = await this.getOneById(id);
       return response;
@@ -33,7 +31,7 @@ export class ProjectService {
   async getOneByCodeIdOrFail(codeId: number) {
     const response = await this.getOneByCodeId(codeId);
     if (!response) {
-      throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return response;
   }
@@ -57,7 +55,7 @@ export class ProjectService {
       return await this.projectRepo.update((await project).id, dto);
     } catch (e) {
       if ((await project).id == undefined) {
-        throw new NotFoundException();
+        throw new NotFoundException('ID Incorrect');
       } else {
         throw new InternalServerErrorException(
           'Sorry, Server is being problem',

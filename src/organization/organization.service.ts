@@ -54,7 +54,7 @@ export class OrganizationService {
       return await this.organizationRepo.update((await organization).id, dto);
     } catch (e) {
       if ((await organization).id == undefined) {
-        throw new NotFoundException();
+        throw new NotFoundException('ID Incorrect');
       } else {
         throw new InternalServerErrorException(
           'Sorry, Server is being problem',
