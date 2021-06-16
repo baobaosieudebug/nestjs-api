@@ -4,12 +4,12 @@ import { Length } from 'class-validator';
 export class AddOrganizationDTO {
   @ApiProperty({
     type: String,
-    example: 'Get User By Id',
+    example: 'APPLE-001',
   })
-  @Length(10, 30)
+  @Length(5, 30)
   name: string;
 
-  @ApiProperty({ type: String, example: 'BE-001' })
+  @ApiProperty({ type: String, example: 'AP-001' })
   @Length(5, 10)
   codeId: string;
 }

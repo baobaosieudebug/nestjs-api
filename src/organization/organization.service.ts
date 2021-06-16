@@ -9,12 +9,14 @@ import { OrganizationRepository } from '../organization/organization.repository'
 import { AddOrganizationDTO } from '../organization/dto/add-organization.dto';
 import { EditOrganizationDTO } from '../organization/dto/edit-organization.dto';
 import { ProjectRepository } from '../project/project.repository';
+import { ProjectService } from 'src/project/project.service';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly organizationRepo: OrganizationRepository,
     private readonly projectRepo: ProjectRepository,
+    private readonly projectService: ProjectService,
   ) {}
   async getAllOrganization() {
     return await this.organizationRepo.getAllOrganization();
@@ -41,11 +43,24 @@ export class OrganizationService {
     }
   }
 
-  async addProject(codeIdOrga: number, codeIdProject: number) {
-    const organization = await this.organizationRepo.getByCodeId(codeIdOrga);
-    const project = await this.projectRepo.getByCodeId(codeIdProject);
-    project.organization = organization;
-    return await this.projectRepo.save(project);
+  async addProject(codeIdOrg: string, codeIdProject: string) {
+    const checkOrg = this.checkOrg(codeIdOrg);
+    const organization = this.organizationRepo.getByCodeId(codeIdOrg);
+    if ((await checkOrg) == false) {
+      throw new NotFoundException('Organization CodeID Incorrect');
+    } else {
+      return await this.projectService.addProject(
+        await organization,
+        codeIdProject,
+      );
+    }
+  }
+  async checkOrg(codeId: string): Promise<boolean> {
+    const organization = await this.organizationRepo.getByCodeId(codeId);
+    if (!organization) {
+      return false;
+    }
+    return true;
   }
 
   async editOrganization(id: number, dto: EditOrganizationDTO) {

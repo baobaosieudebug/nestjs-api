@@ -6,6 +6,7 @@ import {
 import { ProjectRepository } from '../project/project.repository';
 import { AddProjectDTO } from '../project/dto/add-project.dto';
 import { EditProjectDTO } from '../project/dto/edit-project.dto';
+import { OrganizationEntity } from 'src/organization/organization.entity';
 
 @Injectable()
 export class ProjectService {
@@ -49,6 +50,24 @@ export class ProjectService {
     }
   }
 
+  async addProject(organization: OrganizationEntity, codeId: string) {
+    const project = await this.projectRepo.getByCodeId(codeId);
+    const checkProject = this.checkProject(codeId);
+    if ((await checkProject) == false) {
+      throw new NotFoundException('Project CodeID Incorrect');
+    } else {
+      project.organization = organization;
+      return await this.projectRepo.save(project);
+    }
+  }
+
+  async checkProject(codeId: string): Promise<boolean> {
+    const project = await this.projectRepo.getByCodeId(codeId);
+    if (!project) {
+      return false;
+    }
+    return true;
+  }
   async editProject(id: number, dto: EditProjectDTO) {
     const project = this.getOneByIdOrFail(id);
     try {
