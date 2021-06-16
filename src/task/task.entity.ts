@@ -9,14 +9,14 @@ export class TaskEntity {
   id: number;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar' })
   name: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar' })
   codeId: string;
 
-  @Column({ type: 'varchar', length: 255, default: null })
+  @Column({ name: 'is_delete', type: 'varchar', default: null })
   isDelete: number;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)

@@ -16,7 +16,7 @@ export class ProjectEntity {
   @Column({ type: 'varchar' })
   codeId: string;
 
-  @Column({ type: 'varchar', default: null })
+  @Column({ name: 'is_delete', type: 'varchar', default: null })
   isDelete: number;
 
   @ManyToOne(

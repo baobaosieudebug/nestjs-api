@@ -12,8 +12,11 @@ export class GroupsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ name: 'name_group', type: 'varchar' })
   nameGroup: string;
+
+  @Column({ name: 'is_delete', type: 'varchar', default: null })
+  isDelete: number;
 
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.groups, {
     cascade: ['insert'],
