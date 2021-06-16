@@ -21,7 +21,7 @@ import { JoinGroupRO } from 'src/group/ro/join-group.ro';
 import { GetListUserRO } from 'src/users/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
 import { UserRepository } from 'src/users/repo/user.repository';
-import { GroupRepository } from 'src/group/repo/group.repository';
+import { GroupRepository } from 'src/group/group.repository';
 import { TaskRepository } from 'src/tasks/repo/task.respository';
 import { UsersEntity } from '../entity/users.entity';
 

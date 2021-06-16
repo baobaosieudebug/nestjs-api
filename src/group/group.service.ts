@@ -6,9 +6,9 @@ import {
   Param,
 } from '@nestjs/common';
 import { getCustomRepository } from 'typeorm';
-import { GroupsEntity } from '../entity/group.entity';
-import { EditGroupDTO } from '../dto/edit-group.dto';
-import { GroupRepository } from 'src/group/repo/group.repository';
+import { GroupsEntity } from './group.entity';
+import { EditGroupDTO } from './dto/edit-group.dto';
+import { GroupRepository } from 'src/group/group.repository';
 import { UserRepository } from 'src/users/repo/user.repository';
 import { TaskRepository } from 'src/tasks/repo/task.respository';
 
