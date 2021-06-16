@@ -23,39 +23,34 @@ export class TaskController {
 
   @Get()
   async getAllTask() {
-    return await this.taskService.getAllTask();
-  }
-
-  @Get(':idGroup/getAllTask')
-  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
-    return await this.taskService.getAllTaskByIdGroup(idGroup);
+    return await this.taskService.getAll();
   }
 
   @Get(':id')
   async getTaskByIdOrFail(@Param('id') id: number) {
-    return await this.taskService.getOneByIdForUser(id);
+    return await this.taskService.getOneByIdOrFail(id);
   }
 
   @Get('getByCode/:codeId')
-  async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: number) {
-    return await this.taskService.getOneTaskByCodeIdOrFail(codeId);
+  async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: string) {
+    return await this.taskService.getOneByCodeIdOrFail(codeId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
   async createTask(@Body() dto: AddTaskDTO) {
-    return await this.taskService.createTask(dto);
+    return await this.taskService.add(dto);
   }
 
   @Put(':id')
   @UsePipes(ValidationPipe)
   async editTask(@Param('id') id: number, @Body() dto: EditTaskDTO) {
-    return await this.taskService.editTask(id, dto);
+    return await this.taskService.edit(id, dto);
   }
 
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
-    return await this.taskService.removeTask(id);
+    return await this.taskService.remove(id);
   }
 }
