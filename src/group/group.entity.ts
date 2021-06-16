@@ -12,7 +12,7 @@ export class GroupsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar' })
   nameGroup: string;
 
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.groups, {

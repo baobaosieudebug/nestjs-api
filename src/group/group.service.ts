@@ -51,7 +51,7 @@ export class GroupsService {
   }
   async update(idGroup, group: EditGroupDTO) {
     if ((await this.getOneGroupById(idGroup)) == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('ID Incorrect');
     } else {
       return await this.groupRepo.update(idGroup, group);
     }
@@ -59,7 +59,7 @@ export class GroupsService {
 
   async destroy(idGroup: number) {
     if ((await this.getOneGroupById(idGroup)) == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('ID Incorrect');
     } else {
       return await this.groupRepo.delete(idGroup);
     }

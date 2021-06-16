@@ -7,6 +7,8 @@ import {
   Post,
   Put,
   UseFilters,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
@@ -35,11 +37,13 @@ export class ProjectController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createProject(@Body() dto: AddProjectDTO) {
     return await this.projectService.createProject(dto);
   }
 
   @Put(':id')
+  @UsePipes(ValidationPipe)
   async editProject(@Body() dto: EditProjectDTO, @Param('id') id: number) {
     return await this.projectService.editProject(id, dto);
   }
