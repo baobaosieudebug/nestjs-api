@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDTO } from '../users/dto/login-user.dto';
+import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { HttpService } from '@nestjs/common';
 
 @Injectable()

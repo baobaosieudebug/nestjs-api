@@ -11,7 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { LoginUserDTO } from '../users/dto/login-user.dto';
+import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
