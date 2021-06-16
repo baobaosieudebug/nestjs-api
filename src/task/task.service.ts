@@ -1,18 +1,13 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/service/base.service';
-import { AddTaskDTO } from 'src/task/dto/add-task.dto';
-import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
-import { TaskRepository } from 'src/task/repo/task.respository';
-import { GetTaskRO } from 'src/task/ro/get-task.ro';
-import { BaseEntity, Repository } from 'typeorm';
-import { TaskEntity } from '../entity/task.entity';
+import { Repository } from 'typeorm';
+// import { AddTaskDTO } from 'src/task/dto/add-task.dto';
+// import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
+// import { TaskRepository } from 'src/task/task.respository';
+// import { GetTaskRO } from 'src/task/ro/get-task.ro';
+// import { BaseEntity, Repository } from 'typeorm';
+import { TaskEntity } from './task.entity';
 
 @Injectable()
 export class TaskService extends BaseService<TaskEntity> {

@@ -1,25 +1,10 @@
 // import { Delete, Get, Param, Put } from '@nestjs/common';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseFilters,
-} from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
-import { AddTaskDTO } from 'src/task/dto/add-task.dto';
-import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
-import { TaskService } from '../service/task.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+// import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
+// import { AddTaskDTO } from 'src/task/dto/add-task.dto';
+// import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
+import { TaskService } from './task.service';
 
 @ApiTags('Task')
 @Controller('task')

@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UsersEntity } from 'src/user/entity/users.entity';
+import { UsersEntity } from 'src/user/users.entity';
 
 @Entity('task')
 export class TaskEntity {

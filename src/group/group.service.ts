@@ -9,8 +9,8 @@ import { getCustomRepository } from 'typeorm';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from 'src/group/group.repository';
-import { UserRepository } from 'src/user/repo/user.repository';
-import { TaskRepository } from 'src/task/repo/task.respository';
+import { UserRepository } from 'src/user/user.repository';
+import { TaskRepository } from 'src/task/task.respository';
 
 @Injectable()
 export class GroupsService {

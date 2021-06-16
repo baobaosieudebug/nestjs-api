@@ -8,39 +8,30 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { AddUserDTO } from '../dto/add-user.dto';
+import { AddUserDTO } from './dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
 import axios from 'axios';
-import { LoginUserDTO } from '../dto/login-user.dto';
-import { TokenUserDTO } from '../dto/token-user.dto';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { TokenUserDTO } from './dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { AddUsersRO } from 'src/user/ro/add-user.ro';
-import { EditUserDTO } from '../dto/edit-user.dto';
+import { EditUserDTO } from './dto/edit-user.dto';
 import { GetUserRO } from 'src/user/ro/get-user.ro';
 import { JoinGroupRO } from 'src/group/ro/join-group.ro';
 import { GetListUserRO } from 'src/user/ro/get-list-user.ro';
 import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
-import { UserRepository } from 'src/user/repo/user.repository';
+import { UserRepository } from 'src/user/user.repository';
 import { GroupRepository } from 'src/group/group.repository';
-import { TaskRepository } from 'src/task/repo/task.respository';
-import { UsersEntity } from '../entity/users.entity';
+import { UsersEntity } from './users.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
-    // private readonly taskRepo: TaskRepository,
     private readonly groupRepo: GroupRepository,
   ) {}
 
-  /*---------------------------------------GET Method--------------------------------------- */
-  /**
-   * @method Get
-   * @param id ||  @param email || @param null
-   * @returns information of User
-   * @property name & email & groups
-   */
   async getOneById(id: number) {
     return await this.userRepo.getById(id);
   }
@@ -90,11 +81,6 @@ export class UsersService {
     }
   }
 
-  /**
-   * @method Get
-   * @param access_token
-   * @returns data
-   */
   async getListUserAndVerifyToken(access_token: TokenUserDTO) {
     const apiUrl = 'http://localhost:5001';
     const authAxios = axios.create({
@@ -115,18 +101,10 @@ export class UsersService {
     }
   }
 
-  /*---Task----*/
   async getAllTaskByIdUser(@Param('idUser') idUser: number) {
     return await this.userRepo.getAllTask(idUser);
   }
 
-  /*---------------------------------------POST Method--------------------------------------- */
-  /**
-   * @method Post
-   * @param user
-   * @returns token for user
-   * @property Bearer Token
-   */
   async loginApi(user: LoginUserDTO) {
     const response = await this.httpService
       .post('http://localhost:5001/auth/login', {
@@ -180,7 +158,7 @@ export class UsersService {
   //   await this.userRepo.save(user);
   //   return new HttpException('Add Task Success', HttpStatus.OK);
   // }
-  /*---------------------------------------PUT Method--------------------------------------- */
+
   async update(id: number, dto: EditUserDTO) {
     const user = this.getOneByIdOrFail(id);
     (await dto).password = await bcrypt.hash((await dto).password, 12);
@@ -198,7 +176,6 @@ export class UsersService {
     }
   }
 
-  /*---------------------------------------DELETE Method--------------------------------------- */
   async destroy(id: number) {
     const user = this.getOneByIdOrFail(id);
     try {

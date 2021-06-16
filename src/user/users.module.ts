@@ -1,9 +1,8 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersController } from '../controller/users.controller';
-import { UsersService } from '../service/users.service';
-import { UserRepository } from 'src/user/repo/user.repository';
-import { TaskModule } from 'src/task/module/task.module';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { UserRepository } from 'src/user/user.repository';
 import { GroupsModule } from 'src/group/group.module';
 
 @Module({

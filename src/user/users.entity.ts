@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { GroupsEntity } from 'src/group/group.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskEntity } from 'src/task/entity/task.entity';
+import { TaskEntity } from 'src/task/task.entity';
 
 @Entity('users')
 export class UsersEntity {

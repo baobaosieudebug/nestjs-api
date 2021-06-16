@@ -6,7 +6,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { UsersEntity } from '../user/entity/users.entity';
+import { UsersEntity } from '../user/users.entity';
 
 @Entity('groups')
 export class GroupsEntity {

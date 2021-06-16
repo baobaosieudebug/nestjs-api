@@ -10,11 +10,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UsersService } from '../service/users.service';
-import { AddUserDTO } from '../dto/add-user.dto';
+import { UsersService } from './users.service';
+import { AddUserDTO } from './dto/add-user.dto';
 import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
 import { ParseDataToIntPipe } from 'src/common/pipe/parse-to-int.pipe';
-import { TokenUserDTO } from '../dto/token-user.dto';
+import { TokenUserDTO } from './dto/token-user.dto';
 import { Public } from 'src/decorators/public.decorator';
 import {
   ApiBadRequestResponse,
@@ -25,7 +25,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { EditUserDTO } from '../dto/edit-user.dto';
+import { EditUserDTO } from './dto/edit-user.dto';
 
 @ApiTags('User')
 @Controller('users')
