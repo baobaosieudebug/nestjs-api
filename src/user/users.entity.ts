@@ -13,16 +13,16 @@ export class UsersEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, select: false })
+  @Column({ type: 'varchar', select: false })
   password: string;
 
-  @Column({ name: 'is_delete', type: 'varchar', length: 255, default: null })
+  @Column({ name: 'is_delete', type: 'varchar', default: null })
   isDelete: number;
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {

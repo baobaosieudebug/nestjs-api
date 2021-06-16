@@ -66,11 +66,13 @@ export class UsersController {
   }
 
   @Put(':id')
+  @UsePipes(ValidationPipe)
   async update(@Body() dto: EditUserDTO, @Param('id') id: number) {
     return await this.usersService.update(id, dto);
   }
 
   @Delete(':id')
+  @UseFilters(NotFoundExceptionFilter)
   async deleteUser(@Param('id') id: number) {
     return await this.usersService.destroy(id);
   }

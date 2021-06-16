@@ -47,7 +47,7 @@ export class UsersService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('ID Incorrect');
     }
     return response;
   }
@@ -59,7 +59,7 @@ export class UsersService {
   async getUserByEmailOrFail(email) {
     const response = await this.getUserByEmail(email);
     if (!response) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('ID Incorrect');
     }
     return await this.dataTransfer(response);
   }
@@ -71,7 +71,7 @@ export class UsersService {
   async getAllGroupOfUser(idUser: number) {
     const user = await this.userRepo.getById(idUser);
     if (user === undefined) {
-      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('ID Incorrect');
     } else {
       const response = new GetAllGroupRO();
       response.email = user.email;
