@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
-import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
-import { ParseDataToIntPipe } from 'src/common/pipe/parse-to-int.pipe';
+import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+import { ParseDataToIntPipe } from '../common/pipe/parse-to-int.pipe';
 import { TokenUserDTO } from './dto/token-user.dto';
-// import { Public } from 'src/decorators/public.decorator';
+// import { Public } from '../decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { EditUserDTO } from './dto/edit-user.dto';
 

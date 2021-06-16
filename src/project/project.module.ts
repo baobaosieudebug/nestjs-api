@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProjectRepository } from 'src/project/project.repository';
+import { ProjectRepository } from '../project/project.repository';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 

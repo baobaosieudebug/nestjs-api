@@ -1,4 +1,4 @@
-import { OrganizationEntity } from 'src/organization/organization.entity';
+import { OrganizationEntity } from '../organization/organization.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(OrganizationEntity)

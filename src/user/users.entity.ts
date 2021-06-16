@@ -5,8 +5,8 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { GroupsEntity } from 'src/group/group.entity';
-import { TaskEntity } from 'src/task/task.entity';
+import { GroupsEntity } from '../group/group.entity';
+import { TaskEntity } from '../task/task.entity';
 
 @Entity('users')
 export class UsersEntity {

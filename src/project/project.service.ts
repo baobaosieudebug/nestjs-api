@@ -3,9 +3,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ProjectRepository } from 'src/project/project.repository';
-import { AddProjectDTO } from 'src/project/dto/add-project.dto';
-import { EditProjectDTO } from 'src/project/dto/edit-project.dto';
+import { ProjectRepository } from '../project/project.repository';
+import { AddProjectDTO } from '../project/dto/add-project.dto';
+import { EditProjectDTO } from '../project/dto/edit-project.dto';
 
 @Injectable()
 export class ProjectService {

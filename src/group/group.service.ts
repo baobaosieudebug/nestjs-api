@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
-import { GroupRepository } from 'src/group/group.repository';
-import { UserRepository } from 'src/user/user.repository';
+import { GroupRepository } from '../group/group.repository';
+import { UserRepository } from '../user/user.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
 
 @Injectable()

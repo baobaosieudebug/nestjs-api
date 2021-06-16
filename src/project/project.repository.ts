@@ -1,4 +1,4 @@
-import { ProjectEntity } from 'src/project/project.entity';
+import { ProjectEntity } from '../project/project.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(ProjectEntity)

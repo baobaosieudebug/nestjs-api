@@ -11,9 +11,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
-import { AddTaskDTO } from 'src/task/dto/add-task.dto';
-import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
+import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+import { AddTaskDTO } from '../task/dto/add-task.dto';
+import { EditTaskDTO } from '../task/dto/edit-task.dto';
 import { TaskService } from './task.service';
 
 @ApiTags('Task')

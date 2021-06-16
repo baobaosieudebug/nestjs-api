@@ -10,7 +10,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
+import { Public } from '../decorators/public.decorator';
 import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import * as AWS from 'aws-sdk';

@@ -11,9 +11,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
-import { AddProjectDTO } from 'src/project/dto/add-project.dto';
-import { EditProjectDTO } from 'src/project/dto/edit-project.dto';
+import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+import { AddProjectDTO } from '../project/dto/add-project.dto';
+import { EditProjectDTO } from '../project/dto/edit-project.dto';
 import { ProjectService } from './project.service';
 
 @ApiTags('Project')

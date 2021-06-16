@@ -14,14 +14,14 @@ import axios from 'axios';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { TokenUserDTO } from './dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { AddUsersRO } from 'src/user/ro/add-user.ro';
+import { AddUsersRO } from '../user/ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
-import { GetUserRO } from 'src/user/ro/get-user.ro';
-import { JoinGroupRO } from 'src/group/ro/join-group.ro';
-import { GetListUserRO } from 'src/user/ro/get-list-user.ro';
-import { GetAllGroupRO } from 'src/group/ro/get-all-group.ro';
-import { UserRepository } from 'src/user/user.repository';
-import { GroupRepository } from 'src/group/group.repository';
+import { GetUserRO } from '../user/ro/get-user.ro';
+import { JoinGroupRO } from '../group/ro/join-group.ro';
+import { GetListUserRO } from '../user/ro/get-list-user.ro';
+import { GetAllGroupRO } from '../group/ro/get-all-group.ro';
+import { UserRepository } from '../user/user.repository';
+import { GroupRepository } from '../group/group.repository';
 import { UsersEntity } from './users.entity';
 
 @Injectable()

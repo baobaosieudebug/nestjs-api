@@ -3,10 +3,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { AddTaskDTO } from 'src/task/dto/add-task.dto';
-import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
-import { TaskRepository } from 'src/task/task.respository';
-import { GetTaskRO } from 'src/task/ro/get-task.ro';
+import { AddTaskDTO } from '../task/dto/add-task.dto';
+import { EditTaskDTO } from '../task/dto/edit-task.dto';
+import { TaskRepository } from '../task/task.respository';
+import { GetTaskRO } from '../task/ro/get-task.ro';
 import { TaskEntity } from './task.entity';
 
 @Injectable()

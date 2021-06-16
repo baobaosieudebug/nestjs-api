@@ -5,10 +5,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { OrganizationRepository } from 'src/organization/organization.repository';
-import { AddOrganizationDTO } from 'src/organization/dto/add-organization.dto';
-import { EditOrganizationDTO } from 'src/organization/dto/edit-organization.dto';
-import { ProjectRepository } from 'src/project/project.repository';
+import { OrganizationRepository } from '../organization/organization.repository';
+import { AddOrganizationDTO } from '../organization/dto/add-organization.dto';
+import { EditOrganizationDTO } from '../organization/dto/edit-organization.dto';
+import { ProjectRepository } from '../project/project.repository';
 
 @Injectable()
 export class OrganizationService {

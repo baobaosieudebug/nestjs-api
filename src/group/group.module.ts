@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupsController } from './group.controller';
 import { GroupsService } from './group.service';
-import { GroupRepository } from 'src/group/group.repository';
-import { UsersModule } from 'src/user/users.module';
+import { GroupRepository } from '../group/group.repository';
+import { UsersModule } from '../user/users.module';
 
 @Module({
   imports: [
