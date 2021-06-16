@@ -9,18 +9,14 @@ import {
 import { Body, Controller, Post } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
-import {
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
-import { LoginUserDTO } from '../../users/dto/login-user.dto';
-import { AuthService } from '../service/auth.service';
+import { LoginUserDTO } from '../users/dto/login-user.dto';
+import { AuthService } from './auth.service';
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
-import { awsConfig } from '../../config/aws.config';
-import { storage } from '../../config/storage.config';
+import { awsConfig } from '../config/aws.config';
+import { storage } from '../config/storage.config';
 
 const credentials = {
   accessKeyId: awsConfig.AWS_ACCESS_ID,
@@ -39,8 +35,6 @@ const s3client = new AWS.S3({
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiInternalServerErrorResponse({ description: ' Authencation App Is Error' })
-  @ApiCreatedResponse({ description: ' Created Token Success' })
   @Post('login')
   @Public()
   async loginAndRequestToken(@Body() user: LoginUserDTO) {
@@ -53,7 +47,6 @@ export class AuthController {
   }
 
   async uploadToS3(@UploadedFile() file: Express.Multer.File) {
-    // const filePath = path.resolve(__dirname + `/upload`, file.originalname);
     const filePath = path.resolve(
       `D:/intern/get-started-project/upload`,
       file.originalname,

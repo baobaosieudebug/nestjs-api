@@ -1,7 +1,7 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { UsersModule } from './users/module/users.module';
 import { GroupsModule } from './group/module/group.module';
-import { AuthModule } from './auth/module/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { TaskModule } from './tasks/module/task.module';
