@@ -1,6 +1,6 @@
 // import { Delete, Get, Param, Put } from '@nestjs/common';
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 // import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
 // import { AddTaskDTO } from 'src/task/dto/add-task.dto';
 // import { EditTaskDTO } from 'src/task/dto/edit-task.dto';
@@ -12,7 +12,6 @@ export class TaskController {
   constructor(private taskService: TaskService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Get List Task Success' })
   async getAllTask() {
     return await this.taskService.getAll();
   }
@@ -30,8 +29,6 @@ export class TaskController {
   //   return await this.taskService.getOneByIdForUser(id);
   // }
 
-  @ApiOkResponse({ description: 'Get Task Success' })
-  @ApiNotFoundResponse({ description: 'ID Task Not Found' })
   @Get(':id')
   async getTaskByIdOrFail(@Param('id') id: number) {
     return await this.taskService.getOneByIdOrFail(id);
