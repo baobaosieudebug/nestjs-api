@@ -5,20 +5,18 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common';
-import { getCustomRepository } from 'typeorm';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from 'src/group/group.repository';
 import { UserRepository } from 'src/user/user.repository';
-import { TaskRepository } from 'src/task/task.respository';
+import { AddGroupDTO } from './dto/add-group.dto';
 
 @Injectable()
 export class GroupsService {
-  constructor(private readonly groupRepo: GroupRepository) {}
-  userRepo = getCustomRepository(UserRepository);
-  taskRepo = getCustomRepository(TaskRepository);
-
-  /*---------------------------------------GET Method--------------------------------------- */
+  constructor(
+    private readonly groupRepo: GroupRepository,
+    private readonly userRepo: UserRepository,
+  ) {}
 
   async getOneGroupById(id: number): Promise<GroupsEntity> {
     return await this.groupRepo.getById(id);
@@ -44,35 +42,26 @@ export class GroupsService {
     }
   }
 
-  /*---Task----*/
   async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
     return await this.groupRepo.getAllTask(idGroup);
   }
 
-  /*---------------------------------------POST Method--------------------------------------- */
-  async createGroup(group: GroupsEntity): Promise<any> {
+  async createGroup(group: AddGroupDTO): Promise<AddGroupDTO> {
     return await this.groupRepo.save(group);
   }
-
-  /*---------------------------------------PUT Method--------------------------------------- */
-
   async update(idGroup, group: EditGroupDTO) {
     if ((await this.getOneGroupById(idGroup)) == null) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     } else {
-      await this.groupRepo.update(idGroup, group);
-      return HttpStatus.OK;
+      return await this.groupRepo.update(idGroup, group);
     }
   }
 
-  /*---------------------------------------DELETE Method--------------------------------------- */
-
   async destroy(idGroup: number) {
     if ((await this.getOneGroupById(idGroup)) == null) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     } else {
-      await this.groupRepo.delete(idGroup);
-      return HttpStatus.OK;
+      return await this.groupRepo.delete(idGroup);
     }
   }
 

@@ -1,7 +1,4 @@
-import { OmitType } from '@nestjs/swagger';
-import { GroupsEntity } from 'src/group/group.entity';
+import { PartialType } from '@nestjs/swagger';
+import { AddGroupDTO } from './add-group.dto';
 
-export class EditGroupDTO extends OmitType(GroupsEntity, [
-  'users',
-  'id',
-] as const) {}
+export class EditGroupDTO extends PartialType(AddGroupDTO) {}
