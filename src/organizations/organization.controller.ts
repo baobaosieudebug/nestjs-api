@@ -9,7 +9,7 @@ import {
 import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
 import { AddOrganizationDTO } from 'src/organizations/dto/add-organization.dto';
 import { EditOrganizationDTO } from 'src/organizations/dto/edit-organization.dto';
-import { OrganizationService } from '../service/organization.service';
+import { OrganizationService } from './organization.service';
 
 @ApiTags('Organization')
 @Controller('organization')
