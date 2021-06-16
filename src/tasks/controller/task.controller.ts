@@ -16,7 +16,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from 'src/common/exception filter/not-found.filter';
+import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
 import { AddTaskDTO } from 'src/tasks/dto/add-task.dto';
 import { EditTaskDTO } from 'src/tasks/dto/edit-task.dto';
 import { TaskService } from '../service/task.service';

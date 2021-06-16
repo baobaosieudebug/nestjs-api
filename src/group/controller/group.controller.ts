@@ -17,7 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EditGroupDTO } from '../dto/edit-group.dto';
-import { NotFoundExceptionFilter } from 'src/common/exception filter/not-found.filter';
+import { NotFoundExceptionFilter } from 'src/common/exception-filter/not-found.filter';
 
 @ApiTags('Group')
 @Controller('groups')
