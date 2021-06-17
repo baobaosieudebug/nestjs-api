@@ -114,4 +114,15 @@ export class ProjectService {
       throw new InternalServerErrorException();
     }
   }
+
+  async removeUserInProject(idUser: number, codeId: string) {
+    const checkGroup = this.checkProject(codeId);
+    if ((await checkGroup) == false) {
+      throw new NotFoundException();
+    }
+    const project = await this.projectRepo.getByCodeId(codeId);
+    const filteredUser = project.users.filter((res) => res.id != idUser);
+    project.users = filteredUser;
+    return await this.projectRepo.save(project);
+  }
 }

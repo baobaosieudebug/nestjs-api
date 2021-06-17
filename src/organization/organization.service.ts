@@ -100,4 +100,17 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
+
+  async removeProject(codeId: string, codeIdProject: string) {
+    const checkOrg = this.checkOrg(codeId);
+    if ((await checkOrg) == false) {
+      throw new NotFoundException();
+    }
+    const org = this.organizationRepo.getByCodeId(codeId);
+    const filtered = (await org).projects.filter(
+      (res) => res.codeId != codeIdProject,
+    );
+    (await org).projects = filtered;
+    return await this.organizationRepo.save(await org);
+  }
 }

@@ -151,4 +151,15 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
+
+  async removeTask(idUser: number, codeId: string) {
+    const checkUser = this.checkUser(idUser);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
+    const user = await this.userRepo.getOneById(idUser);
+    const filteredTask = user.tasks.filter((res) => res.codeId != codeId);
+    user.tasks = filteredTask;
+    return await this.userRepo.save(user);
+  }
 }

@@ -7,10 +7,6 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.findOne({ id }, { relations: ['user'] });
   }
 
-  // async getByIdWithDelete(id) {
-  //   return this.findOne({ id }, { relations: ['user'], withDeleted: true });
-  // }
-
   getAll() {
     return this.find({ isDelete: null });
   }
@@ -18,8 +14,4 @@ export class TaskRepository extends Repository<TaskEntity> {
   getByCodeId(codeId) {
     return this.findOne({ codeId }, { relations: ['user'] });
   }
-
-  // getAllTaskByIdGroup(id) {
-  //   return this.findOne({ id }, { relations: ['tasks'] });
-  // }
 }

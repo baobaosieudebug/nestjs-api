@@ -60,4 +60,12 @@ export class UsersController {
   async removeUser(@Param('id') id: number) {
     return await this.usersService.remove(id);
   }
+
+  @Delete(':id/removeTask/:codeId')
+  async removeTaskInUser(
+    @Param('id') idUser: number,
+    @Param('codeId') codeId: string,
+  ) {
+    return await this.usersService.removeTask(idUser, codeId);
+  }
 }

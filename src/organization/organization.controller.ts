@@ -62,4 +62,12 @@ export class OrganizationController {
   async removeOrganization(@Param('id') id: number) {
     return await this.organizationService.removeOrganization(id);
   }
+
+  @Delete(':codeId/removeProject/:codeIdProject')
+  async removeProjectInOrg(
+    @Param('codeIdProject') codeIdProject: string,
+    @Param('codeId') codeId: string,
+  ) {
+    return await this.organizationService.removeProject(codeId, codeIdProject);
+  }
 }

@@ -7,9 +7,10 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return this.findOne({ id }, { relations: ['projects'] });
   }
 
-  async getByIdWithDelete(id) {
+  getByIdWithDelete(id) {
     return this.findOne({ id }, { withDeleted: true });
   }
+
   getAllOrganization() {
     return this.find();
   }

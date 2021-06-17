@@ -11,7 +11,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { identity } from 'rxjs';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { AddProjectDTO } from '../project/dto/add-project.dto';
 import { EditProjectDTO } from '../project/dto/edit-project.dto';
@@ -58,5 +57,13 @@ export class ProjectController {
   @Delete(':id')
   async removeProject(@Param('id') id: number) {
     return await this.projectService.removeProject(id);
+  }
+
+  @Delete(':codeId/removeUser/:id')
+  async removeUserInProject(
+    @Param('id') idUser: number,
+    @Param('codeId') codeId: string,
+  ) {
+    return await this.projectService.removeUserInProject(idUser, codeId);
   }
 }
