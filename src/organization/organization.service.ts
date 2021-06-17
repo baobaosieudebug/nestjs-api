@@ -1,6 +1,4 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,14 +6,12 @@ import {
 import { OrganizationRepository } from '../organization/organization.repository';
 import { AddOrganizationDTO } from '../organization/dto/add-organization.dto';
 import { EditOrganizationDTO } from '../organization/dto/edit-organization.dto';
-import { ProjectRepository } from '../project/project.repository';
 import { ProjectService } from 'src/project/project.service';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly organizationRepo: OrganizationRepository,
-    private readonly projectRepo: ProjectRepository,
     private readonly projectService: ProjectService,
   ) {}
   async getAllOrganization() {
@@ -29,7 +25,7 @@ export class OrganizationService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new HttpException('Organization Not Found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return response;
   }
@@ -39,21 +35,17 @@ export class OrganizationService {
       const organization = this.organizationRepo.create(dto);
       return await this.organizationRepo.save(organization);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      throw new InternalServerErrorException();
     }
   }
 
   async addProject(codeIdOrg: string, codeIdProject: string) {
     const checkOrg = this.checkOrg(codeIdOrg);
-    const organization = this.organizationRepo.getByCodeId(codeIdOrg);
     if ((await checkOrg) == false) {
-      throw new NotFoundException('Organization CodeID Incorrect');
-    } else {
-      return await this.projectService.addProject(
-        await organization,
-        codeIdProject,
-      );
+      throw new NotFoundException();
     }
+    const org = this.organizationRepo.getByCodeId(codeIdOrg);
+    return await this.projectService.addProject(await org, codeIdProject);
   }
   async checkOrg(codeId: string): Promise<boolean> {
     const organization = await this.organizationRepo.getByCodeId(codeId);
@@ -63,35 +55,37 @@ export class OrganizationService {
     return true;
   }
 
+  async checkOrgID(id: number): Promise<boolean> {
+    const organization = await this.organizationRepo.getById(id);
+    if (!organization) {
+      return false;
+    }
+    return true;
+  }
+
   async editOrganization(id: number, dto: EditOrganizationDTO) {
-    const organization = this.getOneByIdOrFail(id);
+    const checkOrg = this.checkOrgID(id);
+    if ((await checkOrg) == false) {
+      throw new NotFoundException();
+    }
     try {
-      return await this.organizationRepo.update((await organization).id, dto);
+      return await this.organizationRepo.update(id, dto);
     } catch (e) {
-      if ((await organization).id == undefined) {
-        throw new NotFoundException('ID Incorrect');
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 
   async deleteOrganization(id: number) {
-    const organization = this.getOneByIdOrFail(id);
+    const checkOrg = this.checkOrgID(id);
+    if ((await checkOrg) == false) {
+      throw new NotFoundException();
+    }
     try {
-      // return await this.organizationRepo.delete(await organization);
+      const organization = this.getOneById(id);
       (await organization).isDelete = (await organization).id;
       return this.organizationRepo.save(await organization);
     } catch (e) {
-      if ((await organization).id == undefined) {
-        throw new NotFoundException();
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 }

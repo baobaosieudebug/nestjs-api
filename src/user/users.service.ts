@@ -104,36 +104,29 @@ export class UsersService {
   }
 
   async update(id: number, dto: EditUserDTO) {
-    const user = this.getOneByIdOrFail(id);
-    (await dto).password = await bcrypt.hash((await dto).password, 12);
-
+    const checkUser = this.checkUser(id);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
     try {
-      return await this.userRepo.update((await user).id, dto);
+      (await dto).password = await bcrypt.hash((await dto).password, 12);
+      return await this.userRepo.update(id, dto);
     } catch (e) {
-      if ((await user).id == undefined) {
-        throw new NotFoundException();
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 
   async remove(id: number) {
-    const user = this.getOneByIdOrFail(id);
+    const checkUser = this.checkUser(id);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
     try {
-      // return await this.userRepo.delete(await user);
+      const user = this.getOneById(id);
       (await user).isDelete = (await user).id;
       return this.userRepo.save(await user);
     } catch (e) {
-      if ((await user).id == undefined) {
-        throw new NotFoundException();
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 }

@@ -25,7 +25,8 @@ export class GroupsService {
   }
 
   async getOneOrFail(id: number): Promise<GroupsEntity> {
-    if ((await this.getOneById(id)) == null) {
+    const checkGroup = this.checkGroup(id);
+    if ((await checkGroup) == false) {
       throw new NotFoundException('ID Incorrect');
     } else {
       return await this.getOneById(id);
@@ -51,41 +52,40 @@ export class GroupsService {
   async addUser(idUser: number, idGroup: number) {
     const checkGroup = this.checkGroup(idGroup);
     if ((await checkGroup) == false) {
-      throw new NotFoundException('Project CodeID Incorrect');
+      throw new NotFoundException();
     }
     const group = await this.groupRepo.getOneById(idGroup);
     return this.userService.addUser(idUser, group);
   }
 
   async update(idGroup, group: EditGroupDTO) {
-    if ((await this.getOneById(idGroup)) == null) {
-      throw new NotFoundException('ID Incorrect');
+    const checkGroup = this.checkGroup(idGroup);
+    if ((await checkGroup) == false) {
+      throw new NotFoundException();
     } else {
       return await this.groupRepo.update(idGroup, group);
     }
   }
 
   async remove(idGroup: number) {
-    if ((await this.getOneById(idGroup)) == null) {
-      throw new NotFoundException('ID Incorrect');
+    const checkGroup = this.checkGroup(idGroup);
+    if ((await checkGroup) == false) {
+      throw new NotFoundException();
     } else {
-      return await this.groupRepo.delete(idGroup);
+      const group = this.getOneById(idGroup);
+      (await group).isDelete = (await group).id;
+      return this.groupRepo.save(await group);
     }
   }
 
   async removeUserInGroup(idUser: number, idGroup: number) {
-    const user = await this.userRepo.getOneById(idUser);
-    const group = await this.groupRepo.getOneById(idGroup);
-    if (group == undefined) {
-      throw new NotFoundException('Group Not Found');
-    } else {
-      if (user == undefined) {
-        throw new NotFoundException('User Not Found');
-      } else {
-        const filteredUser = group.users.filter((item) => item.id != idUser);
-        group.users = filteredUser;
-        return await this.groupRepo.save(group);
-      }
+    const checkGroup = this.checkGroup(idGroup);
+    if ((await checkGroup) == false) {
+      throw new NotFoundException();
     }
+    const group = await this.groupRepo.getOneById(idGroup);
+    const filteredUser = group.users.filter((res) => res.id != idUser);
+    group.users = filteredUser;
+    return await this.groupRepo.save(group);
   }
 }

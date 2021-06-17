@@ -46,19 +46,18 @@ export class ProjectService {
       const project = this.projectRepo.create(dto);
       return await this.projectRepo.save(project);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      throw new InternalServerErrorException();
     }
   }
 
   async addProject(organization: OrganizationEntity, codeId: string) {
     const checkProject = this.checkProject(codeId);
     if ((await checkProject) == false) {
-      throw new NotFoundException('Project CodeID Incorrect');
-    } else {
-      const project = await this.projectRepo.getByCodeId(codeId);
-      project.organization = organization;
-      return await this.projectRepo.save(project);
+      throw new NotFoundException();
     }
+    const project = await this.projectRepo.getByCodeId(codeId);
+    project.organization = organization;
+    return await this.projectRepo.save(project);
   }
 
   async checkProject(codeId: string): Promise<boolean> {
@@ -69,35 +68,37 @@ export class ProjectService {
     return true;
   }
 
+  async checkProjectID(id: number): Promise<boolean> {
+    const project = await this.projectRepo.getById(id);
+    if (!project) {
+      return false;
+    }
+    return true;
+  }
+
   async editProject(id: number, dto: EditProjectDTO) {
-    const project = this.getOneByIdOrFail(id);
+    const checkProject = this.checkProjectID(id);
+    if ((await checkProject) == false) {
+      throw new NotFoundException();
+    }
     try {
-      return await this.projectRepo.update((await project).id, dto);
+      return await this.projectRepo.update(id, dto);
     } catch (e) {
-      if ((await project).id == undefined) {
-        throw new NotFoundException('ID Incorrect');
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 
   async removeProject(id: number) {
-    const project = this.getOneByIdOrFail(id);
+    const checkProject = this.checkProjectID(id);
+    if ((await checkProject) == false) {
+      throw new NotFoundException();
+    }
     try {
-      // return await this.projectRepo.delete(await project);
+      const project = this.getOneById(id);
       (await project).isDelete = (await project).id;
       return this.projectRepo.save(await project);
     } catch (e) {
-      if ((await project).id == undefined) {
-        throw new NotFoundException();
-      } else {
-        throw new InternalServerErrorException(
-          'Sorry, Server is being problem',
-        );
-      }
+      throw new InternalServerErrorException();
     }
   }
 }
