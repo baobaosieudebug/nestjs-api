@@ -1,3 +1,4 @@
+import { ProjectEntity } from 'src/project/project.entity';
 import {
   Entity,
   Column,
@@ -32,4 +33,9 @@ export class UsersEntity {
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
   tasks: TaskEntity[];
+
+  @ManyToMany(() => ProjectEntity, (project: ProjectEntity) => project.users, {
+    cascade: ['insert'],
+  })
+  projects: ProjectEntity[];
 }

@@ -16,6 +16,7 @@ import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from '../user/user.repository';
 import { GroupsEntity } from 'src/group/group.entity';
 import { TaskService } from 'src/task/task.service';
+import { ProjectEntity } from 'src/project/project.entity';
 
 @Injectable()
 export class UsersService {
@@ -102,6 +103,16 @@ export class UsersService {
     }
     const user = await this.userRepo.getOneById(idUser);
     user.groups.push(group);
+    return await this.userRepo.save(user);
+  }
+
+  async addUserInProject(idUser: number, project: ProjectEntity) {
+    const checkUser = this.checkUser(idUser);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
+    const user = await this.userRepo.getOneById(idUser);
+    user.projects.push(project);
     return await this.userRepo.save(user);
   }
 

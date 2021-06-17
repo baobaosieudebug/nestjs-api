@@ -15,6 +15,6 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
   }
 
   getByCodeId(codeId) {
-    return this.findOne({ codeId });
+    return this.findOne({ codeId }, { relations: ['projects'] });
   }
 }

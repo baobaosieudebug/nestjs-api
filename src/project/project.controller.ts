@@ -11,6 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { identity } from 'rxjs';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { AddProjectDTO } from '../project/dto/add-project.dto';
 import { EditProjectDTO } from '../project/dto/edit-project.dto';
@@ -42,13 +43,10 @@ export class ProjectController {
     return await this.projectService.createProject(dto);
   }
 
-  // @Post(':codeId/addProject/:codeIdTask')
-  // async addProject(
-  //   @Param('codeIdTask') codeIdTask: string,
-  //   @Param('codeId') codeIdProject: string,
-  // ) {
-  //   return await this.projectService.addTask(codeIdProject, codeIdTask);
-  // }
+  @Post(':codeId/addUser/:id')
+  async addUser(@Param('id') id: number, @Param('codeId') codeId: string) {
+    return await this.projectService.addUser(codeId, id);
+  }
 
   @Put(':id')
   @UsePipes(ValidationPipe)

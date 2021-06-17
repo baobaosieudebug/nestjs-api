@@ -7,10 +7,14 @@ import { ProjectRepository } from '../project/project.repository';
 import { AddProjectDTO } from '../project/dto/add-project.dto';
 import { EditProjectDTO } from '../project/dto/edit-project.dto';
 import { OrganizationEntity } from 'src/organization/organization.entity';
+import { UsersService } from 'src/user/users.service';
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly projectRepo: ProjectRepository) {}
+  constructor(
+    private readonly projectRepo: ProjectRepository,
+    private readonly userService: UsersService,
+  ) {}
 
   async getOneById(id: number) {
     return await this.projectRepo.getById(id);
@@ -76,14 +80,14 @@ export class ProjectService {
     return await this.projectRepo.save(project);
   }
 
-  // async addTask(codeId: string, codeIdTask: string) {
-  //   const checkProject = this.checkProject(codeId);
-  //   if ((await checkProject) == false) {
-  //     throw new NotFoundException();
-  //   }
-  //   const project = await this.projectRepo.getByCodeId(codeId);
-  //   return this.taskService.addTask(codeIdTask, project);
-  // }
+  async addUser(codeId: string, idUser: number) {
+    const checkProject = this.checkProject(codeId);
+    if ((await checkProject) == false) {
+      throw new NotFoundException();
+    }
+    const project = await this.projectRepo.getByCodeId(codeId);
+    return this.userService.addUserInProject(idUser, project);
+  }
 
   async editProject(id: number, dto: EditProjectDTO) {
     const checkProject = this.checkProjectID(id);
