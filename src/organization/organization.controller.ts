@@ -35,15 +35,12 @@ export class OrganizationController {
     return await this.organizationService.createOrganization(dto);
   }
 
-  @Post(':codeIdOrganization/addProject/:codeIdProject')
+  @Post(':codeId/addProject/:codeIdProject')
   async addProject(
-    @Param('codeIdOrganization') codeIdOrganization: string,
+    @Param('codeId') codeIdOrg: string,
     @Param('codeIdProject') codeIdProject: string,
   ) {
-    return await this.organizationService.addProject(
-      codeIdOrganization,
-      codeIdProject,
-    );
+    return await this.organizationService.addProject(codeIdOrg, codeIdProject);
   }
 
   @Put(':id')

@@ -1,6 +1,14 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
-import { TaskEntity } from '../task.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { Length } from 'class-validator';
 
-export class GetTaskRO extends PartialType(
-  OmitType(TaskEntity, ['isDelete', 'id'] as const),
-) {}
+export class GetTaskRO {
+  @ApiProperty({
+    type: String,
+  })
+  @Length(10, 255)
+  name: string;
+
+  @ApiProperty({ type: String })
+  @Length(5, 20)
+  codeId: string;
+}

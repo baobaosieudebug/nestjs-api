@@ -13,11 +13,7 @@ import { TokenUserDTO } from './dto/token-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { AddUsersRO } from '../user/ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
-import { GetUserRO } from '../user/ro/get-user.ro';
-import { GetListUserRO } from '../user/ro/get-list-user.ro';
-import { GetAllGroupRO } from '../group/ro/get-all-group.ro';
 import { UserRepository } from '../user/user.repository';
-import { UsersEntity } from './users.entity';
 import { GroupsEntity } from 'src/group/group.entity';
 
 @Injectable()
@@ -31,14 +27,6 @@ export class UsersService {
     return await this.userRepo.getOneById(id);
   }
 
-  async dataTransfer(dto: UsersEntity) {
-    const userRO = new GetUserRO();
-    userRO.name = dto.name;
-    userRO.email = dto.email;
-    userRO.groups = dto.groups;
-    userRO.tasks = dto.tasks;
-    return userRO;
-  }
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
@@ -47,20 +35,8 @@ export class UsersService {
     return response;
   }
 
-  async getAllUser(): Promise<GetListUserRO[]> {
+  async getAll() {
     return await this.userRepo.getAll();
-  }
-
-  async getAllGroupOfUser(idUser: number) {
-    const user = await this.userRepo.getOneById(idUser);
-    if (user === undefined) {
-      throw new NotFoundException('ID Incorrect');
-    }
-    const response = new GetAllGroupRO();
-    response.email = user.email;
-    response.name = user.name;
-    response.groups = user.groups;
-    return response;
   }
 
   async verifyToken(access_token: TokenUserDTO) {
@@ -127,14 +103,6 @@ export class UsersService {
     return await this.userRepo.save(user);
   }
 
-  // async addTask(idUser: number, codeId: number) {
-  //   const newTask = await this.taskRepo.getByCodeId(codeId);
-  //   const user = await this.userRepo.getById(idUser);
-  //   user.tasks.push(newTask);
-  //   await this.userRepo.save(user);
-  //   return new HttpException('Add Task Success', HttpStatus.OK);
-  // }
-
   async update(id: number, dto: EditUserDTO) {
     const user = this.getOneByIdOrFail(id);
     (await dto).password = await bcrypt.hash((await dto).password, 12);
@@ -152,7 +120,7 @@ export class UsersService {
     }
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     const user = this.getOneByIdOrFail(id);
     try {
       // return await this.userRepo.delete(await user);

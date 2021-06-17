@@ -13,7 +13,6 @@ import {
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
-import { ParseDataToIntPipe } from '../common/pipe/parse-to-int.pipe';
 import { TokenUserDTO } from './dto/token-user.dto';
 // import { Public } from '../decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -30,8 +29,8 @@ export class UsersController {
   }
 
   @Get()
-  async getAllUsers() {
-    return await this.usersService.getAllUser();
+  async getAll() {
+    return await this.usersService.getAll();
   }
 
   @Get('verifyToken')
@@ -53,13 +52,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseFilters(NotFoundExceptionFilter)
-  async deleteUser(@Param('id') id: number) {
-    return await this.usersService.destroy(id);
-  }
-
-  @Get(':id/groups')
-  @UseFilters(new NotFoundExceptionFilter())
-  async getAllGroup(@Param('id', ParseDataToIntPipe) idUser: number) {
-    return await this.usersService.getAllGroupOfUser(idUser);
+  async removeUser(@Param('id') id: number) {
+    return await this.usersService.remove(id);
   }
 }

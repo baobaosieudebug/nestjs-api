@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/swagger';
-import { AddOrganizationDTO } from './add-organization.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { Length } from 'class-validator';
 
-export class EditOrganizationDTO extends PartialType(AddOrganizationDTO) {}
+export class EditOrganizationDTO {
+  @ApiProperty({
+    type: String,
+    example: 'APPLE-001',
+  })
+  @Length(5, 30)
+  name: string;
+
+  @ApiProperty({ type: String, example: 'AP-001' })
+  @Length(5, 10)
+  codeId: string;
+}

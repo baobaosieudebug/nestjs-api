@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/swagger';
-import { AddGroupDTO } from './add-group.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { Length } from 'class-validator';
 
-export class EditGroupDTO extends PartialType(AddGroupDTO) {}
+export class EditGroupDTO {
+  @ApiProperty({ type: String, example: 'NodeJS' })
+  @Length(4, 255)
+  nameGroup: string;
+}

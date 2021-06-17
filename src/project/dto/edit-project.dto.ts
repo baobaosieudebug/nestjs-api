@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/swagger';
-import { AddProjectDTO } from './add-project.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { Length } from 'class-validator';
 
-export class EditProjectDTO extends PartialType(AddProjectDTO) {}
+export class EditProjectDTO {
+  @ApiProperty({
+    type: String,
+    example: 'Phat trien he thong chat bot tren Iphone',
+  })
+  @Length(10, 255)
+  name: string;
+
+  @ApiProperty({ type: String, example: 'IOS-001' })
+  @Length(5, 20)
+  codeId: string;
+}

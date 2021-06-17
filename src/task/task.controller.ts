@@ -31,7 +31,7 @@ export class TaskController {
     return await this.taskService.getOneByIdOrFail(id);
   }
 
-  @Get('getByCode/:codeId')
+  @Get('codeId/:codeId')
   async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: string) {
     return await this.taskService.getOneByCodeIdOrFail(codeId);
   }

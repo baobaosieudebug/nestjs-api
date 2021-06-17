@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/swagger';
-import { EditUserDTO } from '../dto/edit-user.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class EditUserRO extends PartialType(EditUserDTO) {}
+export class EditUserRO {
+  @ApiProperty({ type: String })
+  name: string;
+
+  @ApiProperty({ type: String })
+  email: string;
+}
