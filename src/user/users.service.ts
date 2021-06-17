@@ -17,17 +17,14 @@ import { GetUserRO } from '../user/ro/get-user.ro';
 import { GetListUserRO } from '../user/ro/get-list-user.ro';
 import { GetAllGroupRO } from '../group/ro/get-all-group.ro';
 import { UserRepository } from '../user/user.repository';
-import { GroupRepository } from '../group/group.repository';
 import { UsersEntity } from './users.entity';
-import { GroupsService } from 'src/group/group.service';
+import { GroupsEntity } from 'src/group/group.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
-    private readonly groupService: GroupsService,
-    private readonly groupRepo: GroupRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -120,13 +117,14 @@ export class UsersService {
     }
   }
 
-  async addGroup(idUser: number, idGroup: number) {
+  async addUser(idUser: number, group: GroupsEntity) {
     const checkUser = this.checkUser(idUser);
     if ((await checkUser) == false) {
       throw new NotFoundException();
     }
     const user = await this.userRepo.getOneById(idUser);
-    return this.groupService.addGroup(idGroup, user);
+    user.groups.push(group);
+    return await this.userRepo.save(user);
   }
 
   // async addTask(idUser: number, codeId: number) {

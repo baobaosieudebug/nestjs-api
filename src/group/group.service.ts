@@ -1,16 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from '../group/group.repository';
 import { UserRepository } from '../user/user.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
-import { UsersEntity } from 'src/user/users.entity';
+import { UsersService } from 'src/user/users.service';
 
 @Injectable()
 export class GroupsService {
   constructor(
     private readonly groupRepo: GroupRepository,
     private readonly userRepo: UserRepository,
+    @Inject(forwardRef(() => UsersService))
+    private readonly userService: UsersService,
   ) {}
 
   async getOneById(id: number): Promise<GroupsEntity> {
@@ -41,14 +48,13 @@ export class GroupsService {
     return true;
   }
 
-  async addGroup(id: number, user: UsersEntity) {
-    const checkGroup = this.checkGroup(id);
+  async addUser(idUser: number, idGroup: number) {
+    const checkGroup = this.checkGroup(idGroup);
     if ((await checkGroup) == false) {
       throw new NotFoundException('Project CodeID Incorrect');
     }
-    const group = await this.groupRepo.getOneById(id);
-    group.users.push(user);
-    return await this.groupRepo.save(group);
+    const group = await this.groupRepo.getOneById(idGroup);
+    return this.userService.addUser(idUser, group);
   }
 
   async update(idGroup, group: EditGroupDTO) {

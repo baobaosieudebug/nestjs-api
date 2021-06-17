@@ -45,14 +45,6 @@ export class UsersController {
     return await this.usersService.create(dto);
   }
 
-  @Post(':id/addGroup/:idGroup')
-  async userJoinGroup(
-    @Param('id') idUser: number,
-    @Param('idGroup') idGroup: number,
-  ) {
-    return await this.usersService.addGroup(idUser, idGroup);
-  }
-
   @Put(':id')
   @UsePipes(ValidationPipe)
   async update(@Body() dto: EditUserDTO, @Param('id') id: number) {
