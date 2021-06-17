@@ -41,9 +41,9 @@ export class AuthController {
     return await this.authService.login(user);
   }
 
-  @Get('getAListUserAndVerifyToken')
-  async getListUserAndVerifyToken(@Body() user: LoginUserDTO) {
-    return await this.authService.getListUserAndVerifyToken(user);
+  @Get('verifyToken')
+  async verifyToken(@Body() user: LoginUserDTO) {
+    return await this.authService.verifyToken(user);
   }
 
   async uploadToS3(@UploadedFile() file: Express.Multer.File) {

@@ -33,7 +33,7 @@ export class AuthService {
     }
   }
 
-  async getListUserAndVerifyToken(user: LoginUserDTO) {
+  async verifyToken(user: LoginUserDTO) {
     const response = await this.httpService
       .post('http://localhost:5001/auth/login', {
         email: user.email,
