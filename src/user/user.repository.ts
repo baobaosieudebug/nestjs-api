@@ -3,24 +3,11 @@ import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {
-  getById(id) {
+  getOneById(id) {
     return this.findOne({ id }, { relations: ['groups', 'tasks'] });
   }
 
-  getByEmail(email) {
-    return this.findOne(
-      { email },
-      {
-        relations: ['groups'],
-      },
-    );
-  }
-
-  getAllUser() {
+  getAll() {
     return this.find({ relations: ['groups', 'tasks'] });
-  }
-
-  getAllTask(id) {
-    return this.findOne({ id }, { relations: ['tasks'] });
   }
 }

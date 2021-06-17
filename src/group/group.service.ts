@@ -1,15 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-  Param,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from '../group/group.repository';
 import { UserRepository } from '../user/user.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
+import { UsersEntity } from 'src/user/users.entity';
 
 @Injectable()
 export class GroupsService {
@@ -18,56 +13,63 @@ export class GroupsService {
     private readonly userRepo: UserRepository,
   ) {}
 
-  async getOneGroupById(id: number): Promise<GroupsEntity> {
-    return await this.groupRepo.getById(id);
+  async getOneById(id: number): Promise<GroupsEntity> {
+    return await this.groupRepo.getOneById(id);
   }
 
-  async getOneGroupOrFail(id: number): Promise<GroupsEntity> {
-    if ((await this.getOneGroupById(id)) == null) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+  async getOneOrFail(id: number): Promise<GroupsEntity> {
+    if ((await this.getOneById(id)) == null) {
+      throw new NotFoundException('ID Incorrect');
     } else {
-      return await this.getOneGroupById(id);
+      return await this.getOneById(id);
     }
   }
 
-  async getAllGroup(): Promise<GroupsEntity[]> {
-    return await this.groupRepo.getAllGroup();
-  }
-
-  async getAllUserOfOneGroup(idGroup: number): Promise<GroupsEntity> {
-    if ((await this.getOneGroupById(idGroup)) == null) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
-    } else {
-      return await this.groupRepo.getById(idGroup);
-    }
-  }
-
-  async getAllTaskByIdGroup(@Param('idGroup') idGroup: number) {
-    return await this.groupRepo.getAllTask(idGroup);
+  async getAll(): Promise<GroupsEntity[]> {
+    return await this.groupRepo.getAll();
   }
 
   async createGroup(group: AddGroupDTO): Promise<AddGroupDTO> {
     return await this.groupRepo.save(group);
   }
+
+  async checkGroup(id: number): Promise<boolean> {
+    const group = await this.groupRepo.getOneById(id);
+    if (!group) {
+      return false;
+    }
+    return true;
+  }
+
+  async addGroup(id: number, user: UsersEntity) {
+    const checkGroup = this.checkGroup(id);
+    if ((await checkGroup) == false) {
+      throw new NotFoundException('Project CodeID Incorrect');
+    }
+    const group = await this.groupRepo.getOneById(id);
+    group.users.push(user);
+    return await this.groupRepo.save(group);
+  }
+
   async update(idGroup, group: EditGroupDTO) {
-    if ((await this.getOneGroupById(idGroup)) == null) {
+    if ((await this.getOneById(idGroup)) == null) {
       throw new NotFoundException('ID Incorrect');
     } else {
       return await this.groupRepo.update(idGroup, group);
     }
   }
 
-  async destroy(idGroup: number) {
-    if ((await this.getOneGroupById(idGroup)) == null) {
+  async remove(idGroup: number) {
+    if ((await this.getOneById(idGroup)) == null) {
       throw new NotFoundException('ID Incorrect');
     } else {
       return await this.groupRepo.delete(idGroup);
     }
   }
 
-  async deleteUserInGroup(idUser: number, idGroup: number) {
-    const user = await this.userRepo.getById(idUser);
-    const group = await this.groupRepo.getById(idGroup);
+  async removeUserInGroup(idUser: number, idGroup: number) {
+    const user = await this.userRepo.getOneById(idUser);
+    const group = await this.groupRepo.getOneById(idGroup);
     if (group == undefined) {
       throw new NotFoundException('Group Not Found');
     } else {
@@ -76,8 +78,7 @@ export class GroupsService {
       } else {
         const filteredUser = group.users.filter((item) => item.id != idUser);
         group.users = filteredUser;
-        await this.groupRepo.save(group);
-        return HttpStatus.OK;
+        return await this.groupRepo.save(group);
       }
     }
   }

@@ -51,11 +51,11 @@ export class ProjectService {
   }
 
   async addProject(organization: OrganizationEntity, codeId: string) {
-    const project = await this.projectRepo.getByCodeId(codeId);
     const checkProject = this.checkProject(codeId);
     if ((await checkProject) == false) {
       throw new NotFoundException('Project CodeID Incorrect');
     } else {
+      const project = await this.projectRepo.getByCodeId(codeId);
       project.organization = organization;
       return await this.projectRepo.save(project);
     }
@@ -68,6 +68,7 @@ export class ProjectService {
     }
     return true;
   }
+
   async editProject(id: number, dto: EditProjectDTO) {
     const project = this.getOneByIdOrFail(id);
     try {

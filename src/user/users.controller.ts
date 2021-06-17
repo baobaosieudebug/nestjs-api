@@ -29,21 +29,14 @@ export class UsersController {
     return await this.usersService.getOneByIdOrFail(id);
   }
 
-  @Get('email/:email')
-  async getUserByEmail(@Param('email') email: string) {
-    return await this.usersService.getUserByEmailOrFail(email);
-  }
-
   @Get()
   async getAllUsers() {
     return await this.usersService.getAllUser();
   }
 
-  @Get('getAListUserAndVerifyToken')
-  async getListUserAndVerifyToken(
-    @Body() token: TokenUserDTO,
-  ): Promise<unknown> {
-    return await this.usersService.getListUserAndVerifyToken(token);
+  @Get('verifyToken')
+  async verifyToken(@Body() token: TokenUserDTO): Promise<unknown> {
+    return await this.usersService.verifyToken(token);
   }
 
   @Post()
@@ -52,17 +45,12 @@ export class UsersController {
     return await this.usersService.create(dto);
   }
 
-  @Post(':idUser/userJoinGroup/:idGroup')
+  @Post(':id/addGroup/:idGroup')
   async userJoinGroup(
-    @Param('idUser') idUser: number,
+    @Param('id') idUser: number,
     @Param('idGroup') idGroup: number,
   ) {
-    return await this.usersService.userJoinGroup(idUser, idGroup);
-  }
-
-  @Get(':idUser/getTaskByUser')
-  async getTaskByUser(@Param('idUser') idUser: number) {
-    return await this.usersService.getAllTaskByIdUser(idUser);
+    return await this.usersService.addGroup(idUser, idGroup);
   }
 
   @Put(':id')
@@ -77,17 +65,9 @@ export class UsersController {
     return await this.usersService.destroy(id);
   }
 
-  @Get(':idUser/getAllGroup')
+  @Get(':id/groups')
   @UseFilters(new NotFoundExceptionFilter())
-  async getAllGroup(@Param('idUser', ParseDataToIntPipe) idUser: number) {
+  async getAllGroup(@Param('id', ParseDataToIntPipe) idUser: number) {
     return await this.usersService.getAllGroupOfUser(idUser);
-  }
-
-  @Post(':idUser/groupJoinByUser/:idGroup')
-  async groupJoinByUser(
-    @Param('idUser') idUser: number,
-    @Param('idGroup') idGroup: number,
-  ) {
-    return await this.usersService.groupJoinByUser(idUser, idGroup);
   }
 }

@@ -1,10 +1,7 @@
 import {
   Injectable,
-  HttpStatus,
-  HttpException,
   HttpService,
   UnauthorizedException,
-  Param,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,23 +14,24 @@ import { BadRequestException } from '@nestjs/common';
 import { AddUsersRO } from '../user/ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
 import { GetUserRO } from '../user/ro/get-user.ro';
-import { JoinGroupRO } from '../group/ro/join-group.ro';
 import { GetListUserRO } from '../user/ro/get-list-user.ro';
 import { GetAllGroupRO } from '../group/ro/get-all-group.ro';
 import { UserRepository } from '../user/user.repository';
 import { GroupRepository } from '../group/group.repository';
 import { UsersEntity } from './users.entity';
+import { GroupsService } from 'src/group/group.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
+    private readonly groupService: GroupsService,
     private readonly groupRepo: GroupRepository,
   ) {}
 
   async getOneById(id: number) {
-    return await this.userRepo.getById(id);
+    return await this.userRepo.getOneById(id);
   }
 
   async dataTransfer(dto: UsersEntity) {
@@ -52,36 +50,23 @@ export class UsersService {
     return response;
   }
 
-  async getUserByEmail(email: string) {
-    return await this.userRepo.getByEmail(email);
-  }
-
-  async getUserByEmailOrFail(email) {
-    const response = await this.getUserByEmail(email);
-    if (!response) {
-      throw new NotFoundException('ID Incorrect');
-    }
-    return await this.dataTransfer(response);
-  }
-
   async getAllUser(): Promise<GetListUserRO[]> {
-    return await this.userRepo.getAllUser();
+    return await this.userRepo.getAll();
   }
 
   async getAllGroupOfUser(idUser: number) {
-    const user = await this.userRepo.getById(idUser);
+    const user = await this.userRepo.getOneById(idUser);
     if (user === undefined) {
       throw new NotFoundException('ID Incorrect');
-    } else {
-      const response = new GetAllGroupRO();
-      response.email = user.email;
-      response.name = user.name;
-      response.groups = user.groups;
-      return response;
     }
+    const response = new GetAllGroupRO();
+    response.email = user.email;
+    response.name = user.name;
+    response.groups = user.groups;
+    return response;
   }
 
-  async getListUserAndVerifyToken(access_token: TokenUserDTO) {
+  async verifyToken(access_token: TokenUserDTO) {
     const apiUrl = 'http://localhost:5001';
     const authAxios = axios.create({
       baseURL: apiUrl,
@@ -101,10 +86,6 @@ export class UsersService {
     }
   }
 
-  async getAllTaskByIdUser(@Param('idUser') idUser: number) {
-    return await this.userRepo.getAllTask(idUser);
-  }
-
   async loginApi(user: LoginUserDTO) {
     const response = await this.httpService
       .post('http://localhost:5001/auth/login', {
@@ -121,6 +102,14 @@ export class UsersService {
     }
   }
 
+  async checkUser(id: number): Promise<boolean> {
+    const user = await this.userRepo.getOneById(id);
+    if (!user) {
+      return false;
+    }
+    return true;
+  }
+
   async create(user: AddUserDTO): Promise<AddUsersRO> {
     try {
       user.password = await bcrypt.hash(user.password, 12);
@@ -131,26 +120,15 @@ export class UsersService {
     }
   }
 
-  async userJoinGroup(idUser: number, idGroup: number) {
-    const group = await this.groupRepo.getById(idGroup);
-    const user = await this.userRepo.getById(idUser);
-    if (group == undefined) {
-      throw new HttpException('Group Not Found', HttpStatus.NOT_FOUND);
-    } else {
-      if (user == undefined) {
-        throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-      } else {
-        group.users = [user];
-        await this.groupRepo.save(group);
-        const groupRO = new JoinGroupRO();
-        groupRO.id = group.id;
-        groupRO.nameGroup = group.nameGroup;
-        return groupRO;
-      }
+  async addGroup(idUser: number, idGroup: number) {
+    const checkUser = this.checkUser(idUser);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
     }
+    const user = await this.userRepo.getOneById(idUser);
+    return this.groupService.addGroup(idGroup, user);
   }
 
-  /*---Task----*/
   // async addTask(idUser: number, codeId: number) {
   //   const newTask = await this.taskRepo.getByCodeId(codeId);
   //   const user = await this.userRepo.getById(idUser);
@@ -191,13 +169,5 @@ export class UsersService {
         );
       }
     }
-  }
-
-  async groupJoinByUser(idUser: number, idGroup: number) {
-    const group = await this.groupRepo.getById(idGroup);
-    const user = await this.userRepo.getById(idUser);
-    user.groups = [group];
-    await this.userRepo.save(user);
-    return user;
   }
 }

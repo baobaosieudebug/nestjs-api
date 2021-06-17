@@ -20,23 +20,13 @@ export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
   @Get(':id')
-  async getOneGroup(@Param('id') idGroup: number) {
-    return await this.groupsService.getOneGroupOrFail(idGroup);
+  async getOne(@Param('id') idGroup: number) {
+    return await this.groupsService.getOneOrFail(idGroup);
   }
 
   @Get()
-  async getManyGroup() {
-    return await this.groupsService.getAllGroup();
-  }
-
-  @Get(':idGroup/getAllUser')
-  async getAllUser(@Param('idGroup') idGroup: number) {
-    return await this.groupsService.getAllUserOfOneGroup(idGroup);
-  }
-
-  @Get(':idGroup/getTask')
-  async getAllTask(@Param('idGroup') idGroup: number) {
-    return await this.groupsService.getAllTaskByIdGroup(idGroup);
+  async getAll() {
+    return await this.groupsService.getAll();
   }
 
   @Post()
@@ -51,16 +41,16 @@ export class GroupsController {
     return await this.groupsService.update(id, group);
   }
 
-  @Delete(':idUser/deleteUser/:idGroup')
-  async deleteUserInGroup(
+  @Delete(':id/removeUser/:idUser')
+  async removeUserInGroup(
     @Param('idUser') idUser: number,
-    @Param('idGroup') idGroup: number,
+    @Param('id') idGroup: number,
   ) {
-    return await this.groupsService.deleteUserInGroup(idUser, idGroup);
+    return await this.groupsService.removeUserInGroup(idUser, idGroup);
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: number) {
-    return await this.groupsService.destroy(id);
+  async remove(@Param('id') id: number) {
+    return await this.groupsService.remove(id);
   }
 }
