@@ -44,6 +44,11 @@ export class UsersController {
     return await this.usersService.create(dto);
   }
 
+  @Post(':id/addTask/:codeId')
+  async addProject(@Param('id') id: number, @Param('codeId') codeId: string) {
+    return await this.usersService.addTask(id, codeId);
+  }
+
   @Put(':id')
   @UsePipes(ValidationPipe)
   async update(@Body() dto: EditUserDTO, @Param('id') id: number) {

@@ -25,11 +25,11 @@ export class ProjectService {
     }
   }
 
-  async getOneByCodeId(codeId: number) {
+  async getOneByCodeId(codeId: string) {
     return await this.projectRepo.getByCodeId(codeId);
   }
 
-  async getOneByCodeIdOrFail(codeId: number) {
+  async getOneByCodeIdOrFail(codeId: string) {
     const response = await this.getOneByCodeId(codeId);
     if (!response) {
       throw new NotFoundException();
@@ -39,6 +39,22 @@ export class ProjectService {
 
   async getAllProject() {
     return await this.projectRepo.getAllProject();
+  }
+
+  async checkProject(codeId: string): Promise<boolean> {
+    const project = await this.projectRepo.getByCodeId(codeId);
+    if (!project) {
+      return false;
+    }
+    return true;
+  }
+
+  async checkProjectID(id: number): Promise<boolean> {
+    const project = await this.projectRepo.getById(id);
+    if (!project) {
+      return false;
+    }
+    return true;
   }
 
   async createProject(dto: AddProjectDTO) {
@@ -60,21 +76,14 @@ export class ProjectService {
     return await this.projectRepo.save(project);
   }
 
-  async checkProject(codeId: string): Promise<boolean> {
-    const project = await this.projectRepo.getByCodeId(codeId);
-    if (!project) {
-      return false;
-    }
-    return true;
-  }
-
-  async checkProjectID(id: number): Promise<boolean> {
-    const project = await this.projectRepo.getById(id);
-    if (!project) {
-      return false;
-    }
-    return true;
-  }
+  // async addTask(codeId: string, codeIdTask: string) {
+  //   const checkProject = this.checkProject(codeId);
+  //   if ((await checkProject) == false) {
+  //     throw new NotFoundException();
+  //   }
+  //   const project = await this.projectRepo.getByCodeId(codeId);
+  //   return this.taskService.addTask(codeIdTask, project);
+  // }
 
   async editProject(id: number, dto: EditProjectDTO) {
     const checkProject = this.checkProjectID(id);

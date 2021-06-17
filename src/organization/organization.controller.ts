@@ -29,6 +29,11 @@ export class OrganizationController {
     return await this.organizationService.getOneByIdOrFail(id);
   }
 
+  @Get('codeId/:codeId')
+  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
+    return await this.organizationService.getOneByCodeIdOrFail(codeId);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createOrganization(@Body() dto: AddOrganizationDTO) {
@@ -55,6 +60,6 @@ export class OrganizationController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeOrganization(@Param('id') id: number) {
-    return await this.organizationService.deleteOrganization(id);
+    return await this.organizationService.removeOrganization(id);
   }
 }

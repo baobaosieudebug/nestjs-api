@@ -4,12 +4,13 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserRepository } from '../user/user.repository';
 import { GroupsModule } from '../group/group.module';
+import { TaskModule } from 'src/task/task.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
     HttpModule,
-    // TaskModule,
+    TaskModule,
     GroupsModule,
   ],
   controllers: [UsersController],

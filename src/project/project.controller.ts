@@ -27,13 +27,13 @@ export class ProjectController {
   }
 
   @Get(':id')
-  async getByCodeId(@Param('id') codeId: number) {
-    return await this.projectService.getOneByCodeIdOrFail(codeId);
-  }
-
-  @Get(':id')
   async getProjectByIdOrFail(@Param('id') id: number) {
     return await this.projectService.getOneByIdOrFail(id);
+  }
+
+  @Get('codeId/:codeId')
+  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
+    return await this.projectService.getOneByCodeIdOrFail(codeId);
   }
 
   @Post()
@@ -41,6 +41,14 @@ export class ProjectController {
   async createProject(@Body() dto: AddProjectDTO) {
     return await this.projectService.createProject(dto);
   }
+
+  // @Post(':codeId/addProject/:codeIdTask')
+  // async addProject(
+  //   @Param('codeIdTask') codeIdTask: string,
+  //   @Param('codeId') codeIdProject: string,
+  // ) {
+  //   return await this.projectService.addTask(codeIdProject, codeIdTask);
+  // }
 
   @Put(':id')
   @UsePipes(ValidationPipe)

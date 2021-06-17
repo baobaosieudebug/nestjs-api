@@ -15,12 +15,14 @@ import { AddUsersRO } from '../user/ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from '../user/user.repository';
 import { GroupsEntity } from 'src/group/group.entity';
+import { TaskService } from 'src/task/task.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly httpService: HttpService,
+    private readonly taskService: TaskService,
   ) {}
 
   async getOneById(id: number) {
@@ -101,6 +103,15 @@ export class UsersService {
     const user = await this.userRepo.getOneById(idUser);
     user.groups.push(group);
     return await this.userRepo.save(user);
+  }
+
+  async addTask(id: number, codeIdTask: string) {
+    const checkUser = this.checkUser(id);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
+    const user = await this.userRepo.getOneById(id);
+    return this.taskService.addTask(codeIdTask, user);
   }
 
   async update(id: number, dto: EditUserDTO) {

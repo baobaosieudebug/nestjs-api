@@ -7,11 +7,11 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.findOne({ id }, { relations: ['user'] });
   }
 
-  async getByIdWithDelete(id) {
-    return this.findOne({ id }, { relations: ['user'], withDeleted: true });
-  }
+  // async getByIdWithDelete(id) {
+  //   return this.findOne({ id }, { relations: ['user'], withDeleted: true });
+  // }
 
-  getAllTask() {
+  getAll() {
     return this.find({ isDelete: null });
   }
 
@@ -19,7 +19,7 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.findOne({ codeId }, { relations: ['user'] });
   }
 
-  getAllTaskByIdGroup(id) {
-    return this.findOne({ id }, { relations: ['tasks'] });
-  }
+  // getAllTaskByIdGroup(id) {
+  //   return this.findOne({ id }, { relations: ['tasks'] });
+  // }
 }

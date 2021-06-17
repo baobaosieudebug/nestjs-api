@@ -16,7 +16,7 @@ export class TaskEntity {
   @Column({ type: 'varchar' })
   codeId: string;
 
-  @Column({ name: 'is_delete', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDelete: number;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)

@@ -30,6 +30,18 @@ export class OrganizationService {
     return response;
   }
 
+  getOneByCodeId(codeId: string) {
+    return this.organizationRepo.getByCodeId(codeId);
+  }
+
+  async getOneByCodeIdOrFail(codeId: string) {
+    const responseEntity = await this.getOneByCodeId(codeId);
+    if (!responseEntity) {
+      throw new NotFoundException();
+    }
+    return responseEntity;
+  }
+
   async createOrganization(dto: AddOrganizationDTO) {
     try {
       const organization = this.organizationRepo.create(dto);
@@ -75,7 +87,7 @@ export class OrganizationService {
     }
   }
 
-  async deleteOrganization(id: number) {
+  async removeOrganization(id: number) {
     const checkOrg = this.checkOrgID(id);
     if ((await checkOrg) == false) {
       throw new NotFoundException();

@@ -32,14 +32,14 @@ export class TaskController {
   }
 
   @Get('codeId/:codeId')
-  async getOneTaskByCodeIdOrFail(@Param('codeId') codeId: string) {
+  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
     return await this.taskService.getOneByCodeIdOrFail(codeId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
   async createTask(@Body() dto: AddTaskDTO) {
-    return await this.taskService.add(dto);
+    return await this.taskService.create(dto);
   }
 
   @Put(':id')

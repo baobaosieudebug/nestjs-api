@@ -43,7 +43,6 @@ export class BaseService<childRepo> {
       throw new InternalServerErrorException('Sorry, Server is being problem');
     }
   }
-
   async edit(id: number, dto): Promise<childRepo> {
     const old = await this.getOneByIdOrFail(id);
     try {

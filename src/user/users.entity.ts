@@ -22,7 +22,7 @@ export class UsersEntity {
   @Column({ type: 'varchar', select: false })
   password: string;
 
-  @Column({ name: 'is_delete', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDelete: number;
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
