@@ -4,11 +4,13 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { OrganizationEntity } from '../organization/organization.entity';
 import { UsersEntity } from 'src/user/users.entity';
+import { TaskEntity } from 'src/task/task.entity';
 
 @Entity('project')
 export class ProjectEntity {
@@ -38,4 +40,7 @@ export class ProjectEntity {
   })
   @JoinTable()
   users: UsersEntity[];
+
+  @OneToMany((type) => TaskEntity, (task) => task.project)
+  tasks: TaskEntity[];
 }

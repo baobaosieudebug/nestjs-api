@@ -60,6 +60,7 @@ export class TaskService {
   async create(dto: AddTaskDTO) {
     try {
       const task = this.taskRepo.create(dto);
+      task.createdAt = new Date();
       return await this.taskRepo.save(task);
     } catch (e) {
       throw new InternalServerErrorException();
@@ -76,6 +77,15 @@ export class TaskService {
     return this.taskRepo.save(await task);
   }
 
+  async assignTask(codeId: string, user: UsersEntity) {
+    const checkTask = this.checkTask(codeId);
+    if ((await checkTask) == false) {
+      throw new NotFoundException();
+    }
+    const task = this.getOneByCodeId(codeId);
+    (await task).userAssign = user;
+    return this.taskRepo.save(await task);
+  }
   async edit(id: number, dto: EditTaskDTO) {
     const checkTask = this.checkTaskID(id);
     if ((await checkTask) == false) {

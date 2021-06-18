@@ -31,6 +31,9 @@ export class UsersEntity {
   })
   groups: GroupsEntity[];
 
+  @OneToMany(() => TaskEntity, (task: TaskEntity) => task.userAssign)
+  tasksAssign: TaskEntity[];
+
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
   tasks: TaskEntity[];
 

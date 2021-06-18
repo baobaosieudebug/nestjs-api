@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsDateString, IsString, Length } from 'class-validator';
 
 export class AddTaskDTO {
   @ApiProperty({
@@ -12,4 +12,16 @@ export class AddTaskDTO {
   @ApiProperty({ type: String, example: 'BE-001' })
   @Length(5, 20)
   codeId: string;
+
+  @ApiProperty({ example: 'Create UI For Website' })
+  @IsString()
+  description: string;
+
+  @ApiProperty({ example: '2020-01-01' })
+  @IsDateString()
+  dateBegin: Date;
+
+  @ApiProperty({ example: '2020-01-01' })
+  @IsDateString()
+  dateEnd: Date;
 }

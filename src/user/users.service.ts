@@ -82,6 +82,15 @@ export class UsersService {
     return this.taskService.addTask(codeIdTask, user);
   }
 
+  async assignTask(id: number, codeIdTask: string) {
+    const checkUser = this.checkUser(id);
+    if ((await checkUser) == false) {
+      throw new NotFoundException();
+    }
+    const user = await this.userRepo.getOneById(id);
+    return this.taskService.assignTask(codeIdTask, user);
+  }
+
   async update(id: number, dto: EditUserDTO) {
     const checkUser = this.checkUser(id);
     if ((await checkUser) == false) {
