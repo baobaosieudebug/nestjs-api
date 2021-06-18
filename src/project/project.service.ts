@@ -22,7 +22,7 @@ export class ProjectService {
 
   async getOneByIdOrFail(id: number) {
     if ((await this.getOneById(id)) == null) {
-      throw new NotFoundException('ID Incorrect');
+      throw new NotFoundException();
     } else {
       const response = await this.getOneById(id);
       return response;

@@ -25,7 +25,7 @@ export class GroupsService {
   async getOneOrFail(id: number): Promise<GroupsEntity> {
     const checkGroup = this.checkGroup(id);
     if ((await checkGroup) == false) {
-      throw new NotFoundException('ID Incorrect');
+      throw new NotFoundException();
     } else {
       return await this.getOneById(id);
     }

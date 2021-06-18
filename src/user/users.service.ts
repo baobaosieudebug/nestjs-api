@@ -1,6 +1,5 @@
 import {
   Injectable,
-  HttpService,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,7 +16,6 @@ import { ProjectEntity } from 'src/project/project.entity';
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
-    private readonly httpService: HttpService,
     private readonly taskService: TaskService,
   ) {}
 
@@ -28,7 +26,7 @@ export class UsersService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new NotFoundException('ID Incorrect');
+      throw new NotFoundException();
     }
     return response;
   }
@@ -51,7 +49,7 @@ export class UsersService {
       await this.userRepo.create(user);
       return await this.userRepo.save(user);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      throw new InternalServerErrorException();
     }
   }
 
