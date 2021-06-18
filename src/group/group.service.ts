@@ -7,7 +7,6 @@ import {
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from '../group/group.repository';
-import { UserRepository } from '../user/user.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { UsersService } from 'src/user/users.service';
 
@@ -15,7 +14,6 @@ import { UsersService } from 'src/user/users.service';
 export class GroupsService {
   constructor(
     private readonly groupRepo: GroupRepository,
-    private readonly userRepo: UserRepository,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}

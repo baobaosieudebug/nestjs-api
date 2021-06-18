@@ -13,8 +13,6 @@ import {
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
-import { TokenUserDTO } from './dto/token-user.dto';
-// import { Public } from '../decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { EditUserDTO } from './dto/edit-user.dto';
 
@@ -31,11 +29,6 @@ export class UsersController {
   @Get()
   async getAll() {
     return await this.usersService.getAll();
-  }
-
-  @Get('verifyToken')
-  async verifyToken(@Body() token: TokenUserDTO): Promise<unknown> {
-    return await this.usersService.verifyToken(token);
   }
 
   @Post()

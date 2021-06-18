@@ -1,16 +1,11 @@
 import {
   Injectable,
   HttpService,
-  UnauthorizedException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { AddUserDTO } from './dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
-import axios from 'axios';
-import { LoginUserDTO } from './dto/login-user.dto';
-import { TokenUserDTO } from './dto/token-user.dto';
-import { BadRequestException } from '@nestjs/common';
 import { AddUsersRO } from '../user/ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from '../user/user.repository';
@@ -40,42 +35,6 @@ export class UsersService {
 
   async getAll() {
     return await this.userRepo.getAll();
-  }
-
-  async verifyToken(access_token: TokenUserDTO) {
-    const apiUrl = 'http://localhost:5001';
-    const authAxios = axios.create({
-      baseURL: apiUrl,
-      headers: {
-        Authorization: `Bearer ${access_token.token}`,
-      },
-    });
-    const result = authAxios.get(`${apiUrl}/users`);
-    if (!authAxios) {
-      throw new UnauthorizedException('Unauthorized!');
-    } else {
-      if (!result) {
-        throw new BadRequestException('Bad Request');
-      } else {
-        return (await result).data;
-      }
-    }
-  }
-
-  async loginApi(user: LoginUserDTO) {
-    const response = await this.httpService
-      .post('http://localhost:5001/auth/login', {
-        email: user.email,
-        password: user.password,
-      })
-      .toPromise();
-    if (!response) {
-      throw new BadRequestException(
-        'Bad Request ! Check My Email And Password !',
-      );
-    } else {
-      return response.data;
-    }
   }
 
   async checkUser(id: number): Promise<boolean> {
