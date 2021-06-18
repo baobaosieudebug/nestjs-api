@@ -60,7 +60,7 @@ export class OrganizationService {
     return await this.projectService.addProject(await org, codeIdProject);
   }
   async checkOrg(codeId: string): Promise<boolean> {
-    const organization = await this.organizationRepo.getByCodeId(codeId);
+    const organization = await this.getOneByCodeIdOrFail(codeId);
     if (!organization) {
       return false;
     }
@@ -68,7 +68,7 @@ export class OrganizationService {
   }
 
   async checkOrgID(id: number): Promise<boolean> {
-    const organization = await this.organizationRepo.getById(id);
+    const organization = await this.getOneByIdOrFail(id);
     if (!organization) {
       return false;
     }

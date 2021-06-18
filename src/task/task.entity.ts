@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UsersEntity } from '../user/users.entity';
+import { ProjectEntity } from 'src/project/project.entity';
 
 @Entity('task')
 export class TaskEntity {
@@ -50,4 +51,8 @@ export class TaskEntity {
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
   @JoinColumn({ name: 'create_user_id' })
   user: UsersEntity;
+
+  @ManyToOne(() => ProjectEntity, (project) => project.tasks)
+  @JoinColumn({ name: 'project_id' })
+  project: ProjectEntity;
 }

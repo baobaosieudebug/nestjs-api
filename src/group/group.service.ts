@@ -40,7 +40,7 @@ export class GroupsService {
   }
 
   async checkGroup(id: number): Promise<boolean> {
-    const group = await this.groupRepo.getOneById(id);
+    const group = await this.getOneOrFail(id);
     if (!group) {
       return false;
     }

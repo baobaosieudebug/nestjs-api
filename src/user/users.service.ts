@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   async checkUser(id: number): Promise<boolean> {
-    const user = await this.userRepo.getOneById(id);
+    const user = await this.getOneByIdOrFail(id);
     if (!user) {
       return false;
     }

@@ -4,7 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
   async getById(id) {
-    return this.findOne({ id }, { relations: ['user'] });
+    return this.findOne({ id }, { relations: ['user', 'project'] });
   }
 
   getAll() {
@@ -12,6 +12,6 @@ export class TaskRepository extends Repository<TaskEntity> {
   }
 
   getByCodeId(codeId) {
-    return this.findOne({ codeId }, { relations: ['user'] });
+    return this.findOne({ codeId }, { relations: ['user', 'project'] });
   }
 }

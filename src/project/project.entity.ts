@@ -41,6 +41,6 @@ export class ProjectEntity {
   @JoinTable()
   users: UsersEntity[];
 
-  @OneToMany((type) => TaskEntity, (task) => task.project)
+  @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];
 }

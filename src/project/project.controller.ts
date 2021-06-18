@@ -47,6 +47,14 @@ export class ProjectController {
     return await this.projectService.addUser(codeId, id);
   }
 
+  @Post(':codeId/addTask/:codeIdTask')
+  async addTask(
+    @Param('codeIdTask') codeIdTask: string,
+    @Param('codeId') codeId: string,
+  ) {
+    return await this.projectService.addTask(codeId, codeIdTask);
+  }
+
   @Put(':id')
   @UsePipes(ValidationPipe)
   async editProject(@Body() dto: EditProjectDTO, @Param('id') id: number) {
@@ -65,5 +73,13 @@ export class ProjectController {
     @Param('codeId') codeId: string,
   ) {
     return await this.projectService.removeUserInProject(idUser, codeId);
+  }
+
+  @Delete(':codeId/removeTask/:codeIdTask')
+  async removeTaskInProject(
+    @Param('codeIdTask') codeIdTask: string,
+    @Param('codeId') codeId: string,
+  ) {
+    return await this.projectService.removeTaskInProject(codeIdTask, codeId);
   }
 }

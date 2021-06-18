@@ -8,12 +8,14 @@ import { AddProjectDTO } from '../project/dto/add-project.dto';
 import { EditProjectDTO } from '../project/dto/edit-project.dto';
 import { OrganizationEntity } from 'src/organization/organization.entity';
 import { UsersService } from 'src/user/users.service';
+import { TaskService } from 'src/task/task.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
     private readonly projectRepo: ProjectRepository,
     private readonly userService: UsersService,
+    private readonly taskService: TaskService,
   ) {}
 
   async getOneById(id: number) {
@@ -46,7 +48,7 @@ export class ProjectService {
   }
 
   async checkProject(codeId: string): Promise<boolean> {
-    const project = await this.projectRepo.getByCodeId(codeId);
+    const project = await this.getOneByCodeIdOrFail(codeId);
     if (!project) {
       return false;
     }
@@ -89,6 +91,15 @@ export class ProjectService {
     return this.userService.addUserInProject(idUser, project);
   }
 
+  async addTask(codeId: string, codeIdTask: string) {
+    const checkProject = this.checkProject(codeId);
+    if ((await checkProject) == false) {
+      throw new NotFoundException();
+    }
+    const project = await this.projectRepo.getByCodeId(codeId);
+    return this.taskService.addTaskInProject(codeIdTask, project);
+  }
+
   async editProject(id: number, dto: EditProjectDTO) {
     const checkProject = this.checkProjectID(id);
     if ((await checkProject) == false) {
@@ -116,13 +127,26 @@ export class ProjectService {
   }
 
   async removeUserInProject(idUser: number, codeId: string) {
-    const checkGroup = this.checkProject(codeId);
-    if ((await checkGroup) == false) {
+    const checkProject = this.checkProject(codeId);
+    if ((await checkProject) == false) {
       throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
     const filteredUser = project.users.filter((res) => res.id != idUser);
     project.users = filteredUser;
+    return await this.projectRepo.save(project);
+  }
+
+  async removeTaskInProject(codeId: string, codeIdTask: string) {
+    const checkProject = this.checkProject(codeId);
+    if ((await checkProject) == false) {
+      throw new NotFoundException('SAI CODEID');
+    }
+    const project = await this.projectRepo.getByCodeId(codeId);
+    const filteredUser = project.tasks.filter(
+      (res) => res.codeId != codeIdTask,
+    );
+    project.tasks = filteredUser;
     return await this.projectRepo.save(project);
   }
 }

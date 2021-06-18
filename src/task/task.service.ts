@@ -7,6 +7,7 @@ import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
 import { UsersEntity } from 'src/user/users.entity';
+import { ProjectEntity } from 'src/project/project.entity';
 
 @Injectable()
 export class TaskService {
@@ -42,7 +43,7 @@ export class TaskService {
   }
 
   async checkTask(codeId: string): Promise<boolean> {
-    const task = await this.taskRepo.getByCodeId(codeId);
+    const task = await this.getOneByCodeIdOrFail(codeId);
     if (!task) {
       return false;
     }
@@ -50,7 +51,7 @@ export class TaskService {
   }
 
   async checkTaskID(id: number): Promise<boolean> {
-    const task = await this.taskRepo.getById(id);
+    const task = await this.getOneByIdOrFail(id);
     if (!task) {
       return false;
     }
@@ -74,6 +75,16 @@ export class TaskService {
     }
     const task = this.getOneByCodeId(codeId);
     (await task).user = user;
+    return this.taskRepo.save(await task);
+  }
+
+  async addTaskInProject(codeId: string, project: ProjectEntity) {
+    const checkTask = this.checkTask(codeId);
+    if ((await checkTask) == false) {
+      throw new NotFoundException();
+    }
+    const task = this.getOneByCodeId(codeId);
+    (await task).project = project;
     return this.taskRepo.save(await task);
   }
 
