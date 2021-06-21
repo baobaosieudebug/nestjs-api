@@ -3,13 +3,13 @@ import {
   Get,
   Param,
   Put,
-  UseFilters,
+  // UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+// import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { OrganizationService } from './organization.service';
@@ -57,7 +57,7 @@ export class OrganizationController {
     return await this.organizationService.editOrganization(id, dto);
   }
 
-  @UseFilters(NotFoundExceptionFilter)
+  // @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeOrganization(@Param('id') id: number) {
     return await this.organizationService.removeOrganization(id);

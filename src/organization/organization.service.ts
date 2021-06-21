@@ -97,11 +97,21 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
-
+  async checkDeleted(id: number) {
+    const org = this.organizationRepo.getByIdWithDelete(id);
+    if (!org) {
+      return null;
+    }
+    return org;
+  }
   async removeOrganization(id: number) {
     const checkOrg = await this.checkOrgByID(id);
     if (!checkOrg) {
-      throw new NotFoundException();
+      throw new NotFoundException('Project Not Found');
+    }
+    const existDelete = await this.checkDeleted(id);
+    if (existDelete) {
+      throw new NotFoundException('Org Deleted');
     }
     try {
       return this.organizationRepo.update(id, { isDeleted: id });
