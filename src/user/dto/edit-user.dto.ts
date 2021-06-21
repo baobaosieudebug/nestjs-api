@@ -6,10 +6,6 @@ export class EditUserDTO {
   @Length(10, 20)
   name: string;
 
-  @ApiProperty({ type: String, example: 'Johnzoe@gmail.com' })
-  @IsEmail()
-  email: string;
-
   @ApiProperty({ type: String, example: '4pumn!fcv6' })
   @Length(10, 20)
   password: string;

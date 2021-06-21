@@ -42,10 +42,10 @@ export class ProjectController {
     return await this.projectService.createProject(dto);
   }
 
-  @Post(':codeId/addUser/:id')
-  async addUser(@Param('id') id: number, @Param('codeId') codeId: string) {
-    return await this.projectService.addUser(codeId, id);
-  }
+  // @Post(':codeId/addUser/:id')
+  // async addUser(@Param('id') id: number, @Param('codeId') codeId: string) {
+  //   return await this.projectService.addUser(codeId, id);
+  // }
 
   @Post(':codeId/addTask/:codeIdTask')
   async addTask(

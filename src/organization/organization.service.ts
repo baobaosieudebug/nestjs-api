@@ -102,7 +102,7 @@ export class OrganizationService {
   }
 
   async removeProject(codeId: string, codeIdProject: string) {
-    const checkOrg = this.checkOrg(codeId);
+    const checkOrg = this.checkOrg(codeId);//
     if ((await checkOrg) == false) {
       throw new NotFoundException();
     }

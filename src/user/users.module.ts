@@ -2,7 +2,7 @@ import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from './user.repository';
 import { GroupsModule } from '../group/group.module';
 import { TaskModule } from 'src/task/task.module';
 

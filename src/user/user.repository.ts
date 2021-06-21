@@ -10,6 +10,13 @@ export class UserRepository extends Repository<UsersEntity> {
     );
   }
 
+  getOneByEmail(email) {
+    return this.findOne(
+      { email },
+      { relations: ['groups', 'tasks', 'projects', 'tasksAssign'] },
+    );
+  }
+
   getAll() {
     return this.find({ relations: ['groups', 'tasks'] });
   }

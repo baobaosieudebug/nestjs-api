@@ -24,7 +24,7 @@ export class UsersEntity {
   password: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
-  isDelete: number;
+  isDeleted: number;
 
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
     cascade: ['insert'],

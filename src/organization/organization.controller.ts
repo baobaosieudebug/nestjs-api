@@ -10,8 +10,8 @@ import {
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
-import { AddOrganizationDTO } from '../organization/dto/add-organization.dto';
-import { EditOrganizationDTO } from '../organization/dto/edit-organization.dto';
+import { AddOrganizationDTO } from './dto/add-organization.dto';
+import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { OrganizationService } from './organization.service';
 
 @ApiTags('Organization')

@@ -6,13 +6,13 @@ import {
   Delete,
   Body,
   Param,
-  UseFilters,
+  // UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
-import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+// import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { ApiTags } from '@nestjs/swagger';
 import { EditUserDTO } from './dto/edit-user.dto';
 
@@ -30,7 +30,7 @@ export class UsersController {
   async getAll() {
     return await this.usersService.getAll();
   }
-
+  //
   @Post()
   @UsePipes(ValidationPipe)
   async createUsers(@Body() dto: AddUserDTO) {
@@ -54,7 +54,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseFilters(NotFoundExceptionFilter)
+  // @UseFilters(NotFoundExceptionFilter)
   async removeUser(@Param('id') id: number) {
     return await this.usersService.remove(id);
   }

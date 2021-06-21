@@ -3,9 +3,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ProjectRepository } from '../project/project.repository';
-import { AddProjectDTO } from '../project/dto/add-project.dto';
-import { EditProjectDTO } from '../project/dto/edit-project.dto';
+import { ProjectRepository } from './project.repository';
+import { AddProjectDTO } from './dto/add-project.dto';
+import { EditProjectDTO } from './dto/edit-project.dto';
 import { OrganizationEntity } from 'src/organization/organization.entity';
 import { UsersService } from 'src/user/users.service';
 import { TaskService } from 'src/task/task.service';
@@ -26,8 +26,7 @@ export class ProjectService {
     if ((await this.getOneById(id)) == null) {
       throw new NotFoundException();
     } else {
-      const response = await this.getOneById(id);
-      return response;
+      return await this.getOneById(id);
     }
   }
 
@@ -47,20 +46,20 @@ export class ProjectService {
     return await this.projectRepo.getAllProject();
   }
 
-  async checkProject(codeId: string): Promise<boolean> {
+  async checkProject(codeId: string) {
     const project = await this.getOneByCodeIdOrFail(codeId);
     if (!project) {
-      return false;
+      return null;
     }
-    return true;
+    return project;
   }
 
-  async checkProjectID(id: number): Promise<boolean> {
+  async checkProjectID(id: number) {
     const project = await this.projectRepo.getById(id);
     if (!project) {
-      return false;
+      return null;
     }
-    return true;
+    return project;
   }
 
   async createProject(dto: AddProjectDTO) {
@@ -74,7 +73,7 @@ export class ProjectService {
 
   async addProject(organization: OrganizationEntity, codeId: string) {
     const checkProject = this.checkProject(codeId);
-    if ((await checkProject) == false) {
+    if (!checkProject) {
       throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
@@ -84,7 +83,7 @@ export class ProjectService {
 
   async addUser(codeId: string, idUser: number) {
     const checkProject = this.checkProject(codeId);
-    if ((await checkProject) == false) {
+    if (!checkProject) {
       throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
@@ -93,7 +92,7 @@ export class ProjectService {
 
   async addTask(codeId: string, codeIdTask: string) {
     const checkProject = this.checkProject(codeId);
-    if ((await checkProject) == false) {
+    if (!checkProject) {
       throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
@@ -102,7 +101,7 @@ export class ProjectService {
 
   async editProject(id: number, dto: EditProjectDTO) {
     const checkProject = this.checkProjectID(id);
-    if ((await checkProject) == false) {
+    if (!checkProject) {
       throw new NotFoundException();
     }
     try {
@@ -114,7 +113,7 @@ export class ProjectService {
 
   async removeProject(id: number) {
     const checkProject = this.checkProjectID(id);
-    if ((await checkProject) == false) {
+    if (!checkProject) {
       throw new NotFoundException();
     }
     try {
@@ -127,26 +126,22 @@ export class ProjectService {
   }
 
   async removeUserInProject(idUser: number, codeId: string) {
-    const checkProject = this.checkProject(codeId);
-    if ((await checkProject) == false) {
+    const checkProject = await this.checkProject(codeId);
+    if (!checkProject) {
       throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
-    const filteredUser = project.users.filter((res) => res.id != idUser);
-    project.users = filteredUser;
+    project.users = project.users.filter((res) => res.id != idUser);
     return await this.projectRepo.save(project);
   }
 
   async removeTaskInProject(codeId: string, codeIdTask: string) {
     const checkProject = this.checkProject(codeId);
-    if ((await checkProject) == false) {
-      throw new NotFoundException('SAI CODEID');
+    if (!checkProject) {
+      throw new NotFoundException();
     }
     const project = await this.projectRepo.getByCodeId(codeId);
-    const filteredUser = project.tasks.filter(
-      (res) => res.codeId != codeIdTask,
-    );
-    project.tasks = filteredUser;
+    project.tasks = project.tasks.filter((res) => res.codeId != codeIdTask);
     return await this.projectRepo.save(project);
   }
 }

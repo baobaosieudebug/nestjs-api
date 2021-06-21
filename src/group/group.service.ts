@@ -47,14 +47,14 @@ export class GroupsService {
     return true;
   }
 
-  async addUser(idUser: number, idGroup: number) {
-    const checkGroup = this.checkGroup(idGroup);
-    if ((await checkGroup) == false) {
-      throw new NotFoundException();
-    }
-    const group = await this.groupRepo.getOneById(idGroup);
-    return this.userService.addUser(idUser, group);
-  }
+  // async addUser(idUser: number, idGroup: number) {
+  //   const checkGroup = this.checkGroup(idGroup);
+  //   if ((await checkGroup) == false) {
+  //     throw new NotFoundException();
+  //   }
+  //   const group = await this.groupRepo.getOneById(idGroup);
+  //   return this.userService.addUser(idUser, group);
+  // }
 
   async update(idGroup, group: EditGroupDTO) {
     const checkGroup = this.checkGroup(idGroup);

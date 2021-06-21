@@ -21,8 +21,7 @@ export class TaskService {
     if ((await this.getOneById(id)) == null) {
       throw new NotFoundException();
     } else {
-      const response = await this.getOneById(id);
-      return response;
+      return await this.getOneById(id);
     }
   }
 
