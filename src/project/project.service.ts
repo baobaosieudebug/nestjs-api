@@ -6,7 +6,6 @@ import {
 import { ProjectRepository } from './project.repository';
 import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
-import { OrganizationEntity } from 'src/organization/organization.entity';
 import { UsersService } from 'src/user/users.service';
 import { TaskService } from 'src/task/task.service';
 
@@ -125,14 +124,14 @@ export class ProjectService {
     }
   }
 
-  async removeProject(id: number) {
+  async remove(id: number) {
     const checkProject = this.checkProjectID(id);
     if (!checkProject) {
       throw new NotFoundException();
     }
     try {
       const project = this.getOneById(id);
-      (await project).isDelete = (await project).id;
+      (await project).isDeleted = (await project).id;
       return this.projectRepo.save(await project);
     } catch (e) {
       throw new InternalServerErrorException();
@@ -157,5 +156,27 @@ export class ProjectService {
     const project = await this.projectRepo.getByCodeId(codeId);
     project.tasks = project.tasks.filter((res) => res.codeId != codeIdTask);
     return await this.projectRepo.save(project);
+  }
+
+  async removeProject(orgID: number, code: string) {
+    const checkProject = await this.checkProject(code);
+    if (!checkProject) {
+      throw new NotFoundException();
+    }
+    const existProject = await this.projectRepo.isProjectExistInOrg(
+      orgID,
+      code,
+    );
+    // return existProject;
+    if (!existProject) {
+      throw new NotFoundException('Project not exist in Organization');
+    }
+    try {
+      return await this.projectRepo.update(checkProject.id, {
+        organizationID: null,
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }

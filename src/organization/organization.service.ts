@@ -67,7 +67,7 @@ export class OrganizationService {
     }
   }
   async checkOrgByCode(codeId: string) {
-    const organization = await this.getOneByCodeIdOrFail(codeId);
+    const organization = await this.organizationRepo.getByCodeId(codeId);
     if (!organization) {
       return null;
     }
@@ -75,7 +75,7 @@ export class OrganizationService {
   }
 
   async checkOrgByID(id: number) {
-    const organization = await this.getOneByIdOrFail(id);
+    const organization = await this.organizationRepo.getById(id);
     if (!organization) {
       return null;
     }
@@ -125,13 +125,6 @@ export class OrganizationService {
     if (!checkOrg) {
       throw new NotFoundException();
     }
-    try {
-      checkOrg.projects = checkOrg.projects.filter(
-        (res) => res.code != codeIdProject,
-      );
-      return await this.organizationRepo.save(checkOrg);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return await this.projectService.removeProject(checkOrg.id, codeIdProject);
   }
 }

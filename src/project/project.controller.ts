@@ -64,7 +64,7 @@ export class ProjectController {
   @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeProject(@Param('id') id: number) {
-    return await this.projectService.removeProject(id);
+    return await this.projectService.remove(id);
   }
 
   @Delete(':codeId/removeUser/:id')

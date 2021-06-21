@@ -28,7 +28,7 @@ export class ProjectEntity {
   code: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
-  isDelete: number;
+  isDeleted: number;
 
   @Column({ name: 'organization_id', nullable: true })
   organizationID: number;
