@@ -71,14 +71,25 @@ export class ProjectService {
     }
   }
 
-  async addProject(organization: OrganizationEntity, codeId: string) {
-    const checkProject = this.checkProject(codeId);
+  async addProject(orgID: number, code: string) {
+    const checkProject = await this.checkProject(code);
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const project = await this.projectRepo.getByCodeId(codeId);
-    project.organization = organization;
-    return await this.projectRepo.save(project);
+    const existProject = await this.projectRepo.isProjectExistInOrg(
+      orgID,
+      code,
+    );
+    if (existProject) {
+      throw new NotFoundException('Project exist in Organization');
+    }
+    try {
+      return await this.projectRepo.update(checkProject.id, {
+        organizationID: orgID,
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async addUser(codeId: string, idUser: number) {
@@ -91,12 +102,15 @@ export class ProjectService {
   }
 
   async addTask(codeId: string, codeIdTask: string) {
-    const checkProject = this.checkProject(codeId);
+    const checkProject = await this.checkProject(codeId);
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const project = await this.projectRepo.getByCodeId(codeId);
-    return this.taskService.addTaskInProject(codeIdTask, project);
+    try {
+      return this.taskService.addTaskInProject(codeIdTask, checkProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async editProject(id: number, dto: EditProjectDTO) {

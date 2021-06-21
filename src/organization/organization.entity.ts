@@ -14,10 +14,10 @@ export class OrganizationEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  codeId: string;
+  code: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
-  isDelete: number;
+  isDeleted: number;
 
   @OneToMany(
     () => ProjectEntity,

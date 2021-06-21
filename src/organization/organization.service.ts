@@ -3,10 +3,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { OrganizationRepository } from '../organization/organization.repository';
-import { AddOrganizationDTO } from '../organization/dto/add-organization.dto';
-import { EditOrganizationDTO } from '../organization/dto/edit-organization.dto';
-import { ProjectService } from 'src/project/project.service';
+import { OrganizationRepository } from './organization.repository';
+import { AddOrganizationDTO } from './dto/add-organization.dto';
+import { EditOrganizationDTO } from './dto/edit-organization.dto';
+import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class OrganizationService {
@@ -35,50 +35,61 @@ export class OrganizationService {
   }
 
   async getOneByCodeIdOrFail(codeId: string) {
-    const responseEntity = await this.getOneByCodeId(codeId);
-    if (!responseEntity) {
+    const response = await this.getOneByCodeId(codeId);
+    if (!response) {
       throw new NotFoundException();
     }
-    return responseEntity;
+    return response;
   }
 
   async createOrganization(dto: AddOrganizationDTO) {
+    const checkOrg = await this.checkOrgByCode(dto.code);
+    if (checkOrg) {
+      throw new NotFoundException('Code must be unique');
+    }
     try {
-      const organization = this.organizationRepo.create(dto);
-      return await this.organizationRepo.save(organization);
+      const newOrg = this.organizationRepo.create(dto);
+      return await this.organizationRepo.save(newOrg);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async addProject(codeIdOrg: string, codeIdProject: string) {
-    const checkOrg = this.checkOrg(codeIdOrg);
-    if ((await checkOrg) == false) {
+  async addProject(codeOrg: string, codeProject: string) {
+    const checkOrg = await this.checkOrgByCode(codeOrg);
+    if (!checkOrg) {
       throw new NotFoundException();
     }
-    const org = this.organizationRepo.getByCodeId(codeIdOrg);
-    return await this.projectService.addProject(await org, codeIdProject);
+    try {
+      return await this.projectService.addProject(checkOrg.id, codeProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
-  async checkOrg(codeId: string): Promise<boolean> {
+  async checkOrgByCode(codeId: string) {
     const organization = await this.getOneByCodeIdOrFail(codeId);
     if (!organization) {
-      return false;
+      return null;
     }
-    return true;
+    return organization;
   }
 
-  async checkOrgID(id: number): Promise<boolean> {
+  async checkOrgByID(id: number) {
     const organization = await this.getOneByIdOrFail(id);
     if (!organization) {
-      return false;
+      return null;
     }
-    return true;
+    return organization;
   }
 
   async editOrganization(id: number, dto: EditOrganizationDTO) {
-    const checkOrg = this.checkOrgID(id);
-    if ((await checkOrg) == false) {
-      throw new NotFoundException();
+    const checkOrg = this.checkOrgByID(id);
+    if (!checkOrg) {
+      throw new NotFoundException('Organization Not Found');
+    }
+    const existCode = this.organizationRepo.getByCodeId(dto.codeId);
+    if (existCode) {
+      throw new NotFoundException('Code must be unique');
     }
     try {
       return await this.organizationRepo.update(id, dto);
@@ -88,29 +99,29 @@ export class OrganizationService {
   }
 
   async removeOrganization(id: number) {
-    const checkOrg = this.checkOrgID(id);
-    if ((await checkOrg) == false) {
+    const checkOrg = await this.checkOrgByID(id);
+    if (!checkOrg) {
       throw new NotFoundException();
     }
     try {
-      const organization = this.getOneById(id);
-      (await organization).isDelete = (await organization).id;
-      return this.organizationRepo.save(await organization);
+      return this.organizationRepo.update(id, { isDeleted: id });
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
   async removeProject(codeId: string, codeIdProject: string) {
-    const checkOrg = this.checkOrg(codeId);//
-    if ((await checkOrg) == false) {
+    const checkOrg = await this.checkOrgByCode(codeId);
+    if (!checkOrg) {
       throw new NotFoundException();
     }
-    const org = this.organizationRepo.getByCodeId(codeId);
-    const filtered = (await org).projects.filter(
-      (res) => res.codeId != codeIdProject,
-    );
-    (await org).projects = filtered;
-    return await this.organizationRepo.save(await org);
+    try {
+      checkOrg.projects = checkOrg.projects.filter(
+        (res) => res.code != codeIdProject,
+      );
+      return await this.organizationRepo.save(checkOrg);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -24,15 +25,19 @@ export class ProjectEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  codeId: string;
+  code: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDelete: number;
+
+  @Column({ name: 'organization_id', nullable: true })
+  organizationID: number;
 
   @ManyToOne(
     () => OrganizationEntity,
     (organization: OrganizationEntity) => organization.projects,
   )
+  @JoinColumn({ name: 'organization_id' })
   organization: OrganizationEntity;
 
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.projects, {
