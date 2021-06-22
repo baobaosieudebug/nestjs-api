@@ -1,5 +1,6 @@
 import { ProjectEntity } from './project.entity';
 import { EntityRepository, Repository } from 'typeorm';
+import { UsersEntity } from '../user/users.entity';
 
 @EntityRepository(ProjectEntity)
 export class ProjectRepository extends Repository<ProjectEntity> {
@@ -32,4 +33,17 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     return entity > 0;
   }
 
+  async isUserExistInProject(idUser: number) {
+    return await this.createQueryBuilder('project')
+      .leftJoinAndSelect('project.users', 'user')
+      .where('user.id = :idUser', { idUser })
+      .getCount();
+  }
+
+  async removeUserInProject(idUser: number, id: number) {
+    return this.createQueryBuilder('project')
+      .relation(UsersEntity, 'projects')
+      .of(idUser)
+      .remove(id);
+  }
 }

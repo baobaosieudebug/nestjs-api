@@ -97,7 +97,8 @@ export class UsersService {
     try {
       const project = await this.projectRepo.getById(idProject);
       await checkUser.projects.push(project);
-      return await this.userRepo.save(checkUser);
+      await this.userRepo.save(checkUser);
+      return checkUser;
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -161,27 +162,6 @@ export class UsersService {
     try {
       checkUser.tasks = checkUser.tasks.filter((res) => res.code != codeId);
       return await this.userRepo.save(checkUser);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async removeUserInProject(idUser: number, idProject: number) {
-    const checkUser = await this.checkUser(idUser);
-    if (!checkUser) {
-      throw new NotFoundException();
-    }
-    const existUser = await this.userRepo.isUserExistInProject(
-      idUser,
-      idProject,
-    );
-    if (!existUser) {
-      throw new BadRequestException('User not exist Project');
-    }
-    try {
-      return await this.userRepo.update(idUser, {
-        projectID: null,
-      });
     } catch (e) {
       throw new InternalServerErrorException();
     }

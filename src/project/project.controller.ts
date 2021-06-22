@@ -80,6 +80,6 @@ export class ProjectController {
     @Param('codeTask') codeTask: string,
     @Param('code') code: string,
   ) {
-    return await this.projectService.removeTaskInProject(codeTask, code);
+    return await this.projectService.removeTaskInProject(code, codeTask);
   }
 }

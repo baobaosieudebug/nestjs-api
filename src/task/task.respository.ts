@@ -16,9 +16,8 @@ export class TaskRepository extends Repository<TaskEntity> {
   }
 
   async isTaskExistInProject(projectID: number, code: string) {
-    const entity = await this.count({
+    return await this.count({
       where: { code, projectID: projectID },
     });
-    return entity > 0;
   }
 }

@@ -2,8 +2,8 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
-} from "@nestjs/common";
+  NotFoundException,
+} from '@nestjs/common';
 import { OrganizationRepository } from './organization.repository';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';

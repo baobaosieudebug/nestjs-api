@@ -161,21 +161,27 @@ export class ProjectService {
     if (!checkProject) {
       throw new NotFoundException();
     }
+    const existUser = await this.projectRepo.isUserExistInProject(idUser);
+    if (!existUser) {
+      throw new BadRequestException('User not exist in Project');
+    }
     try {
-      return this.userService.removeUserInProject(idUser, checkProject.id);
+      return this.projectRepo.removeUserInProject(idUser, checkProject.id);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
   async removeTaskInProject(code: string, codeTask: string) {
-    const checkProject = this.checkProjectByCode(code);
+    const checkProject = await this.checkProjectByCode(code);
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const project = await this.projectRepo.getByCode(code);
-    project.tasks = project.tasks.filter((res) => res.code != codeTask);
-    return await this.projectRepo.save(project);
+    try {
+      return this.taskService.removeTask(checkProject.id, codeTask);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async removeProject(orgID: number, code: string) {
