@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
@@ -26,6 +27,9 @@ export class UsersEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDeleted: number;
 
+  @Column({ name: 'project_id', nullable: true })
+  projectID: number;
+
   @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
     cascade: ['insert'],
   })
@@ -40,5 +44,6 @@ export class UsersEntity {
   @ManyToMany(() => ProjectEntity, (project: ProjectEntity) => project.users, {
     cascade: ['insert'],
   })
+  @JoinColumn({ name: 'project_id' })
   projects: ProjectEntity[];
 }

@@ -1,4 +1,4 @@
-import { UsersEntity } from '../user/users.entity';
+import { UsersEntity } from './users.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(UsersEntity)
@@ -19,5 +19,12 @@ export class UserRepository extends Repository<UsersEntity> {
 
   getAll() {
     return this.find({ relations: ['groups', 'tasks'] });
+  }
+
+  async isUserExistInProject(projectID: number, id: number) {
+    const entity = await this.count({
+      where: { id, projectID: projectID },
+    });
+    return entity > 0;
   }
 }

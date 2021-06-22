@@ -21,7 +21,7 @@ export class TaskEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  codeId: string;
+  code: string;
 
   @Column({ type: 'varchar', nullable: false })
   description: string;
@@ -42,7 +42,10 @@ export class TaskEntity {
   assignUserId: number;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
-  isDelete: number;
+  isDeleted: number;
+
+  @Column({ name: 'project_id', nullable: true })
+  projectID: number;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasksAssign)
   @JoinColumn({ name: 'assign_user_id' })

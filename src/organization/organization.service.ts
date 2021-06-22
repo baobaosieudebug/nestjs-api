@@ -30,12 +30,12 @@ export class OrganizationService {
     return response;
   }
 
-  getOneByCodeId(codeId: string) {
-    return this.organizationRepo.getByCodeId(codeId);
+  getOneByCode(code: string) {
+    return this.organizationRepo.getByCode(code);
   }
 
-  async getOneByCodeIdOrFail(codeId: string) {
-    const response = await this.getOneByCodeId(codeId);
+  async getOneByCodeOrFail(code: string) {
+    const response = await this.getOneByCode(code);
     if (!response) {
       throw new NotFoundException();
     }
@@ -66,8 +66,8 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
-  async checkOrgByCode(codeId: string) {
-    const organization = await this.organizationRepo.getByCodeId(codeId);
+  async checkOrgByCode(code: string) {
+    const organization = await this.organizationRepo.getByCode(code);
     if (!organization) {
       return null;
     }
@@ -87,7 +87,7 @@ export class OrganizationService {
     if (!checkOrg) {
       throw new NotFoundException('Organization Not Found');
     }
-    const existCode = this.organizationRepo.getByCodeId(dto.codeId);
+    const existCode = this.organizationRepo.getByCode(dto.code);
     if (existCode) {
       throw new NotFoundException('Code must be unique');
     }
@@ -97,6 +97,7 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
+
   async checkDeleted(id: number) {
     const org = this.organizationRepo.getByIdWithDelete(id);
     if (!org) {
@@ -104,6 +105,7 @@ export class OrganizationService {
     }
     return org;
   }
+
   async removeOrganization(id: number) {
     const checkOrg = await this.checkOrgByID(id);
     if (!checkOrg) {
@@ -120,11 +122,15 @@ export class OrganizationService {
     }
   }
 
-  async removeProject(codeId: string, codeIdProject: string) {
-    const checkOrg = await this.checkOrgByCode(codeId);
+  async removeProject(code: string, codeProject: string) {
+    const checkOrg = await this.checkOrgByCode(code);
     if (!checkOrg) {
       throw new NotFoundException();
     }
-    return await this.projectService.removeProject(checkOrg.id, codeIdProject);
+    try {
+      return await this.projectService.removeProject(checkOrg.id, codeProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }

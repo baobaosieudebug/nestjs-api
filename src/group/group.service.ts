@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
 import { EditGroupDTO } from './dto/edit-group.dto';
-import { GroupRepository } from '../group/group.repository';
+import { GroupRepository } from './group.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { UsersService } from 'src/user/users.service';
 
@@ -23,8 +23,8 @@ export class GroupsService {
   }
 
   async getOneOrFail(id: number): Promise<GroupsEntity> {
-    const checkGroup = this.checkGroup(id);
-    if ((await checkGroup) == false) {
+    const checkGroup = await this.checkGroup(id);
+    if (!checkGroup) {
       throw new NotFoundException();
     } else {
       return await this.getOneById(id);
@@ -39,12 +39,12 @@ export class GroupsService {
     return await this.groupRepo.save(group);
   }
 
-  async checkGroup(id: number): Promise<boolean> {
+  async checkGroup(id: number) {
     const group = await this.getOneOrFail(id);
     if (!group) {
-      return false;
+      return null;
     }
-    return true;
+    return group;
   }
 
   // async addUser(idUser: number, idGroup: number) {
@@ -57,8 +57,8 @@ export class GroupsService {
   // }
 
   async update(idGroup, group: EditGroupDTO) {
-    const checkGroup = this.checkGroup(idGroup);
-    if ((await checkGroup) == false) {
+    const checkGroup = await this.checkGroup(idGroup);
+    if (!checkGroup) {
       throw new NotFoundException();
     } else {
       return await this.groupRepo.update(idGroup, group);
@@ -66,19 +66,19 @@ export class GroupsService {
   }
 
   async remove(idGroup: number) {
-    const checkGroup = this.checkGroup(idGroup);
-    if ((await checkGroup) == false) {
+    const checkGroup = await this.checkGroup(idGroup);
+    if (!checkGroup) {
       throw new NotFoundException();
     } else {
       const group = this.getOneById(idGroup);
-      (await group).isDelete = (await group).id;
+      (await group).isDeleted = (await group).id;
       return this.groupRepo.save(await group);
     }
   }
 
   async removeUserInGroup(idUser: number, idGroup: number) {
-    const checkGroup = this.checkGroup(idGroup);
-    if ((await checkGroup) == false) {
+    const checkGroup = await this.checkGroup(idGroup);
+    if (!checkGroup) {
       throw new NotFoundException();
     }
     const group = await this.groupRepo.getOneById(idGroup);

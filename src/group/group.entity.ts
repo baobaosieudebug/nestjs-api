@@ -16,7 +16,7 @@ export class GroupsEntity {
   nameGroup: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
-  isDelete: number;
+  isDeleted: number;
 
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.groups, {
     cascade: ['insert'],

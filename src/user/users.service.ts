@@ -12,7 +12,6 @@ import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from './user.repository';
 import { GroupsEntity } from 'src/group/group.entity';
 import { TaskService } from 'src/task/task.service';
-import { ProjectEntity } from 'src/project/project.entity';
 
 @Injectable()
 export class UsersService {
@@ -80,14 +79,20 @@ export class UsersService {
     }
   }
 
-  async addUserInProject(idUser: number, project: ProjectEntity) {
+  async addUserInProject(idUser: number, idProject: number) {
     const checkUser = await this.checkUser(idUser);
     if (!checkUser) {
       throw new NotFoundException();
     }
+    const existUser = await this.userRepo.isUserExistInProject(
+      idProject,
+      idUser,
+    );
+    if (existUser) {
+      throw new NotFoundException('User exist in Project');
+    }
     try {
-      checkUser.projects.push(project);
-      return await this.userRepo.save(checkUser);
+      return await this.userRepo.update(idUser, { projectID: idProject });
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -149,7 +154,7 @@ export class UsersService {
       throw new NotFoundException();
     }
     try {
-      checkUser.tasks = checkUser.tasks.filter((res) => res.codeId != codeId);
+      checkUser.tasks = checkUser.tasks.filter((res) => res.code != codeId);
       return await this.userRepo.save(checkUser);
     } catch (e) {
       throw new InternalServerErrorException();

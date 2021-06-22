@@ -1,4 +1,4 @@
-import { GroupsEntity } from '../group/group.entity';
+import { GroupsEntity } from './group.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(GroupsEntity)

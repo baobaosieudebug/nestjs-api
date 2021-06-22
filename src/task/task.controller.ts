@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
-import { AddTaskDTO } from '../task/dto/add-task.dto';
-import { EditTaskDTO } from '../task/dto/edit-task.dto';
+import { AddTaskDTO } from './dto/add-task.dto';
+import { EditTaskDTO } from './dto/edit-task.dto';
 import { TaskService } from './task.service';
 
 @ApiTags('Task')
@@ -31,9 +31,9 @@ export class TaskController {
     return await this.taskService.getOneByIdOrFail(id);
   }
 
-  @Get('codeId/:codeId')
-  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
-    return await this.taskService.getOneByCodeIdOrFail(codeId);
+  @Get('code/:code')
+  async getOneTaskByCode(@Param('code') code: string) {
+    return await this.taskService.getOneByCodeOrFail(code);
   }
 
   @Post()

@@ -4,12 +4,12 @@ import { Length } from 'class-validator';
 export class EditProjectDTO {
   @ApiProperty({
     type: String,
-    example: 'Phat trien he thong chat bot tren Iphone',
+    example: 'Development Operating System for IOS 15',
   })
   @Length(10, 255)
   name: string;
 
   @ApiProperty({ type: String, example: 'IOS-001' })
   @Length(5, 20)
-  codeId: string;
+  code: string;
 }

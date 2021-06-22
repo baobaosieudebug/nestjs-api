@@ -7,7 +7,6 @@ import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
 import { UsersEntity } from '../user/users.entity';
-import { ProjectEntity } from '../project/project.entity';
 
 @Injectable()
 export class TaskService {
@@ -25,12 +24,12 @@ export class TaskService {
     }
   }
 
-  async getOneByCodeId(codeId: string) {
-    return await this.taskRepo.getByCodeId(codeId);
+  async getOneByCode(code: string) {
+    return await this.taskRepo.getByCode(code);
   }
 
-  async getOneByCodeIdOrFail(codeId: string) {
-    const response = await this.getOneByCodeId(codeId);
+  async getOneByCodeOrFail(code: string) {
+    const response = await this.getOneByCode(code);
     if (!response) {
       throw new NotFoundException();
     }
@@ -41,8 +40,8 @@ export class TaskService {
     return await this.taskRepo.getAll();
   }
 
-  async checkTask(codeId: string) {
-    const task = await this.getOneByCodeIdOrFail(codeId);
+  async checkTask(code: string) {
+    const task = await this.getOneByCodeOrFail(code);
     if (!task) {
       return null;
     }
@@ -67,8 +66,8 @@ export class TaskService {
     }
   }
 
-  async addTask(codeId: string, user: UsersEntity) {
-    const checkTask = await this.checkTask(codeId);
+  async addTask(code: string, user: UsersEntity) {
+    const checkTask = await this.checkTask(code);
     if (!checkTask) {
       throw new NotFoundException();
     }
@@ -80,21 +79,24 @@ export class TaskService {
     }
   }
 
-  async addTaskInProject(codeId: string, project: ProjectEntity) {
-    const checkTask = await this.checkTask(codeId);
+  async addTaskInProject(code: string, idProject: number) {
+    const checkTask = await this.checkTask(code);
     if (!checkTask) {
       throw new NotFoundException();
     }
+    const existTask = await this.taskRepo.isTaskExistInProject(idProject, code);
+    if (existTask) {
+      throw new NotFoundException('Task exist in Project');
+    }
     try {
-      checkTask.project = project;
-      return this.taskRepo.save(checkTask);
+      return await this.taskRepo.update(checkTask.id, { projectID: idProject });
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async assignTask(codeId: string, user: UsersEntity) {
-    const checkTask = await this.checkTask(codeId);
+  async assignTask(code: string, user: UsersEntity) {
+    const checkTask = await this.checkTask(code);
     if (!checkTask) {
       throw new NotFoundException();
     }
@@ -124,7 +126,7 @@ export class TaskService {
     }
     try {
       const task = this.getOneById(id);
-      (await task).isDelete = (await task).id;
+      (await task).isDeleted = (await task).id;
       return this.taskRepo.save(await task);
     } catch (e) {
       throw new InternalServerErrorException();

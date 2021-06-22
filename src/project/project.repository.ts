@@ -9,19 +9,20 @@ export class ProjectRepository extends Repository<ProjectEntity> {
       { relations: ['organization', 'users', 'tasks'] },
     );
   }
-  // getOneByCodeId(code) {
-  //   return this.findOne({ code });
-  // }
 
   getAllProject() {
     return this.find();
   }
 
-  getByCodeId(code) {
+  getByCode(code) {
     return this.findOne(
       { code },
       { relations: ['organization', 'users', 'tasks'] },
     );
+  }
+
+  getByIdWithDelete(id) {
+    return this.findOne({ id }, { withDeleted: true });
   }
 
   async isProjectExistInOrg(orgID: number, code: string) {

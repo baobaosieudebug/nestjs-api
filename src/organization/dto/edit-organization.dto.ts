@@ -11,5 +11,5 @@ export class EditOrganizationDTO {
 
   @ApiProperty({ type: String, example: 'AP-001' })
   @Length(5, 10)
-  codeId: string;
+  code: string;
 }

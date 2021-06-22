@@ -29,9 +29,9 @@ export class OrganizationController {
     return await this.organizationService.getOneByIdOrFail(id);
   }
 
-  @Get('codeId/:codeId')
-  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
-    return await this.organizationService.getOneByCodeIdOrFail(codeId);
+  @Get('code/:code')
+  async getOneTaskByCode(@Param('code') code: string) {
+    return await this.organizationService.getOneByCodeOrFail(code);
   }
 
   @Post()
@@ -40,12 +40,12 @@ export class OrganizationController {
     return await this.organizationService.createOrganization(dto);
   }
 
-  @Post(':codeId/addProject/:codeIdProject')
+  @Post(':code/addProject/:codeProject')
   async addProject(
-    @Param('codeId') codeIdOrg: string,
-    @Param('codeIdProject') codeIdProject: string,
+    @Param('code') codeOrg: string,
+    @Param('codeProject') codeProject: string,
   ) {
-    return await this.organizationService.addProject(codeIdOrg, codeIdProject);
+    return await this.organizationService.addProject(codeOrg, codeProject);
   }
 
   @Put(':id')
@@ -63,11 +63,11 @@ export class OrganizationController {
     return await this.organizationService.removeOrganization(id);
   }
 
-  @Delete(':codeId/removeProject/:codeIdProject')
+  @Delete(':code/removeProject/:codeProject')
   async removeProjectInOrg(
-    @Param('codeIdProject') codeIdProject: string,
-    @Param('codeId') codeId: string,
+    @Param('codeProject') codeProject: string,
+    @Param('code') code: string,
   ) {
-    return await this.organizationService.removeProject(codeId, codeIdProject);
+    return await this.organizationService.removeProject(code, codeProject);
   }
 }

@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
-import { AddProjectDTO } from '../project/dto/add-project.dto';
-import { EditProjectDTO } from '../project/dto/edit-project.dto';
+import { AddProjectDTO } from './dto/add-project.dto';
+import { EditProjectDTO } from './dto/edit-project.dto';
 import { ProjectService } from './project.service';
 
 @ApiTags('Project')
@@ -31,9 +31,9 @@ export class ProjectController {
     return await this.projectService.getOneByIdOrFail(id);
   }
 
-  @Get('codeId/:codeId')
-  async getOneTaskByCodeId(@Param('codeId') codeId: string) {
-    return await this.projectService.getOneByCodeIdOrFail(codeId);
+  @Get('code/:code')
+  async getOneTaskByCode(@Param('code') code: string) {
+    return await this.projectService.getOneByCodeOrFail(code);
   }
 
   @Post()
@@ -42,17 +42,17 @@ export class ProjectController {
     return await this.projectService.createProject(dto);
   }
 
-  // @Post(':codeId/addUser/:id')
-  // async addUser(@Param('id') id: number, @Param('codeId') codeId: string) {
-  //   return await this.projectService.addUser(codeId, id);
-  // }
+  @Post(':code/addUser/:id')
+  async addUser(@Param('id') id: number, @Param('code') code: string) {
+    return await this.projectService.addUser(code, id);
+  }
 
-  @Post(':codeId/addTask/:codeIdTask')
+  @Post(':code/addTask/:codeTask')
   async addTask(
-    @Param('codeIdTask') codeIdTask: string,
-    @Param('codeId') codeId: string,
+    @Param('codeTask') codeTask: string,
+    @Param('code') code: string,
   ) {
-    return await this.projectService.addTask(codeId, codeIdTask);
+    return await this.projectService.addTask(code, codeTask);
   }
 
   @Put(':id')
@@ -67,19 +67,19 @@ export class ProjectController {
     return await this.projectService.remove(id);
   }
 
-  @Delete(':codeId/removeUser/:id')
+  @Delete(':code/removeUser/:id')
   async removeUserInProject(
     @Param('id') idUser: number,
-    @Param('codeId') codeId: string,
+    @Param('code') code: string,
   ) {
-    return await this.projectService.removeUserInProject(idUser, codeId);
+    return await this.projectService.removeUserInProject(idUser, code);
   }
 
-  @Delete(':codeId/removeTask/:codeIdTask')
+  @Delete(':code/removeTask/:codeTask')
   async removeTaskInProject(
-    @Param('codeIdTask') codeIdTask: string,
-    @Param('codeId') codeId: string,
+    @Param('codeTask') codeTask: string,
+    @Param('code') code: string,
   ) {
-    return await this.projectService.removeTaskInProject(codeIdTask, codeId);
+    return await this.projectService.removeTaskInProject(codeTask, code);
   }
 }

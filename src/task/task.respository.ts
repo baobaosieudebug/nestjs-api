@@ -8,10 +8,17 @@ export class TaskRepository extends Repository<TaskEntity> {
   }
 
   getAll() {
-    return this.find({ isDelete: null });
+    return this.find({ isDeleted: null });
   }
 
-  getByCodeId(codeId) {
-    return this.findOne({ codeId }, { relations: ['user', 'project'] });
+  getByCode(code) {
+    return this.findOne({ code }, { relations: ['user', 'project'] });
+  }
+
+  async isTaskExistInProject(projectID: number, code: string) {
+    const entity = await this.count({
+      where: { code, projectID: projectID },
+    });
+    return entity > 0;
   }
 }
