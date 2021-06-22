@@ -62,11 +62,11 @@ export class UsersController {
     return await this.usersService.remove(id);
   }
 
-  @Delete(':id/removeTask/:codeId')
-  async removeTaskInUser(
+  @Delete(':id/removeUserCreateTask/:code')
+  async removeUserCreateTask(
     @Param('id') idUser: number,
-    @Param('codeId') codeId: string,
+    @Param('code') code: string,
   ) {
-    return await this.usersService.removeTask(idUser, codeId);
+    return await this.usersService.removeUserCreateTask(idUser, code);
   }
 }

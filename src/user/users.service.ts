@@ -154,14 +154,13 @@ export class UsersService {
     }
   }
 
-  async removeTask(idUser: number, codeId: string) {
+  async removeUserCreateTask(idUser: number, code: string) {
     const checkUser = await this.checkUser(idUser);
     if (!checkUser) {
       throw new NotFoundException();
     }
     try {
-      checkUser.tasks = checkUser.tasks.filter((res) => res.code != codeId);
-      return await this.userRepo.save(checkUser);
+      return this.taskService.removeUserCreateTask(idUser, code);
     } catch (e) {
       throw new InternalServerErrorException();
     }

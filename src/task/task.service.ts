@@ -148,4 +148,20 @@ export class TaskService {
       throw new InternalServerErrorException();
     }
   }
+
+  async removeUserCreateTask(idUser: number, code: string) {
+    const checkTask = await this.checkTaskByCode(code);
+    if (!checkTask) {
+      throw new NotFoundException();
+    }
+    const existTask = await this.taskRepo.isTaskExistInUser(idUser, code);
+    if (!existTask) {
+      throw new NotFoundException('Task not Exist User');
+    }
+    try {
+      return await this.taskRepo.update(checkTask.id, { createUserId: null });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

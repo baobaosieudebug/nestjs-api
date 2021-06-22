@@ -20,4 +20,10 @@ export class TaskRepository extends Repository<TaskEntity> {
       where: { code, projectID: projectID },
     });
   }
+
+  async isTaskExistInUser(userID: number, code: string) {
+    return await this.count({
+      where: { code, createUserId: userID },
+    });
+  }
 }
