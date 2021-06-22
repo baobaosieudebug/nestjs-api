@@ -37,9 +37,12 @@ export class UsersController {
     return await this.usersService.create(dto);
   }
 
-  @Post(':id/addTask/:codeId')
-  async addProject(@Param('id') id: number, @Param('codeId') codeId: string) {
-    return await this.usersService.addTask(id, codeId);
+  @Post(':id/addUserCreateTask/:code')
+  async addUserCreateTask(
+    @Param('id') id: number,
+    @Param('code') code: string,
+  ) {
+    return await this.usersService.addUserCreateTask(id, code);
   }
 
   @Post(':id/assignTask/:codeId')

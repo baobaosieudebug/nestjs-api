@@ -18,11 +18,11 @@ export class TaskService {
   }
 
   async getOneByIdOrFail(id: number) {
-    if ((await this.getOneById(id)) == null) {
+    const response = await this.getOneById(id);
+    if (!response) {
       throw new NotFoundException();
-    } else {
-      return await this.getOneById(id);
     }
+    return response;
   }
 
   async getOneByCode(code: string) {
@@ -67,14 +67,13 @@ export class TaskService {
     }
   }
 
-  async addTask(code: string, user: UsersEntity) {
+  async addUserCreateTask(code: string, idUser: number) {
     const checkTask = await this.checkTaskByCode(code);
     if (!checkTask) {
       throw new NotFoundException();
     }
     try {
-      checkTask.user = user;
-      return this.taskRepo.save(checkTask);
+      return await this.taskRepo.update(checkTask.id, { createUserId: idUser });
     } catch (e) {
       throw new InternalServerErrorException();
     }

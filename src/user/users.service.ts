@@ -104,13 +104,13 @@ export class UsersService {
     }
   }
 
-  async addTask(id: number, codeIdTask: string) {
-    const checkUser = await this.checkUser(id);
+  async addUserCreateTask(idUser: number, codeTask: string) {
+    const checkUser = await this.checkUser(idUser);
     if (!checkUser) {
       throw new NotFoundException();
     }
     try {
-      return this.taskService.addTask(codeIdTask, checkUser);
+      return this.taskService.addUserCreateTask(codeTask, idUser);
     } catch (e) {
       throw new InternalServerErrorException();
     }
