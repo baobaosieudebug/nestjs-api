@@ -1,8 +1,9 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { OrganizationRepository } from './organization.repository';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
@@ -61,7 +62,7 @@ export class OrganizationService {
       throw new NotFoundException();
     }
     try {
-      return await this.projectService.addProject(checkOrg.id, codeProject);
+      return this.projectService.addProject(checkOrg.id, codeProject);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -113,7 +114,7 @@ export class OrganizationService {
     }
     const existDelete = await this.checkDeleted(id);
     if (existDelete) {
-      throw new NotFoundException('Org Deleted');
+      throw new BadRequestException('Org Deleted');
     }
     try {
       return this.organizationRepo.update(id, { isDeleted: id });
@@ -128,7 +129,7 @@ export class OrganizationService {
       throw new NotFoundException();
     }
     try {
-      return await this.projectService.removeProject(checkOrg.id, codeProject);
+      return this.projectService.removeProject(checkOrg.id, codeProject);
     } catch (e) {
       throw new InternalServerErrorException();
     }

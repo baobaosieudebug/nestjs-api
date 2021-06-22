@@ -1,8 +1,9 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
@@ -86,7 +87,7 @@ export class TaskService {
     }
     const existTask = await this.taskRepo.isTaskExistInProject(idProject, code);
     if (existTask) {
-      throw new NotFoundException('Task exist in Project');
+      throw new BadRequestException('Task exist in Project');
     }
     try {
       return await this.taskRepo.update(checkTask.id, { projectID: idProject });

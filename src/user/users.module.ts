@@ -5,6 +5,7 @@ import { UsersService } from './users.service';
 import { UserRepository } from './user.repository';
 import { GroupsModule } from '../group/group.module';
 import { TaskModule } from 'src/task/task.module';
+import { ProjectModule } from '../project/project.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TaskModule } from 'src/task/task.module';
     HttpModule,
     TaskModule,
     GroupsModule,
+    ProjectModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

@@ -6,12 +6,12 @@ import {
   Param,
   Post,
   Put,
-  UseFilters,
+  // UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
+// import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { ProjectService } from './project.service';
@@ -61,7 +61,7 @@ export class ProjectController {
     return await this.projectService.editProject(id, dto);
   }
 
-  @UseFilters(NotFoundExceptionFilter)
+  // @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeProject(@Param('id') id: number) {
     return await this.projectService.remove(id);

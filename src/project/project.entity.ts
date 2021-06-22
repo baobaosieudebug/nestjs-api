@@ -33,6 +33,9 @@ export class ProjectEntity {
   @Column({ name: 'organization_id', nullable: true })
   organizationID: number;
 
+  // @Column({ name: 'user_id', nullable: true })
+  // userID: number;
+
   @ManyToOne(
     () => OrganizationEntity,
     (organization: OrganizationEntity) => organization.projects,

@@ -1,6 +1,5 @@
 import {
-  HttpException,
-  HttpStatus,
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -82,10 +81,7 @@ export class ProjectService {
       code,
     );
     if (existProject) {
-      return new HttpException(
-        'Project exist in Organization',
-        HttpStatus.NOT_ACCEPTABLE,
-      );
+      throw new BadRequestException('Project exist in Organization');
     }
     try {
       return await this.projectRepo.update(checkProject.id, {
@@ -145,14 +141,16 @@ export class ProjectService {
   }
 
   async remove(id: number) {
-    const checkProject = this.checkProjectByID(id);
+    const checkProject = await this.checkProjectByID(id);
     if (!checkProject) {
       throw new NotFoundException();
     }
+    const existDelete = await this.checkDeleted(id);
+    if (existDelete) {
+      throw new BadRequestException('Project Deleted');
+    }
     try {
-      const project = this.getOneById(id);
-      (await project).isDeleted = (await project).id;
-      return this.projectRepo.save(await project);
+      return await this.projectRepo.update(checkProject.id, { isDeleted: id });
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -163,9 +161,11 @@ export class ProjectService {
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const project = await this.projectRepo.getByCode(code);
-    project.users = project.users.filter((res) => res.id != idUser);
-    return await this.projectRepo.save(project);
+    try {
+      return this.userService.removeUserInProject(idUser, checkProject.id);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async removeTaskInProject(code: string, codeTask: string) {
@@ -187,12 +187,8 @@ export class ProjectService {
       orgID,
       code,
     );
-
     if (!existProject) {
-      return new HttpException(
-        'Project not exist in Organization',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new BadRequestException('Project not exist in Organization');
     }
     try {
       return await this.projectRepo.update(checkProject.id, {

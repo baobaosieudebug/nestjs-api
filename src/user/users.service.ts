@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -12,12 +13,14 @@ import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from './user.repository';
 import { GroupsEntity } from 'src/group/group.entity';
 import { TaskService } from 'src/task/task.service';
+import { ProjectRepository } from '../project/project.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly taskService: TaskService,
+    private readonly projectRepo: ProjectRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -89,10 +92,12 @@ export class UsersService {
       idUser,
     );
     if (existUser) {
-      throw new NotFoundException('User exist in Project');
+      throw new BadRequestException('User exist in Project');
     }
     try {
-      return await this.userRepo.update(idUser, { projectID: idProject });
+      const project = await this.projectRepo.getById(idProject);
+      await checkUser.projects.push(project);
+      return await this.userRepo.save(checkUser);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -156,6 +161,27 @@ export class UsersService {
     try {
       checkUser.tasks = checkUser.tasks.filter((res) => res.code != codeId);
       return await this.userRepo.save(checkUser);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async removeUserInProject(idUser: number, idProject: number) {
+    const checkUser = await this.checkUser(idUser);
+    if (!checkUser) {
+      throw new NotFoundException();
+    }
+    const existUser = await this.userRepo.isUserExistInProject(
+      idUser,
+      idProject,
+    );
+    if (!existUser) {
+      throw new BadRequestException('User not exist Project');
+    }
+    try {
+      return await this.userRepo.update(idUser, {
+        projectID: null,
+      });
     } catch (e) {
       throw new InternalServerErrorException();
     }
