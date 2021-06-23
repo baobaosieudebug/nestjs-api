@@ -55,6 +55,14 @@ export class UsersService {
     return user;
   }
 
+  async checkDeleted(id: number) {
+    const user = this.userRepo.getByIdWithDelete(id);
+    if (user) {
+      return null;
+    }
+    return user;
+  }
+
   async create(user: AddUserDTO): Promise<AddUsersRO> {
     const checkUser = await this.checkUserByEmail(user.email);
     if (checkUser) {
@@ -145,6 +153,10 @@ export class UsersService {
     const checkUser = await this.checkUser(id);
     if (!checkUser) {
       throw new NotFoundException();
+    }
+    const existDeleted = this.checkDeleted(id);
+    if (!existDeleted) {
+      throw new BadRequestException('User Deleted');
     }
     try {
       checkUser.isDeleted = checkUser.id;

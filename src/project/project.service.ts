@@ -134,7 +134,7 @@ export class ProjectService {
 
   async checkDeleted(id: number) {
     const project = this.projectRepo.getByIdWithDelete(id);
-    if (!project) {
+    if (project) {
       return null;
     }
     return project;
@@ -146,7 +146,7 @@ export class ProjectService {
       throw new NotFoundException();
     }
     const existDelete = await this.checkDeleted(id);
-    if (existDelete) {
+    if (!existDelete) {
       throw new BadRequestException('Project Deleted');
     }
     try {
