@@ -29,6 +29,11 @@ export class GroupsController {
     return await this.groupsService.getAll();
   }
 
+  @Get('/:id/users')
+  async getAllUserByID(@Param('id') id: number) {
+    return await this.groupsService.getAllUserByID(id);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createGroup(@Body() dto: AddGroupDTO) {

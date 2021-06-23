@@ -187,6 +187,13 @@ export class UsersService {
     }
   }
 
+  async getAllUserByIDGroup(idGroup: number) {
+    try {
+      return await this.userRepo.getAllUserByIDGroup(idGroup);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
   async getAllAssignTaskByID(id: number) {
     const checkUser = await this.checkUser(id);
     if (!checkUser) {

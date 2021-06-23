@@ -11,6 +11,7 @@ import { EditGroupDTO } from './dto/edit-group.dto';
 import { GroupRepository } from './group.repository';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { UsersService } from 'src/user/users.service';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class GroupsService {
@@ -18,6 +19,7 @@ export class GroupsService {
     private readonly groupRepo: GroupRepository,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
+    private readonly userRepo: UserRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -108,6 +110,22 @@ export class GroupsService {
     }
     try {
       return await this.groupRepo.removeUserInGroup(idUser, idGroup);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAllUserByID(id: number) {
+    const checkGroup = await this.checkGroup(id);
+    if (!checkGroup) {
+      throw new NotFoundException();
+    }
+    const existUser = await this.userRepo.isUserExist(id);
+    if (existUser == 0) {
+      throw new NotFoundException('Group not exist User');
+    }
+    try {
+      return await this.userService.getAllUserByIDGroup(id);
     } catch (e) {
       throw new InternalServerErrorException();
     }

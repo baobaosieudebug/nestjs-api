@@ -44,7 +44,20 @@ export class UserRepository extends Repository<UsersEntity> {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .where('project.id = :idProject', { idProject })
-      .getRawMany();
+      .getMany();
   }
 
+  async getAllUserByIDGroup(idGroup: number) {
+    return await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.groups', 'group')
+      .where('group.id = :idGroup', { idGroup })
+      .getMany();
+  }
+
+  async isUserExist(idGroup: number) {
+    return await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.groups', 'group')
+      .where('group.id = :idGroup', { idGroup })
+      .getCount();
+  }
 }
