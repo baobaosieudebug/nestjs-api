@@ -40,4 +40,10 @@ export class UserRepository extends Repository<UsersEntity> {
     return entity > 0;
   }
 
+  async getAllUserByIDProject(idProject: number) {
+    return await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.projects', 'project')
+      .where('project.id = :idProject', { idProject })
+      .getRawMany();
+  }
 }

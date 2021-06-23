@@ -176,4 +176,12 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getAllUserByIDProject(idProject: number) {
+    try {
+      return await this.userRepo.getAllUserByIDProject(idProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

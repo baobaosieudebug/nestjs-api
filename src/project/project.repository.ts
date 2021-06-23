@@ -5,10 +5,7 @@ import { UsersEntity } from '../user/users.entity';
 @EntityRepository(ProjectEntity)
 export class ProjectRepository extends Repository<ProjectEntity> {
   getById(id) {
-    return this.findOne(
-      { id },
-      { relations: ['organization', 'users', 'tasks'] },
-    );
+    return this.findOne({ id });
   }
 
   getAllProject() {
@@ -46,5 +43,9 @@ export class ProjectRepository extends Repository<ProjectEntity> {
       .relation(UsersEntity, 'projects')
       .of(idUser)
       .remove(id);
+  }
+
+  async getAllProjectByIDOrg(idOrg: number) {
+    return this.find({ organizationID: idOrg });
   }
 }

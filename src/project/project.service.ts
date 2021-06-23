@@ -46,6 +46,14 @@ export class ProjectService {
     return await this.projectRepo.getAllProject();
   }
 
+  async getAllProjectByIDOrg(idOrg: number) {
+    try {
+      return await this.projectRepo.getAllProjectByIDOrg(idOrg);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getAllTaskByID(id: number) {
     const checkProject = this.checkProjectByID(id);
     if (!checkProject) {
@@ -53,6 +61,18 @@ export class ProjectService {
     }
     try {
       return await this.taskService.getAllTaskByIDProject(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAllUserByID(id: number) {
+    const checkProject = this.checkProjectByID(id);
+    if (!checkProject) {
+      throw new NotFoundException();
+    }
+    try {
+      return await this.userService.getAllUserByIDProject(id);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -216,4 +236,6 @@ export class ProjectService {
       throw new InternalServerErrorException();
     }
   }
+
+
 }

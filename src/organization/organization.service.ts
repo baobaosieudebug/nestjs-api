@@ -43,6 +43,18 @@ export class OrganizationService {
     return response;
   }
 
+  async getAllProjectByID(id: number) {
+    const checkOrg = await this.checkOrgByID(id);
+    if (!checkOrg) {
+      throw new NotFoundException();
+    }
+    try {
+      return await this.projectService.getAllProjectByIDOrg(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async createOrganization(dto: AddOrganizationDTO) {
     const checkOrg = await this.checkOrgByCode(dto.code);
     if (checkOrg) {

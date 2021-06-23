@@ -41,6 +41,11 @@ export class ProjectController {
     return await this.projectService.getAllTaskByID(id);
   }
 
+  @Get('/:id/users')
+  async getAllUserByID(@Param('id') id: number) {
+    return await this.projectService.getAllUserByID(id);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createProject(@Body() dto: AddProjectDTO) {

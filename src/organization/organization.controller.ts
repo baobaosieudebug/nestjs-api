@@ -34,6 +34,11 @@ export class OrganizationController {
     return await this.organizationService.getOneByCodeOrFail(code);
   }
 
+  @Get(':id/projects')
+  async getAllProjectByID(@Param('id') id: number) {
+    return await this.organizationService.getAllProjectByID(id);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createOrganization(@Body() dto: AddOrganizationDTO) {
