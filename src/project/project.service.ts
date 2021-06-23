@@ -9,6 +9,8 @@ import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { UsersService } from '../user/users.service';
 import { TaskService } from '../task/task.service';
+import { TaskRepository } from '../task/task.respository';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class ProjectService {
@@ -16,6 +18,8 @@ export class ProjectService {
     private readonly projectRepo: ProjectRepository,
     private readonly userService: UsersService,
     private readonly taskService: TaskService,
+    private readonly taskRepo: TaskRepository,
+    private readonly userRepo: UserRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -59,6 +63,10 @@ export class ProjectService {
     if (!checkProject) {
       throw new NotFoundException();
     }
+    const existTask = await this.taskRepo.isExistTaskByIDProject(id);
+    if (existTask == false) {
+      throw new NotFoundException('Project not Exist Task');
+    }
     try {
       return await this.taskService.getAllTaskByIDProject(id);
     } catch (e) {
@@ -70,6 +78,10 @@ export class ProjectService {
     const checkProject = this.checkProjectByID(id);
     if (!checkProject) {
       throw new NotFoundException();
+    }
+    const existTask = await this.userRepo.isUserExistProject(id);
+    if (existTask == 0) {
+      throw new NotFoundException('Project not Exist User');
     }
     try {
       return await this.userService.getAllUserByIDProject(id);
@@ -153,10 +165,6 @@ export class ProjectService {
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const existCode = this.projectRepo.getByCode(dto.code);
-    if (existCode) {
-      throw new NotFoundException('Code must be unique');
-    }
     try {
       return await this.projectRepo.update(id, dto);
     } catch (e) {
@@ -236,6 +244,4 @@ export class ProjectService {
       throw new InternalServerErrorException();
     }
   }
-
-
 }

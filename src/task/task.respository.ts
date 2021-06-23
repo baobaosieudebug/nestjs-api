@@ -63,4 +63,11 @@ export class TaskRepository extends Repository<TaskEntity> {
     });
     return entity > 0;
   }
+
+  async isExistTaskByIDProject(idProject: number) {
+    const entity = await this.count({
+      where: { projectID: idProject },
+    });
+    return entity > 0;
+  }
 }
