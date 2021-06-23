@@ -7,7 +7,6 @@ import {
 import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
-import { UsersEntity } from '../user/users.entity';
 
 @Injectable()
 export class TaskService {
@@ -95,14 +94,17 @@ export class TaskService {
     }
   }
 
-  async assignTask(code: string, user: UsersEntity) {
+  async assignTask(code: string, idUser: number) {
     const checkTask = await this.checkTaskByCode(code);
     if (!checkTask) {
       throw new NotFoundException();
     }
+    const existTask = await this.taskRepo.isAssignTask(idUser, code);
+    if (existTask) {
+      throw new NotFoundException('Task Assigned');
+    }
     try {
-      checkTask.userAssign = user;
-      return this.taskRepo.save(checkTask);
+      return await this.taskRepo.update(checkTask.id, { assignUserId: idUser });
     } catch (e) {
       throw new InternalServerErrorException();
     }

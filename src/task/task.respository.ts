@@ -26,4 +26,10 @@ export class TaskRepository extends Repository<TaskEntity> {
       where: { code, createUserId: userID },
     });
   }
+
+  async isAssignTask(userID: number, code: string) {
+    return await this.count({
+      where: { code, userAssign: null },
+    });
+  }
 }
