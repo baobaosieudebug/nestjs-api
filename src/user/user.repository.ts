@@ -46,4 +46,5 @@ export class UserRepository extends Repository<UsersEntity> {
       .where('project.id = :idProject', { idProject })
       .getRawMany();
   }
+
 }

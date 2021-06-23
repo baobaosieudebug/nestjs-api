@@ -11,6 +11,7 @@ import { UserRepository } from './user.repository';
 import { TaskService } from '../task/task.service';
 import { ProjectRepository } from '../project/project.repository';
 import { GroupRepository } from '../group/group.repository';
+import { TaskRepository } from '../task/task.respository';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     private readonly taskService: TaskService,
     private readonly projectRepo: ProjectRepository,
     private readonly groupRepo: GroupRepository,
+    private readonly taskRepo: TaskRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -180,6 +182,38 @@ export class UsersService {
   async getAllUserByIDProject(idProject: number) {
     try {
       return await this.userRepo.getAllUserByIDProject(idProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAllAssignTaskByID(id: number) {
+    const checkUser = await this.checkUser(id);
+    if (!checkUser) {
+      throw new NotFoundException();
+    }
+    const existAssignTask = await this.taskRepo.isExistTaskByAssignUser(id);
+    if (existAssignTask == false) {
+      throw new NotFoundException('User not assigned Task');
+    }
+    try {
+      return await this.taskService.getAllAssignTaskByIDUser(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAllCreateTaskByID(id: number) {
+    const checkUser = await this.checkUser(id);
+    if (!checkUser) {
+      throw new NotFoundException();
+    }
+    const existCreateTask = await this.taskRepo.isExistTaskByCreateUser(id);
+    if (existCreateTask == false) {
+      throw new NotFoundException('User not created Task');
+    }
+    try {
+      return await this.taskService.getAllCreateTaskByIDUser(id);
     } catch (e) {
       throw new InternalServerErrorException();
     }

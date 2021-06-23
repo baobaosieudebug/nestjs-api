@@ -41,4 +41,26 @@ export class TaskRepository extends Repository<TaskEntity> {
   getAllTaskByIDProject(idProject: number) {
     return this.find({ projectID: idProject });
   }
+
+  async getAllUserByIDUserAssign(idUser: number) {
+    return this.find({ assignUserId: idUser });
+  }
+
+  async getAllUserByIDUserCreate(idUser: number) {
+    return this.find({ createUserId: idUser });
+  }
+
+  async isExistTaskByAssignUser(idUser: number) {
+    const entity = await this.count({
+      where: { assignUserId: idUser },
+    });
+    return entity > 0;
+  }
+
+  async isExistTaskByCreateUser(idUser: number) {
+    const entity = await this.count({
+      where: { createUserId: idUser },
+    });
+    return entity > 0;
+  }
 }
