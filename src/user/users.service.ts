@@ -1,19 +1,16 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { AddUserDTO } from './dto/add-user.dto';
 import * as bcrypt from 'bcrypt';
-import { AddUsersRO } from './ro/add-user.ro';
 import { EditUserDTO } from './dto/edit-user.dto';
 import { UserRepository } from './user.repository';
-import { GroupsEntity } from 'src/group/group.entity';
-import { TaskService } from 'src/task/task.service';
+import { TaskService } from '../task/task.service';
 import { ProjectRepository } from '../project/project.repository';
+import { GroupRepository } from '../group/group.repository';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +18,7 @@ export class UsersService {
     private readonly userRepo: UserRepository,
     private readonly taskService: TaskService,
     private readonly projectRepo: ProjectRepository,
+    private readonly groupRepo: GroupRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -63,10 +61,10 @@ export class UsersService {
     return user;
   }
 
-  async create(user: AddUserDTO): Promise<AddUsersRO> {
+  async create(user: AddUserDTO) {
     const checkUser = await this.checkUserByEmail(user.email);
     if (checkUser) {
-      throw new HttpException('Email must be unique', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('Email must be unique');
     }
     try {
       user.password = await bcrypt.hash(user.password, 12);
@@ -77,14 +75,16 @@ export class UsersService {
     }
   }
 
-  async addUser(id: number, group: GroupsEntity) {
-    const checkUser = await this.checkUser(id);
+  async addUser(idUser: number, idGroup: number) {
+    const checkUser = await this.checkUser(idUser);
     if (!checkUser) {
       throw new NotFoundException();
     }
     try {
-      checkUser.groups.push(group);
-      return await this.userRepo.save(checkUser);
+      const group = await this.groupRepo.getOneById(idGroup);
+      await checkUser.groups.push(group);
+      await this.userRepo.save(checkUser);
+      return checkUser;
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -159,8 +159,7 @@ export class UsersService {
       throw new BadRequestException('User Deleted');
     }
     try {
-      checkUser.isDeleted = checkUser.id;
-      return this.userRepo.save(checkUser);
+      return await this.userRepo.update(id, { isDeleted: id });
     } catch (e) {
       throw new InternalServerErrorException();
     }

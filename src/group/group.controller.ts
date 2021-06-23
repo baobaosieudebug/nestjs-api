@@ -35,10 +35,10 @@ export class GroupsController {
     return await this.groupsService.createGroup(dto);
   }
 
-  // @Post(':id/addUser/:idUser')
-  // async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number) {
-  //   return await this.groupsService.addUser(idUser, idGroup);
-  // }
+  @Post(':id/addUser/:idUser')
+  async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number) {
+    return await this.groupsService.addUser(idUser, idGroup);
+  }
 
   @Put(':id')
   @UsePipes(ValidationPipe)

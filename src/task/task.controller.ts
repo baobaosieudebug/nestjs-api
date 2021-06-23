@@ -6,12 +6,10 @@ import {
   Param,
   Post,
   Put,
-  UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { NotFoundExceptionFilter } from '../common/exception-filter/not-found.filter';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
 import { TaskService } from './task.service';
@@ -48,7 +46,6 @@ export class TaskController {
     return await this.taskService.edit(id, dto);
   }
 
-  // @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
     return await this.taskService.remove(id);

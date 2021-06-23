@@ -32,4 +32,12 @@ export class UserRepository extends Repository<UsersEntity> {
     });
     return entity > 0;
   }
+
+  async isUserExistInGroup(groupID: number, id: number) {
+    const entity = await this.count({
+      where: { id, groupID: groupID },
+    });
+    return entity > 0;
+  }
+
 }

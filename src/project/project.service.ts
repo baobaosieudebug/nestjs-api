@@ -150,7 +150,7 @@ export class ProjectService {
       throw new BadRequestException('Project Deleted');
     }
     try {
-      return await this.projectRepo.update(checkProject.id, { isDeleted: id });
+      return await this.projectRepo.update(id, { isDeleted: id });
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -162,7 +162,7 @@ export class ProjectService {
       throw new NotFoundException();
     }
     const existUser = await this.projectRepo.isUserExistInProject(idUser);
-    if (!existUser) {
+    if (existUser == 0) {
       throw new BadRequestException('User not exist in Project');
     }
     try {

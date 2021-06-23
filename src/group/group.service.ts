@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
@@ -18,50 +20,52 @@ export class GroupsService {
     private readonly userService: UsersService,
   ) {}
 
-  async getOneById(id: number): Promise<GroupsEntity> {
+  async getOneById(id: number) {
     return await this.groupRepo.getOneById(id);
   }
 
-  async getOneOrFail(id: number): Promise<GroupsEntity> {
-    const checkGroup = await this.checkGroup(id);
-    if (!checkGroup) {
+  async getOneOrFail(id: number) {
+    const response = await this.getOneById(id);
+    if (!response) {
       throw new NotFoundException();
-    } else {
-      return await this.getOneById(id);
     }
+    return response;
   }
 
   async getAll(): Promise<GroupsEntity[]> {
     return await this.groupRepo.getAll();
   }
 
-  async createGroup(group: AddGroupDTO): Promise<AddGroupDTO> {
-    return await this.groupRepo.save(group);
+  async createGroup(dto: AddGroupDTO) {
+    try {
+      const group = this.groupRepo.create(dto);
+      return await this.groupRepo.save(group);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async checkGroup(id: number) {
-    const group = await this.getOneOrFail(id);
+    const group = await this.groupRepo.getOneById(id);
     if (!group) {
       return null;
     }
     return group;
   }
 
-  // async addUser(idUser: number, idGroup: number) {
-  //   const checkGroup = this.checkGroup(idGroup);
-  //   if ((await checkGroup) == false) {
-  //     throw new NotFoundException();
-  //   }
-  //   const group = await this.groupRepo.getOneById(idGroup);
-  //   return this.userService.addUser(idUser, group);
-  // }
-
-  async update(idGroup, group: EditGroupDTO) {
+  async update(idGroup, dto: EditGroupDTO) {
     const checkGroup = await this.checkGroup(idGroup);
     if (!checkGroup) {
       throw new NotFoundException();
-    } else {
-      return await this.groupRepo.update(idGroup, group);
+    }
+    const existName = this.groupRepo.getByName(dto.nameGroup);
+    if (existName) {
+      throw new NotFoundException('Name Group must be unique');
+    }
+    try {
+      return await this.groupRepo.update(idGroup, dto);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
@@ -69,10 +73,27 @@ export class GroupsService {
     const checkGroup = await this.checkGroup(idGroup);
     if (!checkGroup) {
       throw new NotFoundException();
-    } else {
-      const group = this.getOneById(idGroup);
-      (await group).isDeleted = (await group).id;
-      return this.groupRepo.save(await group);
+    }
+    try {
+      return this.groupRepo.update(idGroup, { isDeleted: idGroup });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addUser(idUser: number, idGroup: number) {
+    const checkGroup = await this.checkGroup(idGroup);
+    if (!checkGroup) {
+      throw new NotFoundException();
+    }
+    const existUser = this.groupRepo.isUserExistInGroup(idUser);
+    if (!existUser) {
+      throw new BadRequestException('User not exist Group');
+    }
+    try {
+      return this.userService.addUser(idUser, idGroup);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
@@ -81,9 +102,14 @@ export class GroupsService {
     if (!checkGroup) {
       throw new NotFoundException();
     }
-    const group = await this.groupRepo.getOneById(idGroup);
-    const filteredUser = group.users.filter((res) => res.id != idUser);
-    group.users = filteredUser;
-    return await this.groupRepo.save(group);
+    const existUser = await this.groupRepo.isUserExistInGroup(idUser);
+    if (existUser == 0) {
+      throw new BadRequestException('User not exist Group');
+    }
+    try {
+      return await this.groupRepo.removeUserInGroup(idUser, idGroup);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }

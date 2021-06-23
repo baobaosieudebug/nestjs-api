@@ -71,6 +71,13 @@ export class TaskService {
     if (!checkTask) {
       throw new NotFoundException();
     }
+    const existUserCreateTask = await this.taskRepo.isTaskExistInUser(
+      idUser,
+      code,
+    );
+    if (existUserCreateTask == 0) {
+      throw new BadRequestException('UserCreate Existed');
+    }
     try {
       return await this.taskRepo.update(checkTask.id, { createUserId: idUser });
     } catch (e) {
@@ -134,7 +141,7 @@ export class TaskService {
   }
 
   async remove(id: number) {
-    const checkTask = this.checkTaskByID(id);
+    const checkTask = await this.checkTaskByID(id);
     if (!checkTask) {
       throw new NotFoundException();
     }
@@ -144,9 +151,7 @@ export class TaskService {
       throw new BadRequestException('Task Deleted');
     }
     try {
-      const task = this.getOneById(id);
-      (await task).isDeleted = (await task).id;
-      return this.taskRepo.save(await task);
+      return await this.taskRepo.update(id, { isDeleted: id });
     } catch (e) {
       throw new InternalServerErrorException();
     }

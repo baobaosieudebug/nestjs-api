@@ -30,7 +30,7 @@ export class UsersController {
   async getAll() {
     return await this.usersService.getAll();
   }
-  //
+
   @Post()
   @UsePipes(ValidationPipe)
   async createUsers(@Body() dto: AddUserDTO) {
