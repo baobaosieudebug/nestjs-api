@@ -46,6 +46,18 @@ export class ProjectService {
     return await this.projectRepo.getAllProject();
   }
 
+  async getAllTaskByID(id: number) {
+    const checkProject = this.checkProjectByID(id);
+    if (!checkProject) {
+      throw new NotFoundException();
+    }
+    try {
+      return await this.taskService.getAllTaskByIDProject(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async checkProjectByCode(code: string) {
     const project = await this.getOneByCodeOrFail(code);
     if (!project) {

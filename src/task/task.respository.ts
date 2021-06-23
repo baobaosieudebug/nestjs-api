@@ -37,4 +37,8 @@ export class TaskRepository extends Repository<TaskEntity> {
       where: { code, userAssign: null },
     });
   }
+
+  getAllTaskByIDProject(idProject: number) {
+    return this.find({ projectID: idProject });
+  }
 }

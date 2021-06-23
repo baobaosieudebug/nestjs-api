@@ -15,7 +15,7 @@ import { EditTaskDTO } from './dto/edit-task.dto';
 import { TaskService } from './task.service';
 
 @ApiTags('Task')
-@Controller('task')
+@Controller('tasks')
 export class TaskController {
   constructor(private taskService: TaskService) {}
 

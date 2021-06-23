@@ -188,4 +188,12 @@ export class TaskService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getAllTaskByIDProject(idProject: number) {
+    try {
+      return await this.taskRepo.getAllTaskByIDProject(idProject);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
 }

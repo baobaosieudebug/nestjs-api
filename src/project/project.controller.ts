@@ -36,6 +36,11 @@ export class ProjectController {
     return await this.projectService.getOneByCodeOrFail(code);
   }
 
+  @Get('/:id/tasks')
+  async getAllTaskByID(@Param('id') id: number) {
+    return await this.projectService.getAllTaskByID(id);
+  }
+
   @Post()
   @UsePipes(ValidationPipe)
   async createProject(@Body() dto: AddProjectDTO) {
