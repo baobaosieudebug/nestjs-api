@@ -48,7 +48,7 @@ export class TaskController {
     return await this.taskService.edit(id, dto);
   }
 
-  @UseFilters(NotFoundExceptionFilter)
+  // @UseFilters(NotFoundExceptionFilter)
   @Delete(':id')
   async removeTask(@Param('id') id: number) {
     return await this.taskService.remove(id);

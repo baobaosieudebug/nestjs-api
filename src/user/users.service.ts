@@ -57,7 +57,7 @@ export class UsersService {
 
   async checkDeleted(id: number) {
     const user = this.userRepo.getByIdWithDelete(id);
-    if (user) {
+    if (!user) {
       return null;
     }
     return user;

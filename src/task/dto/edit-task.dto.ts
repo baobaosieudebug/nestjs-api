@@ -11,7 +11,7 @@ export class EditTaskDTO {
 
   @ApiProperty({ type: String, example: 'BE-001' })
   @Length(5, 20)
-  codeId: string;
+  code: string;
 
   @ApiProperty({ example: 'Create UI For Website' })
   @IsString()

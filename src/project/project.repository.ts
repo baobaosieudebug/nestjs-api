@@ -21,8 +21,10 @@ export class ProjectRepository extends Repository<ProjectEntity> {
       { relations: ['organization', 'users', 'tasks'] },
     );
   }
-  getByIdWithDelete(id) {
-    return this.count({ where: { id, isDeleted: id } });
+
+  async getByIdWithDelete(id) {
+    const entity = await this.count({ where: { id, isDeleted: id } });
+    return entity > 0;
   }
 
   async isProjectExistInOrg(orgID: number, code: string) {

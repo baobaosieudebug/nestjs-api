@@ -7,8 +7,9 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return this.findOne({ id }, { relations: ['projects'] });
   }
 
-  getByIdWithDelete(id) {
-    return this.findOne({ id }, { withDeleted: true });
+  async getByIdWithDelete(id) {
+    const entity = await this.count({ where: { id, isDeleted: id } });
+    return entity > 0;
   }
 
   getAllOrganization() {

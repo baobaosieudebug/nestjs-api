@@ -21,8 +21,9 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.find({ relations: ['groups', 'tasks'] });
   }
 
-  getByIdWithDelete(id) {
-    return this.count({ where: { id, isDeleted: id } });
+  async getByIdWithDelete(id) {
+    const entity = await this.count({ where: { id, isDeleted: id } });
+    return entity > 0;
   }
 
   async isUserExistInProject(projectID: number, id: number) {

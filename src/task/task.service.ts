@@ -114,6 +114,10 @@ export class TaskService {
     if (!checkTask) {
       throw new NotFoundException();
     }
+    const existCode = this.taskRepo.getByCode(dto.code);
+    if (existCode) {
+      throw new NotFoundException('Code must be unique');
+    }
     try {
       return await this.taskRepo.update(id, dto);
     } catch (e) {
@@ -121,10 +125,23 @@ export class TaskService {
     }
   }
 
+  async checkDeleted(id: number) {
+    const task = this.taskRepo.getByIdWithDelete(id);
+    if (!task) {
+      return null;
+    }
+    return task;
+  }
+
   async remove(id: number) {
     const checkTask = this.checkTaskByID(id);
     if (!checkTask) {
       throw new NotFoundException();
+    }
+    const existDelete = await this.checkDeleted(id);
+
+    if (existDelete) {
+      throw new BadRequestException('Task Deleted');
     }
     try {
       const task = this.getOneById(id);

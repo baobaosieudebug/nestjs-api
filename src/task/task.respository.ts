@@ -15,6 +15,11 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.findOne({ code }, { relations: ['user', 'project'] });
   }
 
+  async getByIdWithDelete(id) {
+    const entity = await this.count({ where: { id, isDeleted: id } });
+    return entity > 0;
+  }
+
   async isTaskExistInProject(projectID: number, code: string) {
     return await this.count({
       where: { code, projectID: projectID },
