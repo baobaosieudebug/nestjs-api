@@ -13,10 +13,7 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   }
 
   getByCode(code) {
-    return this.findOne(
-      { code },
-      { relations: ['organization', 'users', 'tasks'] },
-    );
+    return this.findOne({ code });
   }
 
   async getByIdWithDelete(id) {

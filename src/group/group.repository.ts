@@ -5,7 +5,7 @@ import { UsersEntity } from '../user/users.entity';
 @EntityRepository(GroupsEntity)
 export class GroupRepository extends Repository<GroupsEntity> {
   getOneById(id) {
-    return this.findOne({ id }, { relations: ['users'] });
+    return this.findOne({ id });
   }
 
   getAll() {

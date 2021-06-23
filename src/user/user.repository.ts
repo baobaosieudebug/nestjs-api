@@ -4,21 +4,15 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {
   getOneById(id) {
-    return this.findOne(
-      { id },
-      { relations: ['groups', 'tasks', 'projects', 'tasksAssign'] },
-    );
+    return this.findOne({ id });
   }
 
   getOneByEmail(email) {
-    return this.findOne(
-      { email },
-      { relations: ['groups', 'tasks', 'projects', 'tasksAssign'] },
-    );
+    return this.findOne({ email });
   }
 
   getAll() {
-    return this.find({ relations: ['groups', 'tasks'] });
+    return this.find();
   }
 
   async getByIdWithDelete(id) {
