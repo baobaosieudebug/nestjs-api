@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Category } from './category.entity';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(Category)
 export class CategoryRepository extends Repository<Category> {
@@ -7,8 +8,15 @@ export class CategoryRepository extends Repository<Category> {
     return this.findOne({ id });
   }
 
-  getAll() {
-    return this.find();
+  async getOneByIdOrFail(id: number) {
+    const response = await this.getById(id);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
   }
 
+  getAll(id) {
+    return this.find({ projectID: id });
+  }
 }

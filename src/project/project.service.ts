@@ -91,7 +91,7 @@ export class ProjectService {
   }
 
   async checkProjectByCode(code: string) {
-    const project = await this.getOneByCodeOrFail(code);
+    const project = await this.projectRepo.getByCode(code);
     if (!project) {
       return null;
     }
@@ -244,4 +244,5 @@ export class ProjectService {
       throw new InternalServerErrorException();
     }
   }
+
 }
