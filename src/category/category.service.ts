@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -39,7 +40,22 @@ export class CategoryService {
       throw new InternalServerErrorException();
     }
   }
-  async edit(id: number, dto: EditCategoryDTO) {
+  async edit(id: number, idProject: number, dto: EditCategoryDTO) {
+    const checkCategory = await this.checkCategory(id);
+    if (!checkCategory) {
+      throw new NotFoundException();
+    }
+    const checkProject = await this.projectService.checkProjectByID(idProject);
+    if (!checkProject) {
+      throw new NotFoundException('Project not found');
+    }
+    const categoryExistProject = await this.categoryRepo.countCategoryInProject(
+      id,
+      idProject,
+    );
+    if (!categoryExistProject) {
+      throw new BadRequestException('Category not exist Project');
+    }
     try {
       return await this.categoryRepo.update(id, dto);
     } catch (e) {
@@ -72,6 +88,13 @@ export class CategoryService {
     const checkProject = await this.projectService.checkProjectByID(idProject);
     if (!checkProject) {
       throw new NotFoundException('Project not Exist');
+    }
+    const categoryExistProject = await this.categoryRepo.countCategoryInProject(
+      id,
+      idProject,
+    );
+    if (categoryExistProject) {
+      throw new BadRequestException('Category exist Project');
     }
     try {
       return await this.categoryRepo.update(id, { projectID: idProject });

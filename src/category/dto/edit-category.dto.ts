@@ -6,6 +6,6 @@ export class EditCategoryDTO {
     type: String,
     example: 'Development',
   })
-  @Length(10, 255)
+  @Length(5, 255)
   name: string;
 }

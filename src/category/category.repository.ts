@@ -19,4 +19,8 @@ export class CategoryRepository extends Repository<Category> {
   getAll(id) {
     return this.find({ projectID: id });
   }
+
+  async countCategoryInProject(id: number, idProject: number) {
+    return this.count({ where: { id, projectID: idProject } });
+  }
 }
