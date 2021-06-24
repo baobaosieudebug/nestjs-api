@@ -80,7 +80,7 @@ export class VersionService {
   }
 
   async remove(id: number, idProject: number) {
-    const validation = this.validation(id, idProject);
+    const validation = await this.validation(id, idProject);
     if (!validation) {
       return validation;
     }
