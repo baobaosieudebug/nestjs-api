@@ -120,7 +120,7 @@ export class GroupsService {
     if (!checkGroup) {
       throw new NotFoundException();
     }
-    const existUser = await this.userRepo.isUserExist(id);
+    const existUser = await this.userRepo.countUserInGroup(id);
     if (existUser == 0) {
       throw new NotFoundException('Group not exist User');
     }

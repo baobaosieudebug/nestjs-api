@@ -12,6 +12,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { OrganizationEntity } from '../organization/organization.entity';
 import { UsersEntity } from '../user/users.entity';
 import { TaskEntity } from '../task/task.entity';
+import { Category } from '../category/category.entity';
+import { Type } from '../type/type.entity';
+import { Status } from '../status/status.entity';
+import { Version } from 'aws-sdk/clients/swf';
 
 @Entity('project')
 export class ProjectEntity {
@@ -45,6 +49,18 @@ export class ProjectEntity {
   })
   @JoinTable()
   users: UsersEntity[];
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  categories: Category[];
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  types: Type[];
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  statuses: Status[];
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  versions: Version[];
 
   @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];

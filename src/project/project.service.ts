@@ -79,7 +79,7 @@ export class ProjectService {
     if (!checkProject) {
       throw new NotFoundException();
     }
-    const existTask = await this.userRepo.isUserExistProject(id);
+    const existTask = await this.userRepo.countUserInProject(id);
     if (existTask == 0) {
       throw new NotFoundException('Project not Exist User');
     }

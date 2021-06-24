@@ -41,14 +41,14 @@ export class UserRepository extends Repository<UsersEntity> {
       .getMany();
   }
 
-  async isUserExist(idGroup: number) {
+  async countUserInGroup(idGroup: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.groups', 'group')
       .where('group.id = :idGroup', { idGroup })
       .getCount();
   }
 
-  async isUserExistProject(idProject: number) {
+  async countUserInProject(idProject: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .where('project.id = :idProject', { idProject })

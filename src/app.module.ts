@@ -7,6 +7,10 @@ import { DatabaseModule } from './database/database.module';
 import { TaskModule } from './task/task.module';
 import { ProjectModule } from './project/project.module';
 import { OrganizationModule } from './organization/organization.module';
+import { CategoryModule } from './category/category.module';
+import { TypeModule } from './type/type.module';
+import { StatusModule } from './status/status.module';
+import { VersionModule } from './version/version.module';
 
 @Module({
   imports: [
@@ -19,6 +23,10 @@ import { OrganizationModule } from './organization/organization.module';
     TaskModule,
     ProjectModule,
     OrganizationModule,
+    CategoryModule,
+    TypeModule,
+    StatusModule,
+    VersionModule,
   ],
 })
 export class AppModule {}
