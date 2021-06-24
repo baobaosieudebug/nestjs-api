@@ -81,15 +81,15 @@ export class VersionService {
 
   async remove(id: number, idProject: number) {
     const validation = await this.validation(id, idProject);
-    if (!validation) {
-      return validation;
+    if (validation == true) {
+      try {
+        await this.versionRepo.delete(id);
+        return id;
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
-    try {
-      await this.versionRepo.delete(id);
-      return id;
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return validation;
   }
 
   async addVersionInProject(id: number, idProject: number) {

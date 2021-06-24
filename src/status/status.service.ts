@@ -80,16 +80,16 @@ export class StatusService {
   }
 
   async remove(id: number, idProject: number) {
-    const validation = this.validation(id, idProject);
-    if (!validation) {
-      return validation;
+    const validation = await this.validation(id, idProject);
+    if (validation == true) {
+      try {
+        await this.statusRepo.delete(id);
+        return id;
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
-    try {
-      await this.statusRepo.delete(id);
-      return id;
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return validation;
   }
 
   async addStatusInProject(id: number, idProject: number) {

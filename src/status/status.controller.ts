@@ -23,9 +23,8 @@ export class StatusController {
   async getAll() {
     return await this.statusService.getAll();
   }
-
   @Get(':id')
-  async getStatusById(@Param('id') id: number) {
+  async getStatusById(@Param('idStatus') id: number) {
     return await this.statusService.getOneByIdOrFail(id);
   }
 
