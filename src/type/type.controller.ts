@@ -15,7 +15,7 @@ import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
 
 @ApiTags('Type')
-@Controller('type')
+@Controller('projects/:idProject/types')
 export class TypeController {
   constructor(private typeService: TypeService) {}
 

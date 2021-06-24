@@ -19,7 +19,7 @@ import { EditCategoryDTO } from './dto/edit-category.dto';
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  @Get('')
+  @Get()
   async getAll(@Param('idProject') id: number) {
     return await this.categoryService.getAll(id);
   }

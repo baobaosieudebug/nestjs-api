@@ -15,7 +15,7 @@ import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
 
 @ApiTags('Status')
-@Controller('statuses')
+@Controller('projects/:idProject/statuses')
 export class StatusController {
   constructor(private statusService: StatusService) {}
 

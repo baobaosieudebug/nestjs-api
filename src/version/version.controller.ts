@@ -15,7 +15,7 @@ import { AddVersionDTO } from './dto/add-version.dto';
 import { EditVersionDTO } from './dto/edit-version.dto';
 
 @ApiTags('Version')
-@Controller('version')
+@Controller('projects/:idProject/versions')
 export class VersionController {
   constructor(private versionService: VersionService) {}
 
