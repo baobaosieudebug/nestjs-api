@@ -58,6 +58,6 @@ export class StatusController {
     @Param('idProject') idProject: number,
     @Param('id') id: number,
   ) {
-    return await this.statusService.remove(id);
+    return await this.statusService.remove(id, idProject);
   }
 }

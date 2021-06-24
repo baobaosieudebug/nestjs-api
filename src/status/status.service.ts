@@ -79,7 +79,11 @@ export class StatusService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, idProject: number) {
+    const validation = this.validation(id, idProject);
+    if (!validation) {
+      return validation;
+    }
     try {
       await this.statusRepo.delete(id);
       return id;
