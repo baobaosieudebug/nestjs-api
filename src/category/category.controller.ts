@@ -58,6 +58,6 @@ export class CategoryController {
     @Param('idProject') idProject: number,
     @Param('id') id: number,
   ) {
-    return await this.categoryService.remove(id);
+    return await this.categoryService.remove(id, idProject);
   }
 }
