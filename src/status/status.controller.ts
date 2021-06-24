@@ -7,13 +7,15 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
 
 @ApiTags('Status')
-@Controller('status')
+@Controller('statuses')
 export class StatusController {
   constructor(private statusService: StatusService) {}
 
@@ -28,17 +30,34 @@ export class StatusController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createStatus(@Body() dto: AddStatusDTO) {
     return await this.statusService.add(dto);
   }
 
+  @Post(':id')
+  async addStatusInProject(
+    @Param('id') id: number,
+    @Param('idProject') idProject: number,
+  ) {
+    return this.statusService.addStatusInProject(id, idProject);
+  }
+
   @Put(':id')
-  async editStatus(@Param('id') id: number, @Body() dto: EditStatusDTO) {
-    return await this.statusService.edit(id, dto);
+  @UsePipes(ValidationPipe)
+  async editStatus(
+    @Param('idProject') idProject: number,
+    @Param('id') id: number,
+    @Body() dto: EditStatusDTO,
+  ) {
+    return await this.statusService.edit(id, idProject, dto);
   }
 
   @Delete(':id')
-  async removeStatus(@Param('id') id: number) {
+  async removeStatus(
+    @Param('idProject') idProject: number,
+    @Param('id') id: number,
+  ) {
     return await this.statusService.remove(id);
   }
 }
