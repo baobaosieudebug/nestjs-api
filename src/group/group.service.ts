@@ -48,7 +48,7 @@ export class GroupsService {
   }
 
   async checkGroup(id: number) {
-    const group = await this.groupRepo.getOneById(id);
+    const group = await this.groupRepo.getOneByIdOrFail(id);
     if (!group) {
       return null;
     }

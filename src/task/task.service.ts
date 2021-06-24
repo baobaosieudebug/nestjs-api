@@ -41,7 +41,7 @@ export class TaskService {
   }
 
   async checkTaskByCode(code: string) {
-    const task = await this.getOneByCodeOrFail(code);
+    const task = await this.taskRepo.getOneByCodeOrFail(code);
     if (!task) {
       return null;
     }
@@ -49,7 +49,7 @@ export class TaskService {
   }
 
   async checkTaskByID(id: number) {
-    const task = await this.getOneByIdOrFail(id);
+    const task = await this.taskRepo.getOneByIdOrFail(id);
     if (!task) {
       return null;
     }

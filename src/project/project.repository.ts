@@ -1,6 +1,7 @@
 import { ProjectEntity } from './project.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { UsersEntity } from '../user/users.entity';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(ProjectEntity)
 export class ProjectRepository extends Repository<ProjectEntity> {
@@ -14,6 +15,22 @@ export class ProjectRepository extends Repository<ProjectEntity> {
 
   getByCode(code) {
     return this.findOne({ code });
+  }
+
+  async getOneByIdOrFail(id: number) {
+    const response = await this.getById(id);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
+  }
+
+  async getOneByCodeOrFail(code: string) {
+    const response = await this.getByCode(code);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
   }
 
   async getByIdWithDelete(id) {

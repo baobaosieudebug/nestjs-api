@@ -40,7 +40,7 @@ export class UsersService {
   }
 
   async checkUser(id: number) {
-    const user = await this.userRepo.getOneById(id);
+    const user = await this.userRepo.getOneByIdOrFail(id);
     if (!user) {
       return null;
     }

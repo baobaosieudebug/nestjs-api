@@ -1,5 +1,6 @@
 import { TaskEntity } from './task.entity';
 import { EntityRepository, Repository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
@@ -13,6 +14,22 @@ export class TaskRepository extends Repository<TaskEntity> {
 
   getByCode(code) {
     return this.findOne({ code });
+  }
+
+  async getOneByIdOrFail(id: number) {
+    const response = await this.getById(id);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
+  }
+
+  async getOneByCodeOrFail(code: string) {
+    const response = await this.getByCode(code);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
   }
 
   async getByIdWithDelete(id) {

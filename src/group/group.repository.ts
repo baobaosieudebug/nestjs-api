@@ -1,6 +1,7 @@
 import { GroupsEntity } from './group.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { UsersEntity } from '../user/users.entity';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(GroupsEntity)
 export class GroupRepository extends Repository<GroupsEntity> {
@@ -14,6 +15,14 @@ export class GroupRepository extends Repository<GroupsEntity> {
 
   getByName(name: string) {
     return this.count({ where: { nameGroup: name } });
+  }
+
+  async getOneByIdOrFail(id: number) {
+    const response = await this.getOneById(id);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
   }
 
   async isUserExistInGroup(idUser: number) {

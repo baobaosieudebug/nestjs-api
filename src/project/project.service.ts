@@ -91,7 +91,7 @@ export class ProjectService {
   }
 
   async checkProjectByCode(code: string) {
-    const project = await this.projectRepo.getByCode(code);
+    const project = await this.projectRepo.getOneByCodeOrFail(code);
     if (!project) {
       return null;
     }
@@ -99,7 +99,7 @@ export class ProjectService {
   }
 
   async checkProjectByID(id: number) {
-    const project = await this.projectRepo.getById(id);
+    const project = await this.projectRepo.getOneByIdOrFail(id);
     if (!project) {
       return null;
     }

@@ -80,7 +80,7 @@ export class OrganizationService {
     }
   }
   async checkOrgByCode(code: string) {
-    const organization = await this.organizationRepo.getByCode(code);
+    const organization = await this.organizationRepo.getOneByCodeOrFail(code);
     if (!organization) {
       return null;
     }
@@ -88,7 +88,7 @@ export class OrganizationService {
   }
 
   async checkOrgByID(id: number) {
-    const organization = await this.organizationRepo.getById(id);
+    const organization = await this.organizationRepo.getOneByIdOrFail(id);
     if (!organization) {
       return null;
     }
