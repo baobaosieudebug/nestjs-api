@@ -6,7 +6,6 @@ import { UserRepository } from './user.repository';
 import { GroupsModule } from '../group/group.module';
 import { TaskModule } from 'src/task/task.module';
 import { ProjectModule } from '../project/project.module';
-import { ProjectAndUser } from '../projects-users/project-user.entity';
 
 @Module({
   imports: [
@@ -15,7 +14,6 @@ import { ProjectAndUser } from '../projects-users/project-user.entity';
     TaskModule,
     GroupsModule,
     ProjectModule,
-    ProjectAndUser,
   ],
   controllers: [UsersController],
   providers: [UsersService],
