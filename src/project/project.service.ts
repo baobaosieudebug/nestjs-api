@@ -106,8 +106,6 @@ export class ProjectService {
     return project;
   }
 
-
-
   async createProject(dto: AddProjectDTO) {
     try {
       const project = this.projectRepo.create(dto);
@@ -246,5 +244,4 @@ export class ProjectService {
       throw new InternalServerErrorException();
     }
   }
-
 }

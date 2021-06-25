@@ -3,8 +3,6 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -18,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (status == 500) {
       response.status(status).json({
-        message: 'Internal Server',
+        message: 'Internal Server Error',
       });
     }
     response.status(status).json({

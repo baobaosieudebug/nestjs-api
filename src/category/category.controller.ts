@@ -1,4 +1,10 @@
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -15,6 +21,10 @@ import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
 
 @ApiTags('Category')
+@ApiOkResponse({ description: 'Success' })
+@ApiCreatedResponse({ description: 'Created' })
+@ApiNotFoundResponse({ description: 'Not Found' })
+@ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
 @Controller('projects/:id/categories')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}

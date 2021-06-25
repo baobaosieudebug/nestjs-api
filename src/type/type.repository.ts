@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Type } from './type.entity';
-import { NotFoundException } from "@nestjs/common";
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(Type)
 export class TypeRepository extends Repository<Type> {

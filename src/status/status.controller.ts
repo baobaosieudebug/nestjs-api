@@ -1,4 +1,10 @@
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -15,6 +21,10 @@ import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
 
 @ApiTags('Status')
+@ApiOkResponse({ description: 'Success' })
+@ApiCreatedResponse({ description: 'Created' })
+@ApiNotFoundResponse({ description: 'Not Found' })
+@ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
 @Controller('projects/:id/statuses')
 export class StatusController {
   constructor(private statusService: StatusService) {}

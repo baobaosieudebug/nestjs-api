@@ -1,4 +1,10 @@
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -15,6 +21,10 @@ import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
 
 @ApiTags('Type')
+@ApiOkResponse({ description: 'Success' })
+@ApiCreatedResponse({ description: 'Created' })
+@ApiNotFoundResponse({ description: 'Not Found' })
+@ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
 @Controller('projects/:id/types')
 export class TypeController {
   constructor(private typeService: TypeService) {}
