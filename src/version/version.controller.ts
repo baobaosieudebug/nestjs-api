@@ -20,27 +20,25 @@ export class VersionController {
   constructor(private versionService: VersionService) {}
 
   @Get()
-  async getAll() {
-    return await this.versionService.getAll();
+  async getAll(@Param('id') idProject: number) {
+    return await this.versionService.getAll(idProject);
   }
 
   @Get(':idVersion')
-  async getVersionById(@Param('idVersion') id: number) {
-    return await this.versionService.getOneByIdOrFail(id);
+  async getVersionById(
+    @Param('idVersion') id: number,
+    @Param('id') idProject: number,
+  ) {
+    return await this.versionService.getOneByIdOrFail(id, idProject);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createVersion(@Body() dto: AddVersionDTO) {
-    return await this.versionService.add(dto);
-  }
-
-  @Post(':idVersion')
-  async addVersionInProject(
-    @Param('idVersion') id: number,
+  async createVersion(
+    @Body() dto: AddVersionDTO,
     @Param('id') idProject: number,
   ) {
-    return this.versionService.addVersionInProject(id, idProject);
+    return await this.versionService.add(dto, idProject);
   }
 
   @Put(':idVersion')

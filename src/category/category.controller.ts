@@ -20,27 +20,25 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get()
-  async getAll() {
-    return await this.categoryService.getAll();
+  async getAll(@Param('id') idProject: number) {
+    return await this.categoryService.getAll(idProject);
   }
 
   @Get(':idCategory')
-  async getCategoryById(@Param('idCategory') id: number) {
-    return await this.categoryService.getOneByIdOrFail(id);
+  async getCategoryById(
+    @Param('idCategory') id: number,
+    @Param('id') idProject: number,
+  ) {
+    return await this.categoryService.getOneByIdOrFail(id, idProject);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createCategory(@Body() dto: AddCategoryDTO) {
-    return await this.categoryService.add(dto);
-  }
-
-  @Post(':idCategory')
-  async addCategoryInProject(
-    @Param('idCategory') id: number,
+  async createCategory(
+    @Body() dto: AddCategoryDTO,
     @Param('id') idProject: number,
   ) {
-    return this.categoryService.addCategoryInProject(id, idProject);
+    return await this.categoryService.add(dto, idProject);
   }
 
   @Put(':idCategory')

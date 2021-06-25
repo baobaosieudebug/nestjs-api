@@ -20,27 +20,25 @@ export class StatusController {
   constructor(private statusService: StatusService) {}
 
   @Get()
-  async getAll() {
-    return await this.statusService.getAll();
+  async getAll(@Param('id') idProject: number) {
+    return await this.statusService.getAll(idProject);
   }
 
   @Get(':idStatus')
-  async getStatusById(@Param('idStatus') id: number) {
-    return await this.statusService.getOneByIdOrFail(id);
+  async getStatusById(
+    @Param('idStatus') id: number,
+    @Param('id') idProject: number,
+  ) {
+    return await this.statusService.getOneByIdOrFail(id, idProject);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createStatus(@Body() dto: AddStatusDTO) {
-    return await this.statusService.add(dto);
-  }
-
-  @Post(':idStatus')
-  async addStatusInProject(
-    @Param('idStatus') id: number,
+  async createStatus(
+    @Body() dto: AddStatusDTO,
     @Param('id') idProject: number,
   ) {
-    return this.statusService.addStatusInProject(id, idProject);
+    return await this.statusService.add(dto, idProject);
   }
 
   @Put(':idStatus')

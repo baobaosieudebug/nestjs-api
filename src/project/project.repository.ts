@@ -20,7 +20,7 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   async getOneByIdOrFail(id: number) {
     const response = await this.getById(id);
     if (!response) {
-      throw new NotFoundException();
+      throw new NotFoundException('Project Not Found');
     }
     return response;
   }

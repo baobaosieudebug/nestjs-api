@@ -1,65 +1,101 @@
 import {
+  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { ProjectService } from '../../project/project.service';
 
 export class BaseService<childRepo> {
-  constructor(private repo: Repository<childRepo>) {}
+  constructor(
+    private repo: Repository<childRepo>,
+    private serviceProject: ProjectService,
+  ) {}
 
-  getAll(): Promise<childRepo[]> {
-    return this.repo.find();
+  getAll(idProject: number) {
+    return this.repo.find({ where: { projectID: idProject } });
   }
 
   getOneById(id: number): Promise<childRepo> {
     return this.repo.findOne(id);
   }
 
-  getOneByCodeId(codeId: string): Promise<childRepo> {
-    return this.repo.findOne({ where: [{ codeId: codeId }] });
-  }
-
-  async getOneByIdOrFail(id: number): Promise<childRepo> {
+  async getOneByIdOrFail(id: number, idProject: number): Promise<childRepo> {
+    const checkProject = this.serviceProject.checkProjectByID(idProject);
+    if (!checkProject) {
+      throw new NotFoundException();
+    }
     const responseEntity = await this.getOneById(id);
     if (!responseEntity) {
-      throw new NotFoundException('ID Incorrect');
+      throw new NotFoundException();
     }
     return responseEntity;
   }
 
-  async getOneByCodeIdOrFail(codeId: string) {
-    const responseEntity = await this.getOneByCodeId(codeId);
-    if (!responseEntity) {
-      throw new NotFoundException('ID Incorrect');
+  async check(id: number, idProject: number) {
+    const check = await this.getOneByIdOrFail(id, idProject);
+    if (!check) {
+      return null;
     }
-    return responseEntity;
+    return check;
   }
 
-  async add(dto) {
+  async validation(id: number, idProject: number) {
+    const check = await this.check(id, idProject);
+    if (!check) {
+      throw new NotFoundException('Not Found');
+    }
+    const project = await this.serviceProject.checkProjectByID(idProject);
+    if (!project) {
+      return project;
+    }
+    return true;
+  }
+
+  async add(dto, idProject: number) {
+    const checkProject = this.serviceProject.checkProjectByID(idProject);
+    if (!checkProject) {
+      throw new NotFoundException();
+    }
     try {
+      dto.projectID = idProject;
       const responseEntity = this.repo.create(dto);
       return await this.repo.save(responseEntity);
     } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
-    }
-  }
-  async edit(id: number, dto): Promise<childRepo> {
-    const old = await this.getOneByIdOrFail(id);
-    try {
-      const editEntity = this.repo.merge(old, dto);
-      return this.repo.save(editEntity);
-    } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+      throw new InternalServerErrorException();
     }
   }
 
-  async remove(id: number) {
-    const removeEntity = await this.getOneByIdOrFail(id);
-    try {
-      await this.repo.delete(removeEntity);
-      return id;
-    } catch (e) {
-      throw new InternalServerErrorException('Sorry, Server is being problem');
+  async edit(id: number, idProject: number, dto) {
+    const validation = await this.validation(id, idProject);
+    if (!validation) {
+      return validation;
     }
+    const entityExistProject = await this.repo.count({
+      where: { id, projectID: idProject },
+    });
+    if (!entityExistProject) {
+      throw new BadRequestException(' Not Exist In Project');
+    }
+    try {
+      const old = await this.getOneByIdOrFail(id, idProject);
+      const editEntity = this.repo.merge(old, dto);
+      return this.repo.save(editEntity);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async remove(id: number, idProject: number) {
+    const validation = await this.validation(id, idProject);
+    if (validation == true) {
+      try {
+        await this.repo.delete(id);
+        return id;
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
+    }
+    return validation;
   }
 }

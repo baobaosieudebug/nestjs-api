@@ -20,26 +20,22 @@ export class TypeController {
   constructor(private typeService: TypeService) {}
 
   @Get()
-  async getAll() {
-    return await this.typeService.getAll();
+  async getAll(@Param('id') idProject: number) {
+    return await this.typeService.getAll(idProject);
   }
 
   @Get(':idType')
-  async getTypeById(@Param('idType') id: number) {
-    return await this.typeService.getOneByIdOrFail(id);
-  }
-
-  @Post()
-  async createType(@Body() dto: AddTypeDTO) {
-    return await this.typeService.add(dto);
-  }
-
-  @Post(':idType')
-  async addTypeInProject(
+  async getTypeById(
     @Param('idType') id: number,
     @Param('id') idProject: number,
   ) {
-    return this.typeService.addTypeInProject(id, idProject);
+    return await this.typeService.getOneByIdOrFail(id, idProject);
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  async createType(@Body() dto: AddTypeDTO, @Param('id') idProject: number) {
+    return await this.typeService.add(dto, idProject);
   }
 
   @Put(':idType')
@@ -53,7 +49,6 @@ export class TypeController {
   }
 
   @Delete(':idType')
-  @UsePipes(ValidationPipe)
   async removeType(
     @Param('id') idProject: number,
     @Param('idType') id: number,
