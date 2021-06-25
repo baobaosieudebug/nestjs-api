@@ -56,10 +56,11 @@ export class TaskService {
     return task;
   }
 
-  async create(dto: AddTaskDTO) {
+  async create(dto: AddTaskDTO, idUser: number) {
     try {
       const task = this.taskRepo.create(dto);
       task.createdAt = new Date();
+      task.createUserId = idUser;
       return await this.taskRepo.save(task);
     } catch (e) {
       throw new InternalServerErrorException();
