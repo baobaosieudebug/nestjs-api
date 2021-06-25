@@ -15,17 +15,17 @@ import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
 
 @ApiTags('Category')
-@Controller('projects/:idProject/categories')
+@Controller('projects/:id/categories')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get()
-  async getAll(@Param('idProject') id: number) {
-    return await this.categoryService.getAll(id);
+  async getAll() {
+    return await this.categoryService.getAll();
   }
 
-  @Get(':id')
-  async getCategoryById(@Param('id') id: number) {
+  @Get(':idCategory')
+  async getCategoryById(@Param('idCategory') id: number) {
     return await this.categoryService.getOneByIdOrFail(id);
   }
 
@@ -35,28 +35,28 @@ export class CategoryController {
     return await this.categoryService.add(dto);
   }
 
-  @Post(':id')
+  @Post(':idCategory')
   async addCategoryInProject(
-    @Param('id') id: number,
-    @Param('idProject') idProject: number,
+    @Param('idCategory') id: number,
+    @Param('id') idProject: number,
   ) {
     return this.categoryService.addCategoryInProject(id, idProject);
   }
 
-  @Put(':id')
+  @Put(':idCategory')
   @UsePipes(ValidationPipe)
   async editCategory(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idCategory') id: number,
     @Body() dto: EditCategoryDTO,
   ) {
     return await this.categoryService.edit(id, idProject, dto);
   }
 
-  @Delete(':id')
+  @Delete(':idCategory')
   async removeCategory(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idCategory') id: number,
   ) {
     return await this.categoryService.remove(id, idProject);
   }

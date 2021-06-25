@@ -15,7 +15,7 @@ import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
 
 @ApiTags('Type')
-@Controller('projects/:idProject/types')
+@Controller('projects/:id/types')
 export class TypeController {
   constructor(private typeService: TypeService) {}
 
@@ -24,8 +24,8 @@ export class TypeController {
     return await this.typeService.getAll();
   }
 
-  @Get(':id')
-  async getTypeById(@Param('id') id: number) {
+  @Get(':idType')
+  async getTypeById(@Param('idType') id: number) {
     return await this.typeService.getOneByIdOrFail(id);
   }
 
@@ -34,29 +34,29 @@ export class TypeController {
     return await this.typeService.add(dto);
   }
 
-  @Post(':id')
+  @Post(':idType')
   async addTypeInProject(
-    @Param('id') id: number,
-    @Param('idProject') idProject: number,
+    @Param('idType') id: number,
+    @Param('id') idProject: number,
   ) {
     return this.typeService.addTypeInProject(id, idProject);
   }
 
-  @Put(':id')
+  @Put(':idType')
   @UsePipes(ValidationPipe)
   async editType(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idType') id: number,
     @Body() dto: EditTypeDTO,
   ) {
     return await this.typeService.edit(id, idProject, dto);
   }
 
-  @Delete(':id')
+  @Delete(':idType')
   @UsePipes(ValidationPipe)
   async removeType(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idType') id: number,
   ) {
     return await this.typeService.remove(id, idProject);
   }

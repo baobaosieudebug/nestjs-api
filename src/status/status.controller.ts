@@ -15,7 +15,7 @@ import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
 
 @ApiTags('Status')
-@Controller('projects/:idProject/statuses')
+@Controller('projects/:id/statuses')
 export class StatusController {
   constructor(private statusService: StatusService) {}
 
@@ -23,7 +23,8 @@ export class StatusController {
   async getAll() {
     return await this.statusService.getAll();
   }
-  @Get(':id')
+
+  @Get(':idStatus')
   async getStatusById(@Param('idStatus') id: number) {
     return await this.statusService.getOneByIdOrFail(id);
   }
@@ -34,28 +35,28 @@ export class StatusController {
     return await this.statusService.add(dto);
   }
 
-  @Post(':id')
+  @Post(':idStatus')
   async addStatusInProject(
-    @Param('id') id: number,
-    @Param('idProject') idProject: number,
+    @Param('idStatus') id: number,
+    @Param('id') idProject: number,
   ) {
     return this.statusService.addStatusInProject(id, idProject);
   }
 
-  @Put(':id')
+  @Put(':idStatus')
   @UsePipes(ValidationPipe)
   async editStatus(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idStatus') id: number,
     @Body() dto: EditStatusDTO,
   ) {
     return await this.statusService.edit(id, idProject, dto);
   }
 
-  @Delete(':id')
+  @Delete(':idStatus')
   async removeStatus(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idStatus') id: number,
   ) {
     return await this.statusService.remove(id, idProject);
   }

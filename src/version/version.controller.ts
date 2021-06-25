@@ -15,7 +15,7 @@ import { AddVersionDTO } from './dto/add-version.dto';
 import { EditVersionDTO } from './dto/edit-version.dto';
 
 @ApiTags('Version')
-@Controller('projects/:idProject/versions')
+@Controller('projects/:id/versions')
 export class VersionController {
   constructor(private versionService: VersionService) {}
 
@@ -24,8 +24,8 @@ export class VersionController {
     return await this.versionService.getAll();
   }
 
-  @Get(':id')
-  async getVersionById(@Param('id') id: number) {
+  @Get(':idVersion')
+  async getVersionById(@Param('idVersion') id: number) {
     return await this.versionService.getOneByIdOrFail(id);
   }
 
@@ -35,28 +35,28 @@ export class VersionController {
     return await this.versionService.add(dto);
   }
 
-  @Post(':id')
+  @Post(':idVersion')
   async addVersionInProject(
-    @Param('id') id: number,
-    @Param('idProject') idProject: number,
+    @Param('idVersion') id: number,
+    @Param('id') idProject: number,
   ) {
     return this.versionService.addVersionInProject(id, idProject);
   }
 
-  @Put(':id')
+  @Put(':idVersion')
   @UsePipes(ValidationPipe)
   async editVersion(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idVersion') id: number,
     @Body() dto: EditVersionDTO,
   ) {
     return await this.versionService.edit(id, idProject, dto);
   }
 
-  @Delete(':id')
+  @Delete(':idVersion')
   async removeVersion(
-    @Param('idProject') idProject: number,
-    @Param('id') id: number,
+    @Param('id') idProject: number,
+    @Param('idVersion') id: number,
   ) {
     return await this.versionService.remove(id, idProject);
   }

@@ -1,4 +1,9 @@
-import { HttpModule, Module } from '@nestjs/common';
+import {
+  HttpModule,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { UsersModule } from './user/users.module';
 import { GroupsModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +16,11 @@ import { CategoryModule } from './category/category.module';
 import { TypeModule } from './type/type.module';
 import { StatusModule } from './status/status.module';
 import { VersionModule } from './version/version.module';
+import { ProjectMiddleware } from './common/middleware/project.middleware';
+import { StatusController } from './status/status.controller';
+import { VersionController } from './version/version.controller';
+import { CategoryController } from './category/category.controller';
+import { TypeController } from './type/type.controller';
 
 @Module({
   imports: [
@@ -29,4 +39,15 @@ import { VersionModule } from './version/version.module';
     VersionModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ProjectMiddleware)
+      .forRoutes(
+        StatusController,
+        VersionController,
+        CategoryController,
+        TypeController,
+      );
+  }
+}

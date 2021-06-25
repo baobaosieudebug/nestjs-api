@@ -16,8 +16,8 @@ export class CategoryService {
     private readonly projectService: ProjectService,
   ) {}
 
-  getAll(id) {
-    return this.categoryRepo.getAll(id);
+  getAll() {
+    return this.categoryRepo.getAll();
   }
 
   getOneById(id: number) {
