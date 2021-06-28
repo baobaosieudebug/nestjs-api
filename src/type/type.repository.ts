@@ -21,6 +21,6 @@ export class TypeRepository extends Repository<TypeEntity> {
   }
 
   async countTypeInProject(id: number, idProject: number) {
-    return await this.count({ where: { id, projectID: idProject } });
+    return await this.count({ where: { id, projectId: idProject } });
   }
 }

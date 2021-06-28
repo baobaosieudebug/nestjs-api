@@ -4,23 +4,39 @@ import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(CategoryEntity)
 export class CategoryRepository extends Repository<CategoryEntity> {
-  getById(id) {
-    return this.findOne({ id });
+  getAll(idProject: number) {
+    return this.find({ projectId: idProject, isDeleted: null });
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getById(id);
+  getById(id: number, idProject: number) {
+    return this.findOne({ id, projectId: idProject, isDeleted: null });
+  }
+
+  getByCode(code: string) {
+    return this.findOne({ code });
+  }
+
+  async getOneByIdOrFail(id: number, idProject: number) {
+    const response = await this.getById(id, idProject);
     if (!response) {
       throw new NotFoundException();
     }
     return response;
   }
 
-  getAll() {
-    return this.find();
+  async getOneByCodeOrFail(code: string) {
+    const response = await this.getByCode(code);
+    if (!response) {
+      throw new NotFoundException();
+    }
+    return response;
   }
 
-  async countCategoryInProject(id: number, idProject: number) {
-    return await this.count({ where: { id, projectID: idProject } });
+  async countCategoryInProjectByCode(code: string, idProject: number) {
+    return (await this.count({ where: { code, projectId: idProject, isDeleted: null } })) > 0;
+  }
+
+  async countCategoryInProjectById(id: number, idProject: number) {
+    return (await this.count({ where: { id, projectId: idProject, isDeleted: null } })) > 0;
   }
 }

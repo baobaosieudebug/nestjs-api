@@ -45,7 +45,7 @@ export class TaskEntity {
   isDeleted: number;
 
   @Column({ name: 'project_id', nullable: true })
-  projectID: number;
+  projectId: number;
 
   @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasksAssign)
   @JoinColumn({ name: 'assign_user_id' })

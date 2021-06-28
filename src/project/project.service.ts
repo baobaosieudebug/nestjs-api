@@ -100,9 +100,9 @@ export class ProjectService {
 
   async checkProjectByID(id: number) {
     const project = await this.projectRepo.getOneByIdOrFail(id);
-    if (!project) {
-      return null;
-    }
+    // if (!project) {
+    //   return null;
+    // }
     return project;
   }
 

@@ -21,6 +21,6 @@ export class VersionRepository extends Repository<VersionEntity> {
   }
 
   async countVersionInProject(id: number, idProject: number) {
-    return await this.count({ where: { id, projectID: idProject } });
+    return await this.count({ where: { id, projectId: idProject } });
   }
 }

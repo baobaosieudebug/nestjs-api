@@ -29,9 +29,9 @@ export class UserRepository extends Repository<UsersEntity> {
     return entity > 0;
   }
 
-  async isUserExistInProject(projectID: number, id: number) {
+  async isUserExistInProject(projectId: number, id: number) {
     const entity = await this.count({
-      where: { id, projectID: projectID },
+      where: { id, projectId: projectId },
     });
     return entity > 0;
   }

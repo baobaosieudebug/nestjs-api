@@ -21,6 +21,6 @@ export class StatusRepository extends Repository<StatusEntity> {
   }
 
   async countStatusInProject(id: number, idProject: number) {
-    return await this.count({ where: { id, projectID: idProject } });
+    return await this.count({ where: { id, projectId: idProject } });
   }
 }

@@ -77,7 +77,7 @@ export class TaskService {
       throw new BadRequestException('Task exist in Project');
     }
     try {
-      return await this.taskRepo.update(checkTask.id, { projectID: idProject });
+      return await this.taskRepo.update(checkTask.id, { projectId: idProject });
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -149,7 +149,7 @@ export class TaskService {
       throw new NotFoundException('Task not Exist Project');
     }
     try {
-      return await this.taskRepo.update(checkTask.id, { projectID: null });
+      return await this.taskRepo.update(checkTask.id, { projectId: null });
     } catch (e) {
       throw new InternalServerErrorException();
     }
