@@ -26,10 +26,19 @@ export class StatusEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDeleted: number;
 
-  @CreateDateColumn({ name: 'created_at', type: 'date', nullable: false })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'date', nullable: false })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   updatedAt: Date;
 
   @Column({ name: 'project_id', nullable: true })

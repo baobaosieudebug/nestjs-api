@@ -29,10 +29,19 @@ export class VersionEntity {
   @Column({ name: 'date_release', type: 'date', nullable: false })
   releaseDate: Date;
 
-  @CreateDateColumn({ name: 'created_at', type: 'date', nullable: false })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'date', nullable: false })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   updatedAt: Date;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
