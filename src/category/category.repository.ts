@@ -33,10 +33,18 @@ export class CategoryRepository extends Repository<CategoryEntity> {
   }
 
   async countCategoryInProjectByCode(code: string, idProject: number) {
-    return (await this.count({ where: { code, projectId: idProject, isDeleted: null } })) > 0;
+    return (
+      (await this.count({
+        where: { code, projectId: idProject, isDeleted: null },
+      })) > 0
+    );
   }
 
   async countCategoryInProjectById(id: number, idProject: number) {
-    return (await this.count({ where: { id, projectId: idProject, isDeleted: null } })) > 0;
+    return (
+      (await this.count({
+        where: { id, projectId: idProject, isDeleted: null },
+      })) > 0
+    );
   }
 }
