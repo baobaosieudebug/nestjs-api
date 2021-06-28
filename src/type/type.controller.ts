@@ -20,6 +20,7 @@ import { TypeService } from './type.service';
 import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
 
+
 @ApiTags('Type')
 @ApiOkResponse({ description: 'Success' })
 @ApiCreatedResponse({ description: 'Created' })
@@ -30,39 +31,39 @@ export class TypeController {
   constructor(private typeService: TypeService) {}
 
   @Get()
-  async getAll(@Param('id') idProject: number) {
-    return await this.typeService.getAll(idProject);
+  async getAll(@Param('id') projectId: number) {
+    return await this.typeService.getAllTypeByIdProject(projectId);
   }
 
-  // @Get(':idType')
-  // async getTypeById(
-  //   @Param('idType') id: number,
-  //   @Param('id') idProject: number,
-  // ) {
-  //   return await this.typeService.getOneByIdOrFail(id, idProject);
-  // }
-  //
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // async createType(@Body() dto: AddTypeDTO, @Param('id') idProject: number) {
-  //   return await this.typeService.add(dto, idProject);
-  // }
-  //
-  // @Put(':idType')
-  // @UsePipes(ValidationPipe)
-  // async editType(
-  //   @Param('id') idProject: number,
-  //   @Param('idType') id: number,
-  //   @Body() dto: EditTypeDTO,
-  // ) {
-  //   return await this.typeService.edit(id, idProject, dto);
-  // }
-  //
-  // @Delete(':idType')
-  // async removeType(
-  //   @Param('id') idProject: number,
-  //   @Param('idType') id: number,
-  // ) {
-  //   return await this.typeService.remove(id, idProject);
-  // }
+  @Get(':idType')
+  async getTypeById(
+    @Param('idType') id: number,
+    @Param('id') idProject: number,
+  ) {
+    return await this.typeService.getOneByIdOrFail(id, idProject);
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  async createType(@Body() dto: AddTypeDTO, @Param('id') idProject: number) {
+    return await this.typeService.add(dto, idProject);
+  }
+
+  @Put(':idType')
+  @UsePipes(ValidationPipe)
+  async editType(
+    @Param('id') idProject: number,
+    @Param('idType') id: number,
+    @Body() dto: EditTypeDTO,
+  ) {
+    return await this.typeService.edit(id, idProject, dto);
+  }
+
+  @Delete(':idType')
+  async removeType(
+    @Param('id') idProject: number,
+    @Param('idType') id: number,
+  ) {
+    return await this.typeService.remove(id, idProject);
+  }
 }

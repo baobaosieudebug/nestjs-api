@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VersionRepository } from './version.repository';
 import { VersionService } from './version.service';
 import { VersionController } from './version.controller';
 import { ProjectModule } from '../project/project.module';
+import { ProjectMiddleware } from '../common/middleware/project.middleware';
 
 @Module({
   imports: [TypeOrmModule.forFeature([VersionRepository]), ProjectModule],
@@ -11,4 +12,8 @@ import { ProjectModule } from '../project/project.module';
   controllers: [VersionController],
   exports: [VersionService],
 })
-export class VersionModule {}
+export class VersionModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ProjectMiddleware).forRoutes(VersionController);
+  }
+}

@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeRepository } from './type.repository';
 import { TypeService } from './type.service';
 import { TypeController } from './type.controller';
 import { ProjectModule } from '../project/project.module';
+import { ProjectMiddleware } from '../common/middleware/project.middleware';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TypeRepository]), ProjectModule],
@@ -11,4 +12,8 @@ import { ProjectModule } from '../project/project.module';
   controllers: [TypeController],
   exports: [TypeService],
 })
-export class TypeModule {}
+export class TypeModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ProjectMiddleware).forRoutes(TypeController);
+  }
+}

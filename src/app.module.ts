@@ -2,9 +2,7 @@ import {
   CacheInterceptor,
   CacheModule,
   HttpModule,
-  MiddlewareConsumer,
   Module,
-  NestModule,
 } from '@nestjs/common';
 import { UsersModule } from './user/users.module';
 import { GroupsModule } from './group/group.module';
@@ -18,11 +16,6 @@ import { CategoryModule } from './category/category.module';
 import { TypeModule } from './type/type.module';
 import { StatusModule } from './status/status.module';
 import { VersionModule } from './version/version.module';
-import { ProjectMiddleware } from './common/middleware/project.middleware';
-import { StatusController } from './status/status.controller';
-import { VersionController } from './version/version.controller';
-import { CategoryController } from './category/category.controller';
-import { TypeController } from './type/type.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
@@ -49,15 +42,4 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ProjectMiddleware)
-      .forRoutes(
-        StatusController,
-        VersionController,
-        CategoryController,
-        TypeController,
-      );
-  }
-}
+export class AppModule {}
