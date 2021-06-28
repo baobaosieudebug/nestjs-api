@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectService } from '../project/project.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Type } from './type.entity';
-import { Repository } from 'typeorm';
-import { BaseService } from '../common/service/base.service';
+import { TypeRepository } from './type.repository';
 
 @Injectable()
-export class TypeService extends BaseService<Type> {
-  constructor(
-    @InjectRepository(Type)
-    private type: Repository<Type>,
-    private projectService: ProjectService,
-  ) {
-    super(type, projectService);
+export class TypeService {
+  constructor(private readonly typeRepo: TypeRepository) {}
+
+  async getAll(projectId: number) {
+    return await this.typeRepo.find({ projectId: projectId });
+  }
+
+  async getOneById(id: number) {
+    return await this.typeRepo.findOne(id);
   }
 }

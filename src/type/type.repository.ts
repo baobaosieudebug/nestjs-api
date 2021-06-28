@@ -1,9 +1,9 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Type } from './type.entity';
+import { TypeEntity } from './type.entity';
 import { NotFoundException } from '@nestjs/common';
 
-@EntityRepository(Type)
-export class TypeRepository extends Repository<Type> {
+@EntityRepository(TypeEntity)
+export class TypeRepository extends Repository<TypeEntity> {
   getById(id) {
     return this.findOne({ id });
   }

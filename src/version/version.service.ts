@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectService } from '../project/project.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Version } from './version.entity';
-import { Repository } from 'typeorm';
-import { BaseService } from '../common/service/base.service';
+import { VersionRepository } from './version.repository';
 
 @Injectable()
-export class VersionService extends BaseService<Version> {
-  constructor(
-    @InjectRepository(Version)
-    private version: Repository<Version>,
-    private projectService: ProjectService,
-  ) {
-    super(version, projectService);
+export class VersionService {
+  constructor(private readonly versionRepo: VersionRepository) {}
+
+  async getAll(projectId: number) {
+    return await this.versionRepo.find({ projectId: projectId });
+  }
+
+  async getOneById(id: number) {
+    return await this.versionRepo.findOne(id);
   }
 }

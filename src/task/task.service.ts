@@ -67,25 +67,6 @@ export class TaskService {
     }
   }
 
-  async addUserCreateTask(code: string, idUser: number) {
-    const checkTask = await this.checkTaskByCode(code);
-    if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existUserCreateTask = await this.taskRepo.isTaskExistInUser(
-      idUser,
-      code,
-    );
-    if (existUserCreateTask == 0) {
-      throw new BadRequestException('UserCreate Existed');
-    }
-    try {
-      return await this.taskRepo.update(checkTask.id, { createUserId: idUser });
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
   async addTaskInProject(code: string, idProject: number) {
     const checkTask = await this.checkTaskByCode(code);
     if (!checkTask) {

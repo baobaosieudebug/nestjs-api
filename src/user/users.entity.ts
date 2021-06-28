@@ -26,16 +26,16 @@ export class UsersEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: null })
   isDeleted: number;
 
-  @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
-    cascade: ['insert'],
-  })
-  groups: GroupsEntity[];
-
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.userAssign)
   tasksAssign: TaskEntity[];
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
   tasks: TaskEntity[];
+
+  @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
+    cascade: ['insert'],
+  })
+  groups: GroupsEntity[];
 
   @ManyToMany(() => ProjectEntity, (project: ProjectEntity) => project.users, {
     cascade: ['insert'],

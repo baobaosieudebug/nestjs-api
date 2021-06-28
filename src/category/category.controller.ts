@@ -30,42 +30,42 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Get()
-  async getAll(@Param('id') idProject: number) {
-    return await this.categoryService.getAll(idProject);
+  async getAll(@Param('id') projectId: number) {
+    return await this.categoryService.getAll(projectId);
   }
 
-  @Get(':idCategory')
-  async getCategoryById(
-    @Param('idCategory') id: number,
-    @Param('id') idProject: number,
-  ) {
-    return await this.categoryService.getOneByIdOrFail(id, idProject);
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  async createCategory(
-    @Body() dto: AddCategoryDTO,
-    @Param('id') idProject: number,
-  ) {
-    return await this.categoryService.add(dto, idProject);
-  }
-
-  @Put(':idCategory')
-  @UsePipes(ValidationPipe)
-  async editCategory(
-    @Param('id') idProject: number,
-    @Param('idCategory') id: number,
-    @Body() dto: EditCategoryDTO,
-  ) {
-    return await this.categoryService.edit(id, idProject, dto);
-  }
-
-  @Delete(':idCategory')
-  async removeCategory(
-    @Param('id') idProject: number,
-    @Param('idCategory') id: number,
-  ) {
-    return await this.categoryService.remove(id, idProject);
-  }
+  // @Get(':idCategory')
+  // async getCategoryById(
+  //   @Param('idCategory') id: number,
+  //   @Param('id') idProject: number,
+  // ) {
+  //   return await this.categoryService.getOneByIdOrFail(id, idProject);
+  // }
+  //
+  // @Post()
+  // @UsePipes(ValidationPipe)
+  // async createCategory(
+  //   @Body() dto: AddCategoryDTO,
+  //   @Param('id') idProject: number,
+  // ) {
+  //   return await this.categoryService.add(dto, idProject);
+  // }
+  //
+  // @Put(':idCategory')
+  // @UsePipes(ValidationPipe)
+  // async editCategory(
+  //   @Param('id') idProject: number,
+  //   @Param('idCategory') id: number,
+  //   @Body() dto: EditCategoryDTO,
+  // ) {
+  //   return await this.categoryService.edit(id, idProject, dto);
+  // }
+  //
+  // @Delete(':idCategory')
+  // async removeCategory(
+  //   @Param('id') idProject: number,
+  //   @Param('idCategory') id: number,
+  // ) {
+  //   return await this.categoryService.remove(id, idProject);
+  // }
 }
