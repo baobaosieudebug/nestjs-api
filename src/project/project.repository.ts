@@ -16,8 +16,8 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     return this.findOne({ code, isDeleted: null });
   }
 
-  async getAllProjectByIDOrg(idOrg: number) {
-    return this.find({ organizationID: idOrg });
+  getProjectByIdOrg(orgId: number) {
+    return this.find({ organizationID: orgId, isDeleted: null });
   }
 
   async isProjectExist(orgID: number, code: string) {

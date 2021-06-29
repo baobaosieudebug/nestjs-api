@@ -49,22 +49,11 @@ export class ProjectService {
     return await this.projectRepo.getAll();
   }
 
-  async getAllProjectByIDOrg(idOrg: number) {
+  async getAllTaskByID(id: number) {
     try {
-      return await this.projectRepo.getAllProjectByIDOrg(idOrg);
+      return await this.taskService.getAllTaskByIDProject(id);
     } catch (e) {
       throw new InternalServerErrorException();
-    }
-  }
-
-  async getAllTaskByID(id: number) {
-    const existTask = await this.taskRepo.isExistTask(id);
-    if (existTask) {
-      try {
-        return await this.taskService.getAllTaskByIDProject(id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
     }
   }
 
@@ -79,7 +68,7 @@ export class ProjectService {
     }
   }
 
-  async checkExistProject(code: string, orgId: number) {
+  async checkExistCode(code: string, orgId: number) {
     const project = await this.projectRepo.isProjectExist(orgId, code);
     if (project) {
       throw new NotFoundException('Project Exist');
@@ -98,7 +87,7 @@ export class ProjectService {
 
   async addProject(orgId: number, code: string) {
     const project = await this.getOneByCodeOrFail(code);
-    const existProject = await this.checkExistProject(code, orgId);
+    const existProject = await this.checkExistCode(code, orgId);
     if (!existProject) {
       try {
         return await this.projectRepo.update(project.id, {
@@ -132,7 +121,7 @@ export class ProjectService {
     }
   }
 
-  async editProject(id: number, dto: EditProjectDTO) {
+  async edit(id: number, dto: EditProjectDTO) {
     const checkProject = await this.getOneByIdOrFail(id);
     if (checkProject) {
       try {
@@ -179,7 +168,7 @@ export class ProjectService {
 
   async removeProject(orgId: number, code: string) {
     const project = await this.getOneByCodeOrFail(code);
-    const existProject = await this.checkExistProject(code, orgId);
+    const existProject = await this.checkExistCode(code, orgId);
     if (existProject) {
       try {
         return await this.projectRepo.update(project.id, {
@@ -189,5 +178,9 @@ export class ProjectService {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  async getAllProjectByIDOrg(orgId: number) {
+    return await this.projectRepo.getProjectByIdOrg(orgId);
   }
 }

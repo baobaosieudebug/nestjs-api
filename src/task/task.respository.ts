@@ -16,43 +16,17 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.findOne({ code });
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getById(id);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
-  }
-
-  async getOneByCodeOrFail(code: string) {
-    const response = await this.getByCode(code);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
-  }
-
-  async getByIdWithDelete(id) {
-    const entity = await this.count({ where: { id, isDeleted: id } });
-    return entity > 0;
-  }
-
   async isTaskExistInProject(projectId: number, code: string) {
     return await this.count({
       where: { code, projectId: projectId },
     });
   }
 
-  async isTaskExistInUser(userID: number, code: string) {
-    return await this.count({
-      where: { code, createUserId: null },
-    });
-  }
-
-  async isAssignTask(userID: number, code: string) {
-    return await this.count({
+  async isAssignTask(userID: number, code: string): Promise<boolean> {
+    const response = await this.count({
       where: { code, userAssign: null },
     });
+    return response > 0;
   }
 
   getAllTaskByIDProject(projectId: number) {
@@ -67,23 +41,9 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.find({ createUserId: idUser });
   }
 
-  async isExistTaskByAssignUser(idUser: number) {
+  async isExistTaskCode(code: string, projectId: number): Promise<boolean> {
     const entity = await this.count({
-      where: { assignUserId: idUser },
-    });
-    return entity > 0;
-  }
-
-  async isExistTaskByCreateUser(idUser: number) {
-    const entity = await this.count({
-      where: { createUserId: idUser },
-    });
-    return entity > 0;
-  }
-
-  async isExistTask(projectId: number) {
-    const entity = await this.count({
-      where: { projectId },
+      where: { code, projectId },
     });
     return entity > 0;
   }

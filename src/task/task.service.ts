@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,7 +9,7 @@ import { EditTaskDTO } from './dto/edit-task.dto';
 
 @Injectable()
 export class TaskService {
-  constructor(private taskRepo: TaskRepository) {}
+  constructor(private readonly taskRepo: TaskRepository) {}
 
   async getOneById(id: number) {
     return await this.taskRepo.getById(id);
@@ -19,7 +18,7 @@ export class TaskService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new NotFoundException();
+      throw new NotFoundException('Task Not Found');
     }
     return response;
   }
@@ -40,27 +39,19 @@ export class TaskService {
     return await this.taskRepo.getAll();
   }
 
-  async checkTaskByCode(code: string) {
-    const task = await this.taskRepo.getOneByCodeOrFail(code);
-    if (!task) {
-      return null;
+  async checkExistCode(code: string, projectId: number) {
+    const checkExist = await this.taskRepo.isExistTaskCode(code, projectId);
+    if (checkExist) {
+      throw new NotFoundException('Task Exist');
     }
-    return task;
+    return checkExist;
   }
 
-  async checkTaskByID(id: number) {
-    const task = await this.taskRepo.getOneByIdOrFail(id);
-    if (!task) {
-      return null;
-    }
-    return task;
-  }
-
-  async create(dto: AddTaskDTO, idUser: number) {
+  async create(dto: AddTaskDTO) {
     try {
       const task = this.taskRepo.create(dto);
       task.createdAt = new Date();
-      task.createUserId = idUser;
+      // task.createUserId = idUser;
       return await this.taskRepo.save(task);
     } catch (e) {
       throw new InternalServerErrorException();
@@ -68,106 +59,59 @@ export class TaskService {
   }
 
   async addTaskInProject(code: string, idProject: number) {
-    const checkTask = await this.checkTaskByCode(code);
+    const task = await this.getOneByCodeOrFail(code);
+    const checkTask = await this.checkExistCode(code, idProject);
     if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.taskRepo.isTaskExistInProject(idProject, code);
-    if (existTask) {
-      throw new BadRequestException('Task exist in Project');
-    }
-    try {
-      return await this.taskRepo.update(checkTask.id, { projectId: idProject });
-    } catch (e) {
-      throw new InternalServerErrorException();
+      try {
+        return await this.taskRepo.update(task.id, { projectId: idProject });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async assignTask(code: string, idUser: number) {
-    const checkTask = await this.checkTaskByCode(code);
-    if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.taskRepo.isAssignTask(idUser, code);
-    if (existTask) {
-      throw new NotFoundException('Task Assigned');
-    }
-    try {
-      return await this.taskRepo.update(checkTask.id, { assignUserId: idUser });
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const task = await this.getOneByCodeOrFail(code);
+    const checkTask = await this.taskRepo.isAssignTask(idUser, code);
+    if (checkTask) {
+      try {
+        return await this.taskRepo.update(task.id, { assignUserId: idUser });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
   async edit(id: number, dto: EditTaskDTO) {
-    const checkTask = this.checkTaskByID(id);
-    if (!checkTask) {
-      throw new NotFoundException();
+    const checkTask = await this.getOneByIdOrFail(id);
+    if (checkTask) {
+      try {
+        return await this.taskRepo.update(id, dto);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
-    const existCode = this.taskRepo.getByCode(dto.code);
-    if (existCode) {
-      throw new NotFoundException('Code must be unique');
-    }
-    try {
-      return await this.taskRepo.update(id, dto);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async checkDeleted(id: number) {
-    const task = this.taskRepo.getByIdWithDelete(id);
-    if (!task) {
-      return null;
-    }
-    return task;
   }
 
   async remove(id: number) {
-    const checkTask = await this.checkTaskByID(id);
-    if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existDelete = await this.checkDeleted(id);
-
-    if (existDelete) {
-      throw new BadRequestException('Task Deleted');
-    }
-    try {
-      return await this.taskRepo.update(id, { isDeleted: id });
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkTask = await this.getOneByIdOrFail(id);
+    if (checkTask) {
+      try {
+        return await this.taskRepo.update(id, { isDeleted: id });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async removeTask(idProject: number, code: string) {
-    const checkTask = await this.checkTaskByCode(code);
-    if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.taskRepo.isTaskExistInProject(idProject, code);
-    if (!existTask) {
-      throw new NotFoundException('Task not Exist Project');
-    }
-    try {
-      return await this.taskRepo.update(checkTask.id, { projectId: null });
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async removeUserCreateTask(idUser: number, code: string) {
-    const checkTask = await this.checkTaskByCode(code);
-    if (!checkTask) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.taskRepo.isTaskExistInUser(idUser, code);
-    if (!existTask) {
-      throw new NotFoundException('Task not Exist User');
-    }
-    try {
-      return await this.taskRepo.update(checkTask.id, { createUserId: null });
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkTask = await this.getOneByCodeOrFail(code);
+    const existTask = await this.taskRepo.isExistTaskCode(code, idProject);
+    if (existTask) {
+      try {
+        return await this.taskRepo.update(checkTask.id, { projectId: null });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
@@ -179,19 +123,19 @@ export class TaskService {
     }
   }
 
-  async getAllAssignTaskByIDUser(idUser: number) {
-    try {
-      return await this.taskRepo.getAllUserByIDUserAssign(idUser);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async getAllCreateTaskByIDUser(idUser: number) {
-    try {
-      return await this.taskRepo.getAllUserByIDUserCreate(idUser);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllAssignTaskByIDUser(idUser: number) {
+  //   try {
+  //     return await this.taskRepo.getAllUserByIDUserAssign(idUser);
+  //   } catch (e) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
+  //
+  // async getAllCreateTaskByIDUser(idUser: number) {
+  //   try {
+  //     return await this.taskRepo.getAllUserByIDUserCreate(idUser);
+  //   } catch (e) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 }

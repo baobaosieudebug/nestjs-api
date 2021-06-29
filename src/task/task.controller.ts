@@ -44,10 +44,10 @@ export class TaskController {
     return await this.taskService.getOneByCodeOrFail(code);
   }
 
-  @Post(':idUser')
+  @Post()
   @UsePipes(ValidationPipe)
-  async createTask(@Body() dto: AddTaskDTO, @Param('idUser') idUser: number) {
-    return await this.taskService.create(dto, idUser);
+  async createTask(@Body() dto: AddTaskDTO) {
+    return await this.taskService.create(dto);
   }
 
   @Put(':id')

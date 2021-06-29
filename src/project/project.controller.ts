@@ -79,7 +79,7 @@ export class ProjectController {
   @Put(':id')
   @UsePipes(ValidationPipe)
   async editProject(@Body() dto: EditProjectDTO, @Param('id') id: number) {
-    return await this.projectService.editProject(id, dto);
+    return await this.projectService.edit(id, dto);
   }
 
   @Delete(':id')

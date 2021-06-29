@@ -154,19 +154,6 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-
-  async removeUserCreateTask(idUser: number, code: string) {
-    const checkUser = await this.checkUser(idUser);
-    if (!checkUser) {
-      throw new NotFoundException();
-    }
-    try {
-      return this.taskService.removeUserCreateTask(idUser, code);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
   async getAllUserByIDProject(idProject: number) {
     try {
       return await this.userRepo.getAllUserByIDProject(idProject);
@@ -182,35 +169,35 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-  async getAllAssignTaskByID(id: number) {
-    const checkUser = await this.checkUser(id);
-    if (!checkUser) {
-      throw new NotFoundException();
-    }
-    const existAssignTask = await this.taskRepo.isExistTaskByAssignUser(id);
-    if (existAssignTask == false) {
-      throw new NotFoundException('User not assigned Task');
-    }
-    try {
-      return await this.taskService.getAllAssignTaskByIDUser(id);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllAssignTaskByID(id: number) {
+  //   const checkUser = await this.checkUser(id);
+  //   if (!checkUser) {
+  //     throw new NotFoundException();
+  //   }
+  //   const existAssignTask = await this.taskRepo.isExistTaskByAssignUser(id);
+  //   if (existAssignTask == false) {
+  //     throw new NotFoundException('User not assigned Task');
+  //   }
+  //   try {
+  //     return await this.taskService.getAllAssignTaskByIDUser(id);
+  //   } catch (e) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
-  async getAllCreateTaskByID(id: number) {
-    const checkUser = await this.checkUser(id);
-    if (!checkUser) {
-      throw new NotFoundException();
-    }
-    const existCreateTask = await this.taskRepo.isExistTaskByCreateUser(id);
-    if (existCreateTask == false) {
-      throw new NotFoundException('User not created Task');
-    }
-    try {
-      return await this.taskService.getAllCreateTaskByIDUser(id);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllCreateTaskByID(id: number) {
+  //   const checkUser = await this.checkUser(id);
+  //   if (!checkUser) {
+  //     throw new NotFoundException();
+  //   }
+  //   const existCreateTask = await this.taskRepo.isExistTaskByCreateUser(id);
+  //   if (existCreateTask == false) {
+  //     throw new NotFoundException('User not created Task');
+  //   }
+  //   try {
+  //     return await this.taskService.getAllCreateTaskByIDUser(id);
+  //   } catch (e) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 }
