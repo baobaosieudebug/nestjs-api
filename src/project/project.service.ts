@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -29,7 +28,7 @@ export class ProjectService {
   async getOneByIdOrFail(id: number) {
     const response = await this.getOneById(id);
     if (!response) {
-      throw new NotFoundException();
+      throw new NotFoundException('Project not found');
     }
     return response;
   }
@@ -41,13 +40,13 @@ export class ProjectService {
   async getOneByCodeOrFail(code: string) {
     const response = await this.getOneByCode(code);
     if (!response) {
-      throw new NotFoundException();
+      throw new NotFoundException('Project not found');
     }
     return response;
   }
 
   async getAllProject() {
-    return await this.projectRepo.getAllProject();
+    return await this.projectRepo.getAll();
   }
 
   async getAllProjectByIDOrg(idOrg: number) {
@@ -59,50 +58,32 @@ export class ProjectService {
   }
 
   async getAllTaskByID(id: number) {
-    const checkProject = this.checkProjectByID(id);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.taskRepo.isExistTaskByIDProject(id);
-    if (existTask == false) {
-      throw new NotFoundException('Project not Exist Task');
-    }
-    try {
-      return await this.taskService.getAllTaskByIDProject(id);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const existTask = await this.taskRepo.isExistTask(id);
+    if (existTask) {
+      try {
+        return await this.taskService.getAllTaskByIDProject(id);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async getAllUserByID(id: number) {
-    const checkProject = this.checkProjectByID(id);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existTask = await this.userRepo.countUserInProject(id);
-    if (existTask == 0) {
-      throw new NotFoundException('Project not Exist User');
-    }
-    try {
-      return await this.userService.getAllUserByIDProject(id);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const existTask = await this.userRepo.isUserExist(id);
+    if (existTask) {
+      try {
+        return await this.userService.getAllUserByIDProject(id);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
-  async checkProjectByCode(code: string) {
-    const project = await this.projectRepo.getOneByCodeOrFail(code);
-    if (!project) {
-      return null;
+  async checkExistProject(code: string, orgId: number) {
+    const project = await this.projectRepo.isProjectExist(orgId, code);
+    if (project) {
+      throw new NotFoundException('Project Exist');
     }
-    return project;
-  }
-
-  async checkProjectByID(id: number) {
-    const project = await this.projectRepo.getOneByIdOrFail(id);
-    // if (!project) {
-    //   return null;
-    // }
     return project;
   }
 
@@ -115,133 +96,98 @@ export class ProjectService {
     }
   }
 
-  async addProject(orgID: number, code: string) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existProject = await this.projectRepo.isProjectExistInOrg(
-      orgID,
-      code,
-    );
-    if (existProject) {
-      throw new BadRequestException('Project exist in Organization');
-    }
-    try {
-      return await this.projectRepo.update(checkProject.id, {
-        organizationID: orgID,
-      });
-    } catch (e) {
-      throw new InternalServerErrorException();
+  async addProject(orgId: number, code: string) {
+    const project = await this.getOneByCodeOrFail(code);
+    const existProject = await this.checkExistProject(code, orgId);
+    if (!existProject) {
+      try {
+        return await this.projectRepo.update(project.id, {
+          organizationID: orgId,
+        });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async addUser(code: string, idUser: number) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    try {
-      return this.userService.addUserInProject(idUser, checkProject.id);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkProject = await this.getOneByCodeOrFail(code);
+    if (checkProject) {
+      try {
+        return this.userService.addUserInProject(idUser, checkProject.id);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async addTask(code: string, codeTask: string) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    try {
-      return this.taskService.addTaskInProject(codeTask, checkProject.id);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkProject = await this.getOneByCodeOrFail(code);
+    if (checkProject) {
+      try {
+        return this.taskService.addTaskInProject(codeTask, checkProject.id);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async editProject(id: number, dto: EditProjectDTO) {
-    const checkProject = this.checkProjectByID(id);
-    if (!checkProject) {
-      throw new NotFoundException();
+    const checkProject = await this.getOneByIdOrFail(id);
+    if (checkProject) {
+      try {
+        return await this.projectRepo.update(id, dto);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
-    try {
-      return await this.projectRepo.update(id, dto);
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async checkDeleted(id: number) {
-    const project = this.projectRepo.getByIdWithDelete(id);
-    if (!project) {
-      return null;
-    }
-    return project;
   }
 
   async remove(id: number) {
-    const checkProject = await this.checkProjectByID(id);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existDelete = await this.checkDeleted(id);
-    if (existDelete) {
-      throw new BadRequestException('Project Deleted');
-    }
-    try {
-      return await this.projectRepo.update(id, { isDeleted: id });
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkProject = await this.getOneByIdOrFail(id);
+    if (checkProject) {
+      try {
+        return await this.projectRepo.update(id, { isDeleted: id });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async removeUserInProject(idUser: number, code: string) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existUser = await this.projectRepo.isUserExistInProject(idUser);
-    if (existUser == 0) {
-      throw new BadRequestException('User not exist in Project');
-    }
-    try {
-      return this.projectRepo.removeUserInProject(idUser, checkProject.id);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const project = await this.getOneByCodeOrFail(code);
+    const existUser = await this.projectRepo.isUserExist(idUser);
+    if (existUser) {
+      try {
+        return this.projectRepo.removeUserInProject(idUser, project.id);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async removeTaskInProject(code: string, codeTask: string) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    try {
-      return this.taskService.removeTask(checkProject.id, codeTask);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    const checkProject = await this.getOneByCodeOrFail(code);
+    if (checkProject) {
+      try {
+        return this.taskService.removeTask(checkProject.id, codeTask);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
-  async removeProject(orgID: number, code: string) {
-    const checkProject = await this.checkProjectByCode(code);
-    if (!checkProject) {
-      throw new NotFoundException();
-    }
-    const existProject = await this.projectRepo.isProjectExistInOrg(
-      orgID,
-      code,
-    );
-    if (!existProject) {
-      throw new BadRequestException('Project not exist in Organization');
-    }
-    try {
-      return await this.projectRepo.update(checkProject.id, {
-        organizationID: null,
-      });
-    } catch (e) {
-      throw new InternalServerErrorException();
+  async removeProject(orgId: number, code: string) {
+    const project = await this.getOneByCodeOrFail(code);
+    const existProject = await this.checkExistProject(code, orgId);
+    if (existProject) {
+      try {
+        return await this.projectRepo.update(project.id, {
+          organizationID: null,
+        });
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 }

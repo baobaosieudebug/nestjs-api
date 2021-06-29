@@ -32,13 +32,13 @@ export class ProjectController {
 
   @Get()
   @ApiOkResponse({ description: 'Success' })
-  @ApiInternalServerErrorResponse({ description: 'Internal Server' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async getAllProject() {
     return await this.projectService.getAllProject();
   }
 
   @Get(':id')
-  async getProjectByIdOrFail(@Param('id') id: number) {
+  async getOneByIdOrFail(@Param('id') id: number) {
     return await this.projectService.getOneByIdOrFail(id);
   }
 

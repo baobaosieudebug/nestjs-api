@@ -55,8 +55,8 @@ export class TaskRepository extends Repository<TaskEntity> {
     });
   }
 
-  getAllTaskByIDProject(idProject: number) {
-    return this.find({ projectId: idProject });
+  getAllTaskByIDProject(projectId: number) {
+    return this.find({ projectId: projectId });
   }
 
   async getAllUserByIDUserAssign(idUser: number) {
@@ -81,9 +81,9 @@ export class TaskRepository extends Repository<TaskEntity> {
     return entity > 0;
   }
 
-  async isExistTaskByIDProject(idProject: number) {
+  async isExistTask(projectId: number) {
     const entity = await this.count({
-      where: { projectId: idProject },
+      where: { projectId },
     });
     return entity > 0;
   }

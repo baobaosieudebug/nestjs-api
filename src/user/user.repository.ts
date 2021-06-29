@@ -57,10 +57,11 @@ export class UserRepository extends Repository<UsersEntity> {
       .getCount();
   }
 
-  async countUserInProject(idProject: number) {
-    return await this.createQueryBuilder('user')
+  async isUserExist(idProject: number) {
+    const response = await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .where('project.id = :idProject', { idProject })
       .getCount();
+    return response > 0;
   }
 }

@@ -21,11 +21,4 @@ export class CategoryRepository extends Repository<CategoryEntity> {
     });
     return checkExist > 0;
   }
-
-  async isCategoryExistId(id: number, projectId: number): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id, projectId, isDeleted: null },
-    });
-    return checkExist > 0;
-  }
 }
