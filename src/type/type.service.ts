@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -12,87 +11,84 @@ import { EditTypeDTO } from './dto/edit-type.dto';
 export class TypeService {
   constructor(private readonly typeRepo: TypeRepository) {}
 
-  async getAllTypeByIdProject(idProject: number) {
-    return await this.typeRepo.getAll(idProject);
+  async getAllTypeByIdProject(projectId: number) {
+    return await this.typeRepo.getAll(projectId);
   }
 
-  async getOneById(id: number, idProject: number) {
-    return await this.typeRepo.getById(id, idProject);
+  async getOneById(id: number, projectId: number) {
+    return await this.typeRepo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, idProject: number) {
-    return await this.typeRepo.getByCode(code, idProject);
+  async getOneByCode(code: string, projectId: number) {
+    return await this.typeRepo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, idProject: number) {
-    const type = await this.getOneById(id, idProject);
+  async getOneByIdOrFail(id: number, projectId: number) {
+    const type = await this.getOneById(id, projectId);
     if (!type) {
       throw new NotFoundException('Type not found');
     }
     return type;
   }
 
-  async getOneByCodeOrFail(code: string, idProject: number) {
-    const type = await this.getOneByCode(code, idProject);
+  async getOneByCodeOrFail(code: string, projectId: number) {
+    const type = await this.getOneByCode(code, projectId);
     if (!type) {
       throw new NotFoundException('Type not found');
     }
     return type;
   }
 
-  async checkExist(code: string, idProject: number) {
-    const type = await this.typeRepo.getByCode(code, idProject);
-    if (!type) {
-      throw new NotFoundException('Type Not Found');
+  async checkExistCode(code: string, projectId: number) {
+    const checkExist = await this.typeRepo.isTypeExistCode(code, projectId);
+    if (!checkExist) {
+      throw new NotFoundException('Type not found');
     }
-    return type;
+    return checkExist;
   }
 
-  async add(dto: AddTypeDTO, idProject: number) {
-    const checkExist = await this.typeRepo.countTypeInProjectByCode(
-      dto.code,
-      idProject,
-    );
+  async checkExistId(id: number, projectId: number) {
+    const checkExist = await this.typeRepo.isTypeExistId(id, projectId);
+    if (!checkExist) {
+      throw new NotFoundException('Type not found');
+    }
+    return checkExist;
+  }
+
+  async add(dto: AddTypeDTO, projectId: number) {
+    const checkExist = await this.checkExistCode(dto.code, projectId);
     if (checkExist) {
-      throw new BadRequestException('Code must be unique');
+      throw new NotFoundException('Code must be unique');
     }
     try {
       const newType = this.typeRepo.create(dto);
-      newType.projectId = idProject;
+      newType.projectId = projectId;
       return await this.typeRepo.save(newType);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async edit(id: number, idProject: number, dto: EditTypeDTO) {
-    const checkExist = await this.typeRepo.countTypeInProjectById(
-      id,
-      idProject,
-    );
-    if (!checkExist) {
-      throw new NotFoundException('Type not found');
-    }
-    try {
-      return await this.typeRepo.update(id, dto);
-    } catch (e) {
-      throw new InternalServerErrorException();
+  async edit(id: number, projectId: number, dto: EditTypeDTO) {
+    const checkExist = await this.checkExistCode(dto.code, projectId);
+    if (checkExist) {
+      try {
+        return await this.typeRepo.update(id, dto);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
-  async remove(id: number, idProject: number) {
-    const checkExist = await this.typeRepo.countTypeInProjectById(
-      id,
-      idProject,
-    );
-    if (!checkExist) {
-      throw new NotFoundException('Type not found');
-    }
-    try {
-      await this.typeRepo.update(id, { isDeleted: id });
-      return id;
-    } catch (e) {
-      throw new InternalServerErrorException();
+  async remove(id: number, projectId: number) {
+    const checkExist = await this.checkExistId(id, projectId);
+    if (checkExist) {
+      try {
+        await this.typeRepo.update(id, { isDeleted: id });
+        return id;
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 }

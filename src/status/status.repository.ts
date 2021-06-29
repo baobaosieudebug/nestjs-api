@@ -3,31 +3,29 @@ import { StatusEntity } from './status.entity';
 
 @EntityRepository(StatusEntity)
 export class StatusRepository extends Repository<StatusEntity> {
-  getAll(idProject: number) {
-    return this.find({ projectId: idProject, isDeleted: null });
+  getAll(projectId: number) {
+    return this.find({ projectId, isDeleted: null });
   }
 
-  getById(id: number, idProject: number) {
-    return this.findOne({ id, projectId: idProject, isDeleted: null });
+  getById(id: number, projectId: number) {
+    return this.findOne({ id, projectId, isDeleted: null });
   }
 
-  getByCode(code: string, idProject: number) {
-    return this.findOne({ code, projectId: idProject, isDeleted: null });
+  getByCode(code: string, projectId: number) {
+    return this.findOne({ code, projectId, isDeleted: null });
   }
 
-  async countStatusInProjectByCode(code: string, idProject: number) {
-    return (
-      (await this.count({
-        where: { code, projectId: idProject, isDeleted: null },
-      })) > 0
-    );
+  async isStatusExistCode(code: string, projectId: number): Promise<boolean> {
+    const checkExist = await this.count({
+      where: { code, projectId, isDeleted: null },
+    });
+    return checkExist > 0;
   }
 
-  async countStatusInProjectById(id: number, idProject: number) {
-    return (
-      (await this.count({
-        where: { id, projectId: idProject, isDeleted: null },
-      })) > 0
-    );
+  async isStatusExistId(id: number, projectId: number): Promise<boolean> {
+    const checkExist = await this.count({
+      where: { id, projectId, isDeleted: null },
+    });
+    return checkExist > 0;
   }
 }

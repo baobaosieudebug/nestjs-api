@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -15,6 +14,7 @@ export class OrganizationService {
     private readonly organizationRepo: OrganizationRepository,
     private readonly projectService: ProjectService,
   ) {}
+
   async getAllOrganization() {
     return await this.organizationRepo.getAll();
   }
@@ -79,6 +79,7 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
+
   async checkOrgByCode(code: string) {
     const organization = await this.organizationRepo.getByCode(code);
     if (!organization) {
@@ -110,7 +111,6 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
-
 
   async removeOrganization(id: number) {
     const checkOrg = await this.checkOrgByID(id);

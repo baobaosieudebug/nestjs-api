@@ -3,16 +3,16 @@ import { CategoryEntity } from './category.entity';
 
 @EntityRepository(CategoryEntity)
 export class CategoryRepository extends Repository<CategoryEntity> {
-  getAll(idProject: number) {
-    return this.find({ projectId: idProject, isDeleted: null });
+  getAll(projectId: number) {
+    return this.find({ projectId, isDeleted: null });
   }
 
   getById(id: number, projectId: number) {
     return this.findOne({ id, projectId, isDeleted: null });
   }
 
-  getByCode(code: string, idProject: number) {
-    return this.findOne({ code, projectId: idProject, isDeleted: null });
+  getByCode(code: string, projectId: number) {
+    return this.findOne({ code, projectId, isDeleted: null });
   }
 
   async isCategoryExistCode(code: string, projectId: number): Promise<boolean> {
