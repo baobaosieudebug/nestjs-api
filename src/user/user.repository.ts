@@ -1,31 +1,20 @@
 import { UsersEntity } from './users.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {
   getOneById(id) {
-    return this.findOne({ id });
-  }
-
-  getOneByEmail(email) {
-    return this.findOne({ email });
+    return this.findOne({ id, isDeleted: 0 });
   }
 
   getAll() {
-    return this.find();
+    return this.find({ isDeleted: 0 });
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
-  }
-
-  async getByIdWithDelete(id) {
-    const entity = await this.count({ where: { id, isDeleted: id } });
+  async isUserDeleted(projectId: number, id: number) {
+    const entity = await this.count({
+      where: { id, projectId: projectId },
+    });
     return entity > 0;
   }
 

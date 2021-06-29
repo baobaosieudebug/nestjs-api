@@ -9,7 +9,7 @@ export class TaskRepository extends Repository<TaskEntity> {
   }
 
   getAll() {
-    return this.find({ isDeleted: null });
+    return this.find({ isDeleted: 0 });
   }
 
   getByCode(code) {
@@ -24,7 +24,7 @@ export class TaskRepository extends Repository<TaskEntity> {
 
   async isAssignTask(userID: number, code: string): Promise<boolean> {
     const response = await this.count({
-      where: { code, userAssign: null },
+      where: { code, userAssign: 0 },
     });
     return response > 0;
   }

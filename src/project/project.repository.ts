@@ -5,19 +5,19 @@ import { UsersEntity } from '../user/users.entity';
 @EntityRepository(ProjectEntity)
 export class ProjectRepository extends Repository<ProjectEntity> {
   getById(id) {
-    return this.findOne({ id, isDeleted: null });
+    return this.findOne({ id, isDeleted: 0 });
   }
 
   getAll() {
-    return this.find({ isDeleted: null });
+    return this.find({ isDeleted: 0 });
   }
 
   getByCode(code) {
-    return this.findOne({ code, isDeleted: null });
+    return this.findOne({ code, isDeleted: 0 });
   }
 
   getProjectByIdOrg(orgId: number) {
-    return this.find({ organizationID: orgId, isDeleted: null });
+    return this.find({ organizationID: orgId, isDeleted: 0 });
   }
 
   async isProjectExist(orgID: number, code: string) {
