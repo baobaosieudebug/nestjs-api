@@ -15,7 +15,7 @@ export class GroupsEntity {
   @Column({ name: 'name_group', type: 'varchar' })
   nameGroup: string;
 
-  @Column({ name: 'is_deleted', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
   @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.groups, {

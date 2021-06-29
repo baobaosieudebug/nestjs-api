@@ -23,7 +23,7 @@ export class UsersEntity {
   @Column({ type: 'varchar', select: false })
   password: string;
 
-  @Column({ name: 'is_deleted', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.userAssign)

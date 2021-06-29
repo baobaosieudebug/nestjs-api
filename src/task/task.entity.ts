@@ -41,7 +41,7 @@ export class TaskEntity {
   @Column({ name: 'assign_user_id', nullable: true })
   assignUserId: number;
 
-  @Column({ name: 'is_deleted', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
   @Column({ name: 'project_id', nullable: true })

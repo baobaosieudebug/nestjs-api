@@ -23,7 +23,7 @@ export class TypeEntity {
   @Column({ type: 'varchar', nullable: false })
   description: string;
 
-  @Column({ name: 'is_deleted', type: 'varchar', default: null })
+  @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
   @CreateDateColumn({
