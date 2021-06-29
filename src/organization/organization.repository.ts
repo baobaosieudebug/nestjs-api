@@ -15,11 +15,17 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return this.findOne({ code, isDeleted: null });
   }
 
-  async countOrg(id: number) {
-    return (
-      (await this.count({
-        where: { id, isDeleted: null },
-      })) > 0
-    );
+  async isOrgExistCode(code: string): Promise<boolean> {
+    const checkExist = await this.count({
+      where: { code, isDeleted: null },
+    });
+    return checkExist > 0;
+  }
+
+  async isOrgExistId(id: number): Promise<boolean> {
+    const checkExist = await this.count({
+      where: { id, isDeleted: null },
+    });
+    return checkExist > 0;
   }
 }

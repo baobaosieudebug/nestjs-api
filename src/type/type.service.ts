@@ -41,37 +41,28 @@ export class TypeService {
 
   async checkExistCode(code: string, projectId: number) {
     const checkExist = await this.typeRepo.isTypeExistCode(code, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Type not found');
-    }
-    return checkExist;
-  }
-
-  async checkExistId(id: number, projectId: number) {
-    const checkExist = await this.typeRepo.isTypeExistId(id, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Type not found');
+    if (checkExist) {
+      throw new NotFoundException('Type Exist');
     }
     return checkExist;
   }
 
   async add(dto: AddTypeDTO, projectId: number) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Code must be unique');
-    }
-    try {
-      const newType = this.typeRepo.create(dto);
-      newType.projectId = projectId;
-      return await this.typeRepo.save(newType);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    if (!checkExist) {
+      try {
+        const newType = this.typeRepo.create(dto);
+        newType.projectId = projectId;
+        return await this.typeRepo.save(newType);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async edit(id: number, projectId: number, dto: EditTypeDTO) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
+    if (!checkExist) {
       try {
         return await this.typeRepo.update(id, dto);
       } catch (e) {
@@ -81,7 +72,7 @@ export class TypeService {
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.checkExistId(id, projectId);
+    const checkExist = await this.getOneByIdOrFail(id, projectId);
     if (checkExist) {
       try {
         await this.typeRepo.update(id, { isDeleted: id });

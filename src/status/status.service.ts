@@ -42,37 +42,28 @@ export class StatusService {
 
   async checkExistCode(code: string, projectId: number) {
     const checkExist = await this.statusRepo.isStatusExistCode(code, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Status not found');
-    }
-    return checkExist;
-  }
-
-  async checkExistId(id: number, projectId: number) {
-    const checkExist = await this.statusRepo.isStatusExistId(id, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Status not found');
+    if (checkExist) {
+      throw new NotFoundException('Status Exist');
     }
     return checkExist;
   }
 
   async add(dto: AddStatusDTO, projectId: number) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
-      throw new BadRequestException('Code must be unique');
-    }
-    try {
-      const newStatus = this.statusRepo.create(dto);
-      newStatus.projectId = projectId;
-      return await this.statusRepo.save(newStatus);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    if (!checkExist) {
+      try {
+        const newStatus = this.statusRepo.create(dto);
+        newStatus.projectId = projectId;
+        return await this.statusRepo.save(newStatus);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async edit(id: number, projectId: number, dto: EditStatusDTO) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
+    if (!checkExist) {
       try {
         return await this.statusRepo.update(id, dto);
       } catch (e) {
@@ -82,7 +73,7 @@ export class StatusService {
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.checkExistId(id, projectId);
+    const checkExist = await this.getOneByIdOrFail(id, projectId);
     if (checkExist) {
       try {
         await this.statusRepo.update(id, { isDeleted: id });

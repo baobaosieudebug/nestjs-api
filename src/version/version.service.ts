@@ -44,37 +44,28 @@ export class VersionService {
       code,
       projectId,
     );
-    if (!checkExist) {
-      throw new NotFoundException('Version not found');
-    }
-    return checkExist;
-  }
-
-  async checkExistId(id: number, projectId: number) {
-    const checkExist = await this.versionRepo.isVersionExistId(id, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Version not found');
+    if (checkExist) {
+      throw new NotFoundException('Version Exist');
     }
     return checkExist;
   }
 
   async add(dto: AddVersionDTO, projectId: number) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Code must be unique');
-    }
-    try {
-      const newVersion = this.versionRepo.create(dto);
-      newVersion.projectId = projectId;
-      return await this.versionRepo.save(newVersion);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    if (!checkExist) {
+      try {
+        const newVersion = this.versionRepo.create(dto);
+        newVersion.projectId = projectId;
+        return await this.versionRepo.save(newVersion);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async edit(id: number, projectId: number, dto: EditVersionDTO) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
+    if (!checkExist) {
       try {
         return await this.versionRepo.update(id, dto);
       } catch (e) {
@@ -84,7 +75,7 @@ export class VersionService {
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.checkExistId(id, projectId);
+    const checkExist = await this.getOneByIdOrFail(id, projectId);
     if (checkExist) {
       try {
         await this.versionRepo.update(id, { isDeleted: id });

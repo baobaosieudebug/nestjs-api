@@ -44,37 +44,28 @@ export class CategoryService {
       code,
       projectId,
     );
-    if (!checkExist) {
-      throw new NotFoundException('Category not found');
-    }
-    return checkExist;
-  }
-
-  async checkExistId(id: number, projectId: number) {
-    const checkExist = await this.categoryRepo.isCategoryExistId(id, projectId);
-    if (!checkExist) {
-      throw new NotFoundException('Category not found');
+    if (checkExist) {
+      throw new NotFoundException('Category Exist');
     }
     return checkExist;
   }
 
   async add(dto: AddCategoryDTO, projectId: number) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Code must be unique');
-    }
-    try {
-      const newCategory = this.categoryRepo.create(dto);
-      newCategory.projectId = projectId;
-      return await this.categoryRepo.save(newCategory);
-    } catch (e) {
-      throw new InternalServerErrorException();
+    if (!checkExist) {
+      try {
+        const newCategory = this.categoryRepo.create(dto);
+        newCategory.projectId = projectId;
+        return await this.categoryRepo.save(newCategory);
+      } catch (e) {
+        throw new InternalServerErrorException();
+      }
     }
   }
 
   async edit(id: number, projectId: number, dto: EditCategoryDTO) {
     const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (checkExist) {
+    if (!checkExist) {
       try {
         return await this.categoryRepo.update(id, dto);
       } catch (e) {
@@ -84,7 +75,7 @@ export class CategoryService {
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.checkExistId(id, projectId);
+    const checkExist = await this.getOneByIdOrFail(id, projectId);
     if (checkExist) {
       try {
         await this.categoryRepo.update(id, { isDeleted: id });

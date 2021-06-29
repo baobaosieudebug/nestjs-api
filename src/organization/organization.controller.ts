@@ -49,7 +49,7 @@ export class OrganizationController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createOrganization(@Body() dto: AddOrganizationDTO) {
+  async create(@Body() dto: AddOrganizationDTO) {
     return await this.organizationService.createOrganization(dto);
   }
 
@@ -63,15 +63,12 @@ export class OrganizationController {
 
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editOrganization(
-    @Body() dto: EditOrganizationDTO,
-    @Param('id') id: number,
-  ) {
+  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number) {
     return await this.organizationService.editOrganization(id, dto);
   }
 
   @Delete(':id')
-  async removeOrganization(@Param('id') id: number) {
+  async remove(@Param('id') id: number) {
     return await this.organizationService.removeOrganization(id);
   }
 
