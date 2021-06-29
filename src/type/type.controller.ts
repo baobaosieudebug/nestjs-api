@@ -37,40 +37,40 @@ export class TypeController {
   @Get(':idType')
   async getTypeById(
     @Param('idType') id: number,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.typeService.getOneByIdOrFail(id, idProject);
+    return await this.typeService.getOneByIdOrFail(id, projectId);
   }
 
   @Get(':code')
   async getTypeByCode(
     @Param('code') code: string,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.typeService.getOneByCodeOrFail(code, idProject);
+    return await this.typeService.getOneByCodeOrFail(code, projectId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createType(@Body() dto: AddTypeDTO, @Param('id') idProject: number) {
-    return await this.typeService.add(dto, idProject);
+  async createType(@Body() dto: AddTypeDTO, @Param('id') projectId: number) {
+    return await this.typeService.add(dto, projectId);
   }
 
   @Put(':idType')
   @UsePipes(ValidationPipe)
   async editType(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idType') id: number,
     @Body() dto: EditTypeDTO,
   ) {
-    return await this.typeService.edit(id, idProject, dto);
+    return await this.typeService.edit(id, projectId, dto);
   }
 
   @Delete(':idType')
   async removeType(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idType') id: number,
   ) {
-    return await this.typeService.remove(id, idProject);
+    return await this.typeService.remove(id, projectId);
   }
 }

@@ -60,11 +60,11 @@ export class UsersService {
     }
   }
 
-  async addUserInProject(idUser: number, idProject: number) {
+  async addUserInProject(idUser: number, projectId: number) {
     const checkUser = await this.getOneByIdOrFail(idUser);
     if (checkUser) {
       try {
-        const project = await this.projectRepo.getById(idProject);
+        const project = await this.projectRepo.getById(projectId);
         await checkUser.projects.push(project);
         await this.userRepo.save(checkUser);
         return checkUser;
@@ -107,9 +107,9 @@ export class UsersService {
       }
     }
   }
-  async getAllUserByIDProject(idProject: number) {
+  async getAllUserByIDProject(projectId: number) {
     try {
-      return await this.userRepo.getAllUserByIDProject(idProject);
+      return await this.userRepo.getAllUserByIDProject(projectId);
     } catch (e) {
       throw new InternalServerErrorException();
     }

@@ -45,16 +45,6 @@ export class UsersController {
     return await this.usersService.create(dto);
   }
 
-  // @Get('/:id/assignTasks')
-  // async getAllAssignTaskByID(@Param('id') id: number) {
-  //   return await this.usersService.getAllAssignTaskByID(id);
-  // }
-  //
-  // @Get('/:id/createTasks')
-  // async getAllCreateTaskByID(@Param('id') id: number) {
-  //   return await this.usersService.getAllCreateTaskByID(id);
-  // }
-
   @Post(':id/assignTask/:code')
   async assignTask(@Param('id') id: number, @Param('code') code: string) {
     return await this.usersService.assignTask(id, code);

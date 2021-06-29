@@ -37,42 +37,42 @@ export class StatusController {
   @Get(':idStatus')
   async getStatusById(
     @Param('idStatus') id: number,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.statusService.getOneByIdOrFail(id, idProject);
+    return await this.statusService.getOneByIdOrFail(id, projectId);
   }
 
   @Get(':code')
   async getStatusByCode(
     @Param('code') code: string,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.statusService.getOneByCodeOrFail(code, idProject);
+    return await this.statusService.getOneByCodeOrFail(code, projectId);
   }
   @Post()
   @UsePipes(ValidationPipe)
   async createStatus(
     @Body() dto: AddStatusDTO,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.statusService.add(dto, idProject);
+    return await this.statusService.add(dto, projectId);
   }
 
   @Put(':idStatus')
   @UsePipes(ValidationPipe)
   async editStatus(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idStatus') id: number,
     @Body() dto: EditStatusDTO,
   ) {
-    return await this.statusService.edit(id, idProject, dto);
+    return await this.statusService.edit(id, projectId, dto);
   }
 
   @Delete(':idStatus')
   async removeStatus(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idStatus') id: number,
   ) {
-    return await this.statusService.remove(id, idProject);
+    return await this.statusService.remove(id, projectId);
   }
 }

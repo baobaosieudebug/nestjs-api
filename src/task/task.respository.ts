@@ -24,7 +24,7 @@ export class TaskRepository extends Repository<TaskEntity> {
 
   async isAssignTask(userID: number, code: string): Promise<boolean> {
     const response = await this.count({
-      where: { code, userAssign: 0 },
+      where: { code, assignUserId: null },
     });
     return response > 0;
   }

@@ -25,10 +25,10 @@ export class UserRepository extends Repository<UsersEntity> {
     return entity > 0;
   }
 
-  async getAllUserByIDProject(idProject: number) {
+  async getAllUserByIDProject(projectId: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
-      .where('project.id = :idProject', { idProject })
+      .where('project.id = :projectId', { projectId })
       .getMany();
   }
 
@@ -46,10 +46,10 @@ export class UserRepository extends Repository<UsersEntity> {
       .getCount();
   }
 
-  async isUserExist(idProject: number) {
+  async isUserExist(projectId: number) {
     const response = await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
-      .where('project.id = :idProject', { idProject })
+      .where('project.id = :projectId', { projectId })
       .getCount();
     return response > 0;
   }

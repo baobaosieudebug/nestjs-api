@@ -27,43 +27,43 @@ export class VersionController {
   @Get(':idVersion')
   async getVersionById(
     @Param('idVersion') id: number,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.versionService.getOneByIdOrFail(id, idProject);
+    return await this.versionService.getOneByIdOrFail(id, projectId);
   }
 
   @Get(':code')
   async getVersionByCode(
     @Param('code') code: string,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.versionService.getOneByCodeOrFail(code, idProject);
+    return await this.versionService.getOneByCodeOrFail(code, projectId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
   async createVersion(
     @Body() dto: AddVersionDTO,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.versionService.add(dto, idProject);
+    return await this.versionService.add(dto, projectId);
   }
 
   @Put(':idVersion')
   @UsePipes(ValidationPipe)
   async editVersion(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idVersion') id: number,
     @Body() dto: EditVersionDTO,
   ) {
-    return await this.versionService.edit(id, idProject, dto);
+    return await this.versionService.edit(id, projectId, dto);
   }
 
   @Delete(':idVersion')
   async removeVersion(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idVersion') id: number,
   ) {
-    return await this.versionService.remove(id, idProject);
+    return await this.versionService.remove(id, projectId);
   }
 }

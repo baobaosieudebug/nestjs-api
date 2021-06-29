@@ -58,12 +58,12 @@ export class TaskService {
     }
   }
 
-  async addTaskInProject(code: string, idProject: number) {
+  async addTaskInProject(code: string, projectId: number) {
     const task = await this.getOneByCodeOrFail(code);
-    const checkTask = await this.checkExistCode(code, idProject);
+    const checkTask = await this.checkExistCode(code, projectId);
     if (!checkTask) {
       try {
-        return await this.taskRepo.update(task.id, { projectId: idProject });
+        return await this.taskRepo.update(task.id, { projectId: projectId });
       } catch (e) {
         throw new InternalServerErrorException();
       }
@@ -103,9 +103,9 @@ export class TaskService {
     }
   }
 
-  async removeTask(idProject: number, code: string) {
+  async removeTask(projectId: number, code: string) {
     const checkTask = await this.getOneByCodeOrFail(code);
-    const existTask = await this.taskRepo.isExistTaskCode(code, idProject);
+    const existTask = await this.taskRepo.isExistTaskCode(code, projectId);
     if (existTask) {
       try {
         return await this.taskRepo.update(checkTask.id, { projectId: null });
@@ -115,9 +115,9 @@ export class TaskService {
     }
   }
 
-  async getAllTaskByIDProject(idProject: number) {
+  async getAllTaskByIDProject(projectId: number) {
     try {
-      return await this.taskRepo.getAllTaskByIDProject(idProject);
+      return await this.taskRepo.getAllTaskByIDProject(projectId);
     } catch (e) {
       throw new InternalServerErrorException();
     }
