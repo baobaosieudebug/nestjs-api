@@ -1,39 +1,25 @@
 import { OrganizationEntity } from './organization.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(OrganizationEntity)
 export class OrganizationRepository extends Repository<OrganizationEntity> {
-  getById(id) {
-    return this.findOne({ id });
+  getAll() {
+    return this.find({ isDeleted: null });
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getById(id);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
+  getById(id: number) {
+    return this.findOne({ id, isDeleted: null });
   }
 
-  async getByIdWithDelete(id) {
-    const entity = await this.count({ where: { id, isDeleted: id } });
-    return entity > 0;
+  getByCode(code: string) {
+    return this.findOne({ code, isDeleted: null });
   }
 
-  getAllOrganization() {
-    return this.find();
-  }
-
-  getByCode(code) {
-    return this.findOne({ code });
-  }
-
-  async getOneByCodeOrFail(code: string) {
-    const response = await this.getByCode(code);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
+  async countOrg(id: number) {
+    return (
+      (await this.count({
+        where: { id, isDeleted: null },
+      })) > 0
+    );
   }
 }

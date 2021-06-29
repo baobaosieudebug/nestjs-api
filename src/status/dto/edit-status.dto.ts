@@ -1,15 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 
 export class EditStatusDTO {
   @ApiProperty({
     type: String,
     example: 'Closed',
   })
-  @Length(2, 255)
-  name: string;
+  @ApiProperty({ type: String, example: 'Status-001' })
+  @Length(5, 20)
+  code: string;
 
-  @ApiProperty({ type: String, example: '#56712' })
-  @Length(6, 20)
-  color: string;
+  @ApiProperty({ example: 'The Status Is Closed' })
+  @IsString()
+  description: string;
 }

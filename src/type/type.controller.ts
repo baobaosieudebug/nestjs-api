@@ -20,7 +20,6 @@ import { TypeService } from './type.service';
 import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
 
-
 @ApiTags('Type')
 @ApiOkResponse({ description: 'Success' })
 @ApiCreatedResponse({ description: 'Created' })
@@ -41,6 +40,14 @@ export class TypeController {
     @Param('id') idProject: number,
   ) {
     return await this.typeService.getOneByIdOrFail(id, idProject);
+  }
+
+  @Get(':code')
+  async getTypeByCode(
+    @Param('code') code: string,
+    @Param('id') idProject: number,
+  ) {
+    return await this.typeService.getOneByCodeOrFail(code, idProject);
   }
 
   @Post()

@@ -20,8 +20,8 @@ export class TypeService {
     return await this.typeRepo.getById(id, idProject);
   }
 
-  async getOneByCode(code: string) {
-    return await this.typeRepo.getByCode(code);
+  async getOneByCode(code: string, idProject: number) {
+    return await this.typeRepo.getByCode(code, idProject);
   }
 
   async getOneByIdOrFail(id: number, idProject: number) {
@@ -32,16 +32,16 @@ export class TypeService {
     return type;
   }
 
-  async getOneByCodeOrFail(code: string) {
-    const type = await this.getOneByCode(code);
+  async getOneByCodeOrFail(code: string, idProject: number) {
+    const type = await this.getOneByCode(code, idProject);
     if (!type) {
       throw new NotFoundException('Type not found');
     }
     return type;
   }
 
-  async checkExist(code: string) {
-    const type = await this.typeRepo.getByCode(code);
+  async checkExist(code: string, idProject: number) {
+    const type = await this.typeRepo.getByCode(code, idProject);
     if (!type) {
       throw new NotFoundException('Type Not Found');
     }

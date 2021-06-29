@@ -1,26 +1,33 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { VersionEntity } from './version.entity';
-import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(VersionEntity)
 export class VersionRepository extends Repository<VersionEntity> {
-  getById(id) {
-    return this.findOne({ id });
+  getAll(idProject: number) {
+    return this.find({ projectId: idProject, isDeleted: null });
   }
 
-  getAll() {
-    return this.find();
+  getById(id: number, idProject: number) {
+    return this.findOne({ id, projectId: idProject, isDeleted: null });
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getById(id);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
+  getByCode(code: string, idProject: number) {
+    return this.findOne({ code, projectId: idProject, isDeleted: null });
   }
 
-  async countVersionInProject(id: number, idProject: number) {
-    return await this.count({ where: { id, projectId: idProject } });
+  async countVersionInProjectByCode(code: string, idProject: number) {
+    return (
+      (await this.count({
+        where: { code, projectId: idProject, isDeleted: null },
+      })) > 0
+    );
+  }
+
+  async countVersionInProjectById(id: number, idProject: number) {
+    return (
+      (await this.count({
+        where: { id, projectId: idProject, isDeleted: null },
+      })) > 0
+    );
   }
 }

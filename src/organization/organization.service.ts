@@ -16,7 +16,7 @@ export class OrganizationService {
     private readonly projectService: ProjectService,
   ) {}
   async getAllOrganization() {
-    return await this.organizationRepo.getAllOrganization();
+    return await this.organizationRepo.getAll();
   }
 
   async getOneById(id: number) {
@@ -80,17 +80,17 @@ export class OrganizationService {
     }
   }
   async checkOrgByCode(code: string) {
-    const organization = await this.organizationRepo.getOneByCodeOrFail(code);
+    const organization = await this.organizationRepo.getByCode(code);
     if (!organization) {
-      return null;
+      throw new NotFoundException('Organization not found');
     }
     return organization;
   }
 
   async checkOrgByID(id: number) {
-    const organization = await this.organizationRepo.getOneByIdOrFail(id);
+    const organization = await this.organizationRepo.getById(id);
     if (!organization) {
-      return null;
+      throw new NotFoundException('Organization not found');
     }
     return organization;
   }
@@ -111,22 +111,11 @@ export class OrganizationService {
     }
   }
 
-  async checkDeleted(id: number) {
-    const org = this.organizationRepo.getByIdWithDelete(id);
-    if (!org) {
-      return null;
-    }
-    return org;
-  }
 
   async removeOrganization(id: number) {
     const checkOrg = await this.checkOrgByID(id);
     if (!checkOrg) {
-      throw new NotFoundException('Project Not Found');
-    }
-    const existDelete = await this.checkDeleted(id);
-    if (existDelete) {
-      throw new BadRequestException('Org Deleted');
+      throw new NotFoundException('Org Not Found');
     }
     try {
       return this.organizationRepo.update(id, { isDeleted: id });
@@ -136,7 +125,7 @@ export class OrganizationService {
   }
 
   async removeProject(code: string, codeProject: string) {
-    const checkOrg = await this.checkOrgByCode(code);
+    const checkOrg = await this.organizationRepo.getByCode(code);
     if (!checkOrg) {
       throw new NotFoundException();
     }

@@ -37,35 +37,43 @@ export class CategoryController {
   @Get(':idCategory')
   async getCategoryById(
     @Param('idCategory') id: number,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.categoryService.getOneByIdOrFail(id, idProject);
+    return await this.categoryService.getOneByIdOrFail(id, projectId);
+  }
+
+  @Get(':code')
+  async getCategoryByCode(
+    @Param('code') code: string,
+    @Param('id') projectId: number,
+  ) {
+    return await this.categoryService.getOneByCodeOrFail(code, projectId);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
   async createCategory(
     @Body() dto: AddCategoryDTO,
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
   ) {
-    return await this.categoryService.add(dto, idProject);
+    return await this.categoryService.add(dto, projectId);
   }
 
   @Put(':idCategory')
   @UsePipes(ValidationPipe)
   async editCategory(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idCategory') id: number,
     @Body() dto: EditCategoryDTO,
   ) {
-    return await this.categoryService.edit(id, idProject, dto);
+    return await this.categoryService.edit(id, projectId, dto);
   }
 
   @Delete(':idCategory')
   async removeCategory(
-    @Param('id') idProject: number,
+    @Param('id') projectId: number,
     @Param('idCategory') id: number,
   ) {
-    return await this.categoryService.remove(id, idProject);
+    return await this.categoryService.remove(id, projectId);
   }
 }
