@@ -21,11 +21,4 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     });
     return checkExist > 0;
   }
-
-  async isOrgExistId(id: number): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id, isDeleted: 0 },
-    });
-    return checkExist > 0;
-  }
 }

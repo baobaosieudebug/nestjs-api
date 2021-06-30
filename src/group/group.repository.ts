@@ -1,35 +1,23 @@
 import { GroupsEntity } from './group.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { UsersEntity } from '../user/users.entity';
-import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(GroupsEntity)
 export class GroupRepository extends Repository<GroupsEntity> {
   getOneById(id) {
-    return this.findOne({ id });
+    return this.findOne({ id, isDeleted: 0 });
   }
 
   getAll() {
-    return this.find();
-  }
-
-  getByName(name: string) {
-    return this.count({ where: { nameGroup: name } });
-  }
-
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
-      throw new NotFoundException();
-    }
-    return response;
+    return this.find({ isDeleted: 0 });
   }
 
   async isUserExistInGroup(idUser: number) {
-    return await this.createQueryBuilder('group')
+    const response = await this.createQueryBuilder('group')
       .leftJoinAndSelect('group.users', 'user')
       .where('user.id = :idUser', { idUser })
       .getCount();
+    return response > 0;
   }
 
   async removeUserInGroup(idUser: number, id: number) {

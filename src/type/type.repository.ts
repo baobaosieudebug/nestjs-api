@@ -21,11 +21,4 @@ export class TypeRepository extends Repository<TypeEntity> {
     });
     return checkExist > 0;
   }
-
-  async isTypeExistId(id: number, projectId: number): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id, projectId, isDeleted: 0 },
-    });
-    return checkExist > 0;
-  }
 }

@@ -70,8 +70,7 @@ export class OrganizationService {
     const checkExist = await this.getOneByCodeOrFail(codeOrg);
     if (checkExist) {
       try {
-        const organization = await this.organizationRepo.getByCode(codeOrg);
-        return this.projectService.addProject(organization.id, codeProject);
+        return this.projectService.addProject(checkExist.id, codeProject);
       } catch (e) {
         throw new InternalServerErrorException();
       }

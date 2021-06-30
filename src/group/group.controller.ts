@@ -9,7 +9,6 @@ import {
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common';
-import { GroupsService } from './group.service';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -19,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { AddGroupDTO } from './dto/add-group.dto';
+import { GroupsService } from './group.service';
 
 @ApiTags('Group')
 @ApiOkResponse({ description: 'Success' })

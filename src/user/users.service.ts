@@ -47,16 +47,16 @@ export class UsersService {
   }
 
   async addUser(idUser: number, idGroup: number) {
-    const checkUser = await this.getOneByIdOrFail(idUser);
-    if (checkUser) {
-      try {
-        const group = await this.groupRepo.getOneById(idGroup);
-        await checkUser.groups.push(group);
-        await this.userRepo.save(checkUser);
-        return checkUser;
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    const checkUser = await this.userRepo.getOneAndGroupRelation(idUser);
+    if (!checkUser) {
+      throw new NotFoundException('User not found');
+    }
+    try {
+      const group = await this.groupRepo.getOneById(idGroup);
+      checkUser.groups.push(group);
+      return await this.userRepo.save(checkUser);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 

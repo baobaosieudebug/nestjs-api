@@ -8,8 +8,6 @@ import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { UsersService } from '../user/users.service';
 import { TaskService } from '../task/task.service';
-import { TaskRepository } from '../task/task.respository';
-import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class ProjectService {
@@ -17,8 +15,6 @@ export class ProjectService {
     private readonly projectRepo: ProjectRepository,
     private readonly userService: UsersService,
     private readonly taskService: TaskService,
-    private readonly taskRepo: TaskRepository,
-    private readonly userRepo: UserRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -58,8 +54,8 @@ export class ProjectService {
   }
 
   async getAllUserByID(id: number) {
-    const existTask = await this.userRepo.isUserExist(id);
-    if (existTask) {
+    const checkProject = await this.getOneByIdOrFail(id);
+    if (checkProject) {
       try {
         return await this.userService.getAllUserByIDProject(id);
       } catch (e) {

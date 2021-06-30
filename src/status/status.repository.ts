@@ -21,11 +21,4 @@ export class StatusRepository extends Repository<StatusEntity> {
     });
     return checkExist > 0;
   }
-
-  async isStatusExistId(id: number, projectId: number): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id, projectId, isDeleted: 0 },
-    });
-    return checkExist > 0;
-  }
 }

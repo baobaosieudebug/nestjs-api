@@ -21,11 +21,4 @@ export class VersionRepository extends Repository<VersionEntity> {
     });
     return checkExist > 0;
   }
-
-  async isVersionExistId(id: number, projectId: number): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id, projectId, isDeleted: 0 },
-    });
-    return checkExist > 0;
-  }
 }
