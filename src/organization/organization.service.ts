@@ -43,11 +43,11 @@ export class OrganizationService {
     return response;
   }
 
-  async getAllProjectByID(id: number) {
+  async getAllProjectById(id: number) {
     const checkExist = await this.getOneByIdOrFail(id);
     if (checkExist) {
       try {
-        return await this.projectService.getAllProjectByIDOrg(id);
+        return await this.projectService.getAllProjectByIdOrg(id);
       } catch (e) {
         throw new InternalServerErrorException();
       }

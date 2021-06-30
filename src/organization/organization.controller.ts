@@ -43,8 +43,8 @@ export class OrganizationController {
   }
 
   @Get(':id/projects')
-  async getAllProjectByID(@Param('id') id: number) {
-    return await this.organizationService.getAllProjectByID(id);
+  async getAllProjectById(@Param('id') id: number) {
+    return await this.organizationService.getAllProjectById(id);
   }
 
   @Post()

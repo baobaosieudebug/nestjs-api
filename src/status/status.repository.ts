@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Not, Repository } from "typeorm";
 import { StatusEntity } from './status.entity';
 
 @EntityRepository(StatusEntity)
@@ -15,9 +15,13 @@ export class StatusRepository extends Repository<StatusEntity> {
     return this.findOne({ code, projectId, isDeleted: 0 });
   }
 
-  async isStatusExistCode(code: string, projectId: number): Promise<boolean> {
+  async isStatusExistCode(
+    id: number,
+    code: string,
+    projectId: number,
+  ): Promise<boolean> {
     const checkExist = await this.count({
-      where: { code, projectId, isDeleted: 0 },
+      where: { id: Not(id), code, projectId, isDeleted: 0 },
     });
     return checkExist > 0;
   }

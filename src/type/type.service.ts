@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,6 +7,8 @@ import {
 import { TypeRepository } from './type.repository';
 import { AddTypeDTO } from './dto/add-type.dto';
 import { EditTypeDTO } from './dto/edit-type.dto';
+import { TypeEntity } from './type.entity';
+import { AddTypeRO } from './ro/add-type.ro';
 
 @Injectable()
 export class TypeService {
@@ -39,48 +42,51 @@ export class TypeService {
     return type;
   }
 
-  async checkExistCode(code: string, projectId: number) {
-    const checkExist = await this.typeRepo.isTypeExistCode(code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Type Exist');
-    }
-    return checkExist;
+  async getTypeResponse(type: TypeEntity): Promise<AddTypeRO> {
+    const response = new AddTypeRO();
+    response.name = type.name;
+    response.code = type.code;
+    response.description = type.description;
+    return response;
   }
 
-  async add(dto: AddTypeDTO, projectId: number) {
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        const newType = this.typeRepo.create(dto);
-        newType.projectId = projectId;
-        return await this.typeRepo.save(newType);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+  async checkExistCode(id: number, code: string, projectId: number) {
+    const checkExist = await this.typeRepo.isTypeExistCode(id, code, projectId);
+    if (checkExist) {
+      throw new BadRequestException('Code Exist');
+    }
+  }
+
+  async add(dto: AddTypeDTO, projectId: number): Promise<AddTypeRO> {
+    await this.checkExistCode(0, dto.code, projectId);
+    try {
+      const newType = this.typeRepo.create(dto);
+      newType.projectId = projectId;
+      await this.typeRepo.save(newType);
+      return this.getTypeResponse(newType);
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async edit(id: number, projectId: number, dto: EditTypeDTO) {
-    const type = await this.getOneByIdOrFail(id, projectId);
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        return await this.typeRepo.update(type.id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(id, dto.code, projectId);
+    try {
+      await this.typeRepo.update(id, dto);
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.getOneByIdOrFail(id, projectId);
-    if (checkExist) {
-      try {
-        await this.typeRepo.update(id, { isDeleted: id });
-        return id;
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    try {
+      await this.typeRepo.update(id, { isDeleted: id });
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }

@@ -1,9 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AddUsersRO {
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   email: string;
 }

@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Not, Repository } from 'typeorm';
 import { VersionEntity } from './version.entity';
 
 @EntityRepository(VersionEntity)
@@ -15,9 +15,13 @@ export class VersionRepository extends Repository<VersionEntity> {
     return this.findOne({ code, projectId, isDeleted: 0 });
   }
 
-  async isVersionExistCode(code: string, projectId: number): Promise<boolean> {
+  async isVersionExistCode(
+    id: number,
+    code: string,
+    projectId: number,
+  ): Promise<boolean> {
     const checkExist = await this.count({
-      where: { code, projectId, isDeleted: 0 },
+      where: { id: Not(id), code, projectId, isDeleted: 0 },
     });
     return checkExist > 0;
   }

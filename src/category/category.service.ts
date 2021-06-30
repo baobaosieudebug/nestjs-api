@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,6 +7,8 @@ import {
 import { CategoryRepository } from './category.repository';
 import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
+import { AddCategoryRO } from './ro/add-category.ro';
+import { CategoryEntity } from './category.entity';
 
 @Injectable()
 export class CategoryService {
@@ -39,51 +42,55 @@ export class CategoryService {
     return category;
   }
 
-  async checkExistCode(code: string, projectId: number) {
+  async getCategoryResponse(category: CategoryEntity): Promise<AddCategoryRO> {
+    const response = new AddCategoryRO();
+    response.name = category.name;
+    response.code = category.code;
+    response.description = category.description;
+    return response;
+  }
+
+  async checkExistCode(id: number, code: string, projectId: number) {
     const checkExist = await this.categoryRepo.isCategoryExistCode(
+      id,
       code,
       projectId,
     );
     if (checkExist) {
-      throw new NotFoundException('Category Exist');
+      throw new BadRequestException('Code Exist');
     }
-    return checkExist;
   }
 
-  async add(dto: AddCategoryDTO, projectId: number) {
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        const newCategory = this.categoryRepo.create(dto);
-        newCategory.projectId = projectId;
-        return await this.categoryRepo.save(newCategory);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+  async add(dto: AddCategoryDTO, projectId: number): Promise<AddCategoryRO> {
+    await this.checkExistCode(0, dto.code, projectId);
+    try {
+      const newCategory = this.categoryRepo.create(dto);
+      newCategory.projectId = projectId;
+      await this.categoryRepo.save(newCategory);
+      return this.getCategoryResponse(newCategory);
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async edit(id: number, projectId: number, dto: EditCategoryDTO) {
-    const category = await this.getOneByIdOrFail(id, projectId);
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        return await this.categoryRepo.update(category.id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(id, dto.code, projectId);
+    try {
+      await this.categoryRepo.update(id, dto);
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.getOneByIdOrFail(id, projectId);
-    if (checkExist) {
-      try {
-        await this.categoryRepo.update(id, { isDeleted: id });
-        return id;
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    try {
+      await this.categoryRepo.update(id, { isDeleted: id });
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }

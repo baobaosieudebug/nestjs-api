@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,6 +7,8 @@ import {
 import { StatusRepository } from './status.repository';
 import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
+import { StatusEntity } from './status.entity';
+import { AddStatusRO } from './ro/add-status.ro';
 
 @Injectable()
 export class StatusService {
@@ -39,48 +42,55 @@ export class StatusService {
     return status;
   }
 
-  async checkExistCode(code: string, projectId: number) {
-    const checkExist = await this.statusRepo.isStatusExistCode(code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Status Exist');
-    }
-    return checkExist;
+  async getStatusResponse(status: StatusEntity): Promise<AddStatusRO> {
+    const response = new AddStatusRO();
+    response.name = status.name;
+    response.code = status.code;
+    response.description = status.description;
+    return response;
   }
 
-  async add(dto: AddStatusDTO, projectId: number) {
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        const newStatus = this.statusRepo.create(dto);
-        newStatus.projectId = projectId;
-        return await this.statusRepo.save(newStatus);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+  async checkExistCode(id: number, code: string, projectId: number) {
+    const checkExist = await this.statusRepo.isStatusExistCode(
+      id,
+      code,
+      projectId,
+    );
+    if (checkExist) {
+      throw new BadRequestException('Code Exist');
+    }
+  }
+
+  async add(dto: AddStatusDTO, projectId: number): Promise<AddStatusRO> {
+    await this.checkExistCode(0, dto.code, projectId);
+    try {
+      const newStatus = this.statusRepo.create(dto);
+      newStatus.projectId = projectId;
+      await this.statusRepo.save(newStatus);
+      return this.getStatusResponse(newStatus);
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async edit(id: number, projectId: number, dto: EditStatusDTO) {
-    const status = await this.getOneByIdOrFail(id, projectId);
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        return await this.statusRepo.update(status.id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(id, dto.code, projectId);
+    try {
+      await this.statusRepo.update(id, dto);
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.getOneByIdOrFail(id, projectId);
-    if (checkExist) {
-      try {
-        await this.statusRepo.update(id, { isDeleted: id });
-        return id;
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    try {
+      await this.statusRepo.update(id, { isDeleted: id });
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }

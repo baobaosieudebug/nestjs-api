@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,7 +7,8 @@ import {
 import { VersionRepository } from './version.repository';
 import { AddVersionDTO } from './dto/add-version.dto';
 import { EditVersionDTO } from './dto/edit-version.dto';
-
+import { VersionEntity } from './version.entity';
+import { AddVersionRO } from './ro/add-version.ro';
 @Injectable()
 export class VersionService {
   constructor(private readonly versionRepo: VersionRepository) {}
@@ -39,51 +41,55 @@ export class VersionService {
     return version;
   }
 
-  async checkExistCode(code: string, projectId: number) {
+  async getVersionResponse(version: VersionEntity): Promise<AddVersionRO> {
+    const response = new AddVersionRO();
+    response.name = version.name;
+    response.code = version.code;
+    response.description = version.description;
+    return response;
+  }
+
+  async checkExistCode(id: number, code: string, projectId: number) {
     const checkExist = await this.versionRepo.isVersionExistCode(
+      id,
       code,
       projectId,
     );
     if (checkExist) {
-      throw new NotFoundException('Version Exist');
+      throw new BadRequestException('Code Exist');
     }
-    return checkExist;
   }
 
-  async add(dto: AddVersionDTO, projectId: number) {
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        const newVersion = this.versionRepo.create(dto);
-        newVersion.projectId = projectId;
-        return await this.versionRepo.save(newVersion);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+  async add(dto: AddVersionDTO, projectId: number): Promise<AddVersionRO> {
+    await this.checkExistCode(0, dto.code, projectId);
+    try {
+      const newVersion = this.versionRepo.create(dto);
+      newVersion.projectId = projectId;
+      await this.versionRepo.save(newVersion);
+      return this.getVersionResponse(newVersion);
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async edit(id: number, projectId: number, dto: EditVersionDTO) {
-    const version = await this.getOneByIdOrFail(id, projectId);
-    const checkExist = await this.checkExistCode(dto.code, projectId);
-    if (!checkExist) {
-      try {
-        return await this.versionRepo.update(version.id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(id, dto.code, projectId);
+    try {
+      await this.versionRepo.update(id, dto);
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async remove(id: number, projectId: number) {
-    const checkExist = await this.getOneByIdOrFail(id, projectId);
-    if (checkExist) {
-      try {
-        await this.versionRepo.update(id, { isDeleted: id });
-        return id;
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id, projectId);
+    try {
+      await this.versionRepo.update(id, { isDeleted: id });
+      return id;
+    } catch (e) {
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 }
