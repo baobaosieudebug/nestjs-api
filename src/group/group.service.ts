@@ -77,17 +77,6 @@ export class GroupsService {
     }
   }
 
-  async removeUserInGroup(idUser: number, id: number) {
-    const existUser = await this.groupRepo.isUserExistInGroup(idUser);
-    if (existUser) {
-      try {
-        return await this.groupRepo.removeUserInGroup(idUser, id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
-    }
-  }
-
   async getAllUserByID(id: number) {
     const checkGroup = await this.getOneOrFail(id);
     if (checkGroup) {

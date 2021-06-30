@@ -64,10 +64,9 @@ export class UsersService {
     const checkUser = await this.getOneByIdOrFail(idUser);
     if (checkUser) {
       try {
-        const project = await this.projectRepo.getById(projectId);
-        await checkUser.projects.push(project);
-        await this.userRepo.save(checkUser);
-        return checkUser;
+        const project = await this.projectRepo.getOneAndUserRelation(projectId);
+        await project.users.push(checkUser);
+        return await this.projectRepo.save(project);
       } catch (e) {
         throw new InternalServerErrorException();
       }

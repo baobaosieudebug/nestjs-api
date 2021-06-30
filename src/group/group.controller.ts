@@ -61,14 +61,6 @@ export class GroupsController {
     return await this.groupsService.update(id, group);
   }
 
-  @Delete(':id/removeUser/:idUser')
-  async removeUserInGroup(
-    @Param('idUser') idUser: number,
-    @Param('id') idGroup: number,
-  ) {
-    return await this.groupsService.removeUserInGroup(idUser, idGroup);
-  }
-
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return await this.groupsService.remove(id);

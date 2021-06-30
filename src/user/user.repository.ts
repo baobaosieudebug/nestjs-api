@@ -15,13 +15,6 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.findOne({ id, isDeleted: 0 }, { relations: ['groups'] });
   }
 
-  async isUserExistInProject(projectId: number, id: number) {
-    const entity = await this.count({
-      where: { id, projectId: projectId },
-    });
-    return entity > 0;
-  }
-
   async getAllUserByIDProject(projectId: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')

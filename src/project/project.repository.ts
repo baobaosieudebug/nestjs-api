@@ -20,6 +20,10 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     return this.find({ organizationID: orgId, isDeleted: 0 });
   }
 
+  getOneAndUserRelation(id) {
+    return this.findOne({ id, isDeleted: 0 }, { relations: ['users'] });
+  }
+
   async isProjectExist(orgID: number, code: string) {
     const entity = await this.count({
       where: { code, organizationID: orgID },

@@ -1,6 +1,5 @@
 import { GroupsEntity } from './group.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { UsersEntity } from '../user/users.entity';
 
 @EntityRepository(GroupsEntity)
 export class GroupRepository extends Repository<GroupsEntity> {
@@ -18,12 +17,5 @@ export class GroupRepository extends Repository<GroupsEntity> {
       .where('user.id = :idUser', { idUser })
       .getCount();
     return response > 0;
-  }
-
-  async removeUserInGroup(idUser: number, id: number) {
-    return this.createQueryBuilder('group')
-      .relation(UsersEntity, 'groups')
-      .of(idUser)
-      .remove(id);
   }
 }
