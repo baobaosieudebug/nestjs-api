@@ -72,6 +72,14 @@ export class ProjectService {
     return project;
   }
 
+  async checkProjectExist(id: number) {
+    const project = await this.projectRepo.checkProjectExist(id);
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
+  }
+
   async createProject(dto: AddProjectDTO) {
     try {
       const project = this.projectRepo.create(dto);

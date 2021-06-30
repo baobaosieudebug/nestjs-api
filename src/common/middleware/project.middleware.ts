@@ -1,8 +1,7 @@
 import {
+  BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NestMiddleware,
-  NotFoundException,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { ProjectService } from '../../project/project.service';
@@ -13,12 +12,9 @@ export class ProjectMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const projectId = Number(req.params.id);
     if (!projectId) {
-      // throw new InternalServerErrorException('error');
+      throw new BadRequestException('Id Project Incorrect');
     }
-    const check = await this.projectService.getOneByIdOrFail(projectId);
-    if (!check) {
-      throw new NotFoundException();
-    }
+    await this.projectService.checkProjectExist(projectId);
     next();
   }
 }

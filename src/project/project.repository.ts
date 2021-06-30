@@ -24,19 +24,24 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     return this.findOne({ id, isDeleted: 0 }, { relations: ['users'] });
   }
 
+  async checkProjectExist(id: number) {
+    const project = await this.count({ where: { id } });
+    return project > 0;
+  }
+
   async isProjectExist(orgId: number, code: string) {
-    const entity = await this.count({
+    const project = await this.count({
       where: { code, organizationId: orgId },
     });
-    return entity > 0;
+    return project > 0;
   }
 
   async isUserExist(idUser: number) {
-    const response = await this.createQueryBuilder('project')
+    const project = await this.createQueryBuilder('project')
       .leftJoinAndSelect('project.users', 'user')
       .where('user.id = :idUser', { idUser })
       .getCount();
-    return response > 0;
+    return project > 0;
   }
 
   async removeUserInProject(idUser: number, id: number) {
