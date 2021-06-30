@@ -45,19 +45,19 @@ export class ProjectService {
     return await this.projectRepo.getAll();
   }
 
-  async getAllTaskByID(id: number) {
+  async getAllTaskById(id: number) {
     try {
-      return await this.taskService.getAllTaskByIDProject(id);
+      return await this.taskService.getAllTaskByIdProject(id);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async getAllUserByID(id: number) {
+  async getAllUserById(id: number) {
     const checkProject = await this.getOneByIdOrFail(id);
     if (checkProject) {
       try {
-        return await this.userService.getAllUserByIDProject(id);
+        return await this.userService.getAllUserByIdProject(id);
       } catch (e) {
         throw new InternalServerErrorException();
       }
@@ -87,7 +87,7 @@ export class ProjectService {
     if (!existProject) {
       try {
         return await this.projectRepo.update(project.id, {
-          organizationID: orgId,
+          organizationId: orgId,
         });
       } catch (e) {
         throw new InternalServerErrorException();
@@ -168,7 +168,7 @@ export class ProjectService {
     if (existProject) {
       try {
         return await this.projectRepo.update(project.id, {
-          organizationID: null,
+          organizationId: null,
         });
       } catch (e) {
         throw new InternalServerErrorException();
@@ -176,7 +176,7 @@ export class ProjectService {
     }
   }
 
-  async getAllProjectByIDOrg(orgId: number) {
+  async getAllProjectByIdOrg(orgId: number) {
     return await this.projectRepo.getProjectByIdOrg(orgId);
   }
 }

@@ -40,8 +40,8 @@ export class GroupsController {
   }
 
   @Get('/:id/users')
-  async getAllUserByID(@Param('id') id: number) {
-    return await this.groupsService.getAllUserByID(id);
+  async getAllUserById(@Param('id') id: number) {
+    return await this.groupsService.getAllUserById(id);
   }
 
   @Post()

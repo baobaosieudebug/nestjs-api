@@ -48,13 +48,13 @@ export class ProjectController {
   }
 
   @Get('/:id/tasks')
-  async getAllTaskByID(@Param('id') id: number) {
-    return await this.projectService.getAllTaskByID(id);
+  async getAllTaskById(@Param('id') id: number) {
+    return await this.projectService.getAllTaskById(id);
   }
 
   @Get('/:id/users')
-  async getAllUserByID(@Param('id') id: number) {
-    return await this.projectService.getAllUserByID(id);
+  async getAllUserById(@Param('id') id: number) {
+    return await this.projectService.getAllUserById(id);
   }
 
   @Post()

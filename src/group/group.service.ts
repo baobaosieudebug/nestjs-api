@@ -77,11 +77,11 @@ export class GroupsService {
     }
   }
 
-  async getAllUserByID(id: number) {
+  async getAllUserById(id: number) {
     const checkGroup = await this.getOneOrFail(id);
     if (checkGroup) {
       try {
-        return await this.userService.getAllUserByIDGroup(id);
+        return await this.userService.getAllUserByIdGroup(id);
       } catch (e) {
         throw new InternalServerErrorException();
       }

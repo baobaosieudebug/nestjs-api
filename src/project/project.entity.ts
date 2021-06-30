@@ -15,7 +15,7 @@ import { TaskEntity } from '../task/task.entity';
 import { CategoryEntity } from '../category/category.entity';
 import { TypeEntity } from '../type/type.entity';
 import { StatusEntity } from '../status/status.entity';
-import { Version } from 'aws-sdk/clients/swf';
+import { VersionEntity } from '../version/version.entity';
 
 @Entity('project')
 export class ProjectEntity {
@@ -35,7 +35,7 @@ export class ProjectEntity {
   isDeleted: number;
 
   @Column({ name: 'organization_id', nullable: true })
-  organizationID: number;
+  organizationId: number;
 
   @ManyToOne(
     () => OrganizationEntity,
@@ -50,17 +50,17 @@ export class ProjectEntity {
   @JoinTable()
   users: UsersEntity[];
 
-  @OneToMany(() => TaskEntity, (task) => task.project)
+  @OneToMany(() => CategoryEntity, (task) => task.project)
   categories: CategoryEntity[];
 
-  @OneToMany(() => TaskEntity, (task) => task.project)
+  @OneToMany(() => TypeEntity, (task) => task.project)
   types: TypeEntity[];
 
-  @OneToMany(() => TaskEntity, (task) => task.project)
+  @OneToMany(() => StatusEntity, (task) => task.project)
   statuses: StatusEntity[];
 
-  @OneToMany(() => TaskEntity, (task) => task.project)
-  versions: Version[];
+  @OneToMany(() => VersionEntity, (task) => task.project)
+  versions: VersionEntity[];
 
   @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];

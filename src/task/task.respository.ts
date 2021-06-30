@@ -11,7 +11,7 @@ export class TaskRepository extends Repository<TaskEntity> {
     return this.find({ isDeleted: 0 });
   }
 
-  getAllTaskByIDProject(projectId: number) {
+  getAllTaskByIdProject(projectId: number) {
     return this.find({ projectId: projectId });
   }
 
@@ -25,7 +25,7 @@ export class TaskRepository extends Repository<TaskEntity> {
     });
   }
 
-  async isAssignTask(userID: number, code: string): Promise<boolean> {
+  async isAssignTask(userId: number, code: string): Promise<boolean> {
     const response = await this.count({
       where: { code, assignUserId: null },
     });

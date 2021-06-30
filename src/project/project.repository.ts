@@ -17,16 +17,16 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   }
 
   getProjectByIdOrg(orgId: number) {
-    return this.find({ organizationID: orgId, isDeleted: 0 });
+    return this.find({ organizationId: orgId, isDeleted: 0 });
   }
 
   getOneAndUserRelation(id) {
     return this.findOne({ id, isDeleted: 0 }, { relations: ['users'] });
   }
 
-  async isProjectExist(orgID: number, code: string) {
+  async isProjectExist(orgId: number, code: string) {
     const entity = await this.count({
-      where: { code, organizationID: orgID },
+      where: { code, organizationId: orgId },
     });
     return entity > 0;
   }

@@ -15,14 +15,14 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.findOne({ id, isDeleted: 0 }, { relations: ['groups'] });
   }
 
-  async getAllUserByIDProject(projectId: number) {
+  async getAllUserByIdProject(projectId: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'project')
       .where('project.id = :projectId', { projectId })
       .getMany();
   }
 
-  async getAllUserByIDGroup(idGroup: number) {
+  async getAllUserByIdGroup(idGroup: number) {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.groups', 'group')
       .where('group.id = :idGroup', { idGroup })

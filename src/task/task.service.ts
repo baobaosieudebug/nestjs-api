@@ -115,27 +115,11 @@ export class TaskService {
     }
   }
 
-  async getAllTaskByIDProject(projectId: number) {
+  async getAllTaskByIdProject(projectId: number) {
     try {
-      return await this.taskRepo.getAllTaskByIDProject(projectId);
+      return await this.taskRepo.getAllTaskByIdProject(projectId);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
-
-  // async getAllAssignTaskByIDUser(idUser: number) {
-  //   try {
-  //     return await this.taskRepo.getAllUserByIDUserAssign(idUser);
-  //   } catch (e) {
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
-  //
-  // async getAllCreateTaskByIDUser(idUser: number) {
-  //   try {
-  //     return await this.taskRepo.getAllUserByIDUserCreate(idUser);
-  //   } catch (e) {
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
 }

@@ -106,17 +106,17 @@ export class UsersService {
       }
     }
   }
-  async getAllUserByIDProject(projectId: number) {
+  async getAllUserByIdProject(projectId: number) {
     try {
-      return await this.userRepo.getAllUserByIDProject(projectId);
+      return await this.userRepo.getAllUserByIdProject(projectId);
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async getAllUserByIDGroup(idGroup: number) {
+  async getAllUserByIdGroup(idGroup: number) {
     try {
-      return await this.userRepo.getAllUserByIDGroup(idGroup);
+      return await this.userRepo.getAllUserByIdGroup(idGroup);
     } catch (e) {
       throw new InternalServerErrorException();
     }

@@ -13,7 +13,7 @@ export class ProjectMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const projectId = Number(req.params.id);
     if (!projectId) {
-      throw new InternalServerErrorException('error');
+      // throw new InternalServerErrorException('error');
     }
     const check = await this.projectService.getOneByIdOrFail(projectId);
     if (!check) {
