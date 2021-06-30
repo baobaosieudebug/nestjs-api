@@ -61,10 +61,11 @@ export class StatusService {
   }
 
   async edit(id: number, projectId: number, dto: EditStatusDTO) {
+    const status = await this.getOneByIdOrFail(id, projectId);
     const checkExist = await this.checkExistCode(dto.code, projectId);
     if (!checkExist) {
       try {
-        return await this.statusRepo.update(id, dto);
+        return await this.statusRepo.update(status.id, dto);
       } catch (e) {
         throw new InternalServerErrorException();
       }

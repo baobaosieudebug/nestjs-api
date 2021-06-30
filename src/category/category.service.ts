@@ -64,10 +64,11 @@ export class CategoryService {
   }
 
   async edit(id: number, projectId: number, dto: EditCategoryDTO) {
+    const category = await this.getOneByIdOrFail(id, projectId);
     const checkExist = await this.checkExistCode(dto.code, projectId);
     if (!checkExist) {
       try {
-        return await this.categoryRepo.update(id, dto);
+        return await this.categoryRepo.update(category.id, dto);
       } catch (e) {
         throw new InternalServerErrorException();
       }

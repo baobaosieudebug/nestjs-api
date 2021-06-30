@@ -61,10 +61,11 @@ export class TypeService {
   }
 
   async edit(id: number, projectId: number, dto: EditTypeDTO) {
+    const type = await this.getOneByIdOrFail(id, projectId);
     const checkExist = await this.checkExistCode(dto.code, projectId);
     if (!checkExist) {
       try {
-        return await this.typeRepo.update(id, dto);
+        return await this.typeRepo.update(type.id, dto);
       } catch (e) {
         throw new InternalServerErrorException();
       }

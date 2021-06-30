@@ -64,10 +64,11 @@ export class VersionService {
   }
 
   async edit(id: number, projectId: number, dto: EditVersionDTO) {
+    const version = await this.getOneByIdOrFail(id, projectId);
     const checkExist = await this.checkExistCode(dto.code, projectId);
     if (!checkExist) {
       try {
-        return await this.versionRepo.update(id, dto);
+        return await this.versionRepo.update(version.id, dto);
       } catch (e) {
         throw new InternalServerErrorException();
       }
