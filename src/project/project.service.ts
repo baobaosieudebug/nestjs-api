@@ -69,7 +69,6 @@ export class ProjectService {
     if (project) {
       throw new NotFoundException('Project Exist');
     }
-    return project;
   }
 
   async checkProjectExist(id: number) {
@@ -91,96 +90,82 @@ export class ProjectService {
 
   async addProject(orgId: number, code: string) {
     const project = await this.getOneByCodeOrFail(code);
-    const existProject = await this.checkExistCode(code, orgId);
-    if (!existProject) {
-      try {
-        return await this.projectRepo.update(project.id, {
-          organizationId: orgId,
-        });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.checkExistCode(code, orgId);
+    try {
+      return await this.projectRepo.update(project.id, {
+        organizationId: orgId,
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async addUser(code: string, idUser: number) {
     const checkProject = await this.getOneByCodeOrFail(code);
-    if (checkProject) {
-      try {
-        return this.userService.addUserInProject(idUser, checkProject.id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    try {
+      return this.userService.addUserInProject(idUser, checkProject.id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async addTask(code: string, codeTask: string) {
     const checkProject = await this.getOneByCodeOrFail(code);
-    if (checkProject) {
-      try {
-        return this.taskService.addTaskInProject(codeTask, checkProject.id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+
+    try {
+      return this.taskService.addTaskInProject(codeTask, checkProject.id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async edit(id: number, dto: EditProjectDTO) {
-    const checkProject = await this.getOneByIdOrFail(id);
-    if (checkProject) {
-      try {
-        return await this.projectRepo.update(id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id);
+    try {
+      return await this.projectRepo.update(id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async remove(id: number) {
-    const checkProject = await this.getOneByIdOrFail(id);
-    if (checkProject) {
-      try {
-        return await this.projectRepo.update(id, { isDeleted: id });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id);
+
+    try {
+      return await this.projectRepo.update(id, { isDeleted: id });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async removeUserInProject(idUser: number, code: string) {
     const project = await this.getOneByCodeOrFail(code);
-    const existUser = await this.projectRepo.isUserExist(idUser);
-    if (existUser) {
-      try {
-        return this.projectRepo.removeUserInProject(idUser, project.id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.projectRepo.isUserExist(idUser);
+    try {
+      return this.projectRepo.removeUserInProject(idUser, project.id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async removeTaskInProject(code: string, codeTask: string) {
     const checkProject = await this.getOneByCodeOrFail(code);
-    if (checkProject) {
-      try {
-        return this.taskService.removeTask(checkProject.id, codeTask);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    try {
+      return this.taskService.removeTask(checkProject.id, codeTask);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async removeProject(orgId: number, code: string) {
     const project = await this.getOneByCodeOrFail(code);
-    const existProject = await this.checkExistCode(code, orgId);
-    if (existProject) {
-      try {
-        return await this.projectRepo.update(project.id, {
-          organizationId: null,
-        });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.checkExistCode(code, orgId);
+    try {
+      return await this.projectRepo.update(project.id, {
+        organizationId: null,
+      });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
