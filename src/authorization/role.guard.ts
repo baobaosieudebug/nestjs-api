@@ -2,8 +2,7 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { Reflector } from '@nestjs/core';
@@ -15,58 +14,27 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const decoded = await this.validateToken(request.headers.authorization);
     const roles = this.reflector.get<number[]>('roles', context.getHandler());
-    const roleControllers = this.reflector.get<string[]>(
-      'roles',
-      context.getClass(),
-    );
-    // If public route allow access, else check role permission
     if (!roles) {
       return true;
     } else {
-      return roles.includes(decoded['role']);
+      return roles.includes(decoded['roles']);
     }
   }
 
   async validateToken(auth: string) {
-    // check request header
     if (!auth) {
-      throw new HttpException(
-        'Authorization header is required.',
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException('Authorization header not null');
     }
     const authHeader = auth.split(' ');
     if (authHeader[0] !== 'Bearer') {
-      throw new HttpException('Invalid Token', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('Invalid token');
     }
     const token = authHeader[1];
     try {
       const decoded = jwt.verify(token, 'SECRET');
       return decoded;
     } catch (err) {
-      const message = 'Token error: ' + (err.message || err.name);
-      throw new HttpException(message, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('FORBIDDEN');
     }
   }
 }
-// import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-// import { Reflector } from '@nestjs/core';
-// import { Role } from './role.enum';
-// import { ROLES_KEY } from './role.decorator';
-//
-// @Injectable()
-// export class RolesGuard implements CanActivate {
-//   constructor(private reflector: Reflector) {}
-//
-//   canActivate(context: ExecutionContext): boolean {
-//     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-//       context.getHandler(),
-//       context.getClass(),
-//     ]);
-//     if (!requiredRoles) {
-//       return true;
-//     }
-//     const { user } = context.switchToHttp().getRequest();
-//     return requiredRoles.some((role) => user.roles?.includes(role));
-//   }
-// }

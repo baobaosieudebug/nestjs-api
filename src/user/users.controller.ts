@@ -22,8 +22,8 @@ import {
 import { EditUserDTO } from './dto/edit-user.dto';
 import { Roles } from '../authorization/role.decorator';
 import { Role } from '../authorization/role.enum';
-import { LoginUserDTO } from './dto/login-user.dto';
-import { RolesGuard } from "../authorization/role.guard";
+// import { LoginUserDTO } from './dto/login-user.dto';
+import { RolesGuard } from '../authorization/role.guard';
 
 @ApiTags('User')
 @Controller('users')
@@ -40,6 +40,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   async getAll() {
     return await this.usersService.getAll();

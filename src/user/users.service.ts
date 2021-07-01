@@ -28,12 +28,23 @@ export class UsersService {
     return await this.userRepo.getOneById(id);
   }
 
-  async getOneByIdOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
-      throw new NotFoundException();
+  async getOneByEmail(email: string) {
+    return await this.userRepo.getOneByEmail(email);
+  }
+  async getOneByEmailOrFail(email: string) {
+    const user = await this.getOneByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-    return response;
+    return user;
+  }
+
+  async getOneByIdOrFail(id: number) {
+    const user = await this.getOneById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   async getAll() {

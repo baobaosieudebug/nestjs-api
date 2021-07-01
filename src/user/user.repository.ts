@@ -7,6 +7,10 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.findOne({ id, isDeleted: 0 });
   }
 
+  async getOneByEmail(email: string) {
+    return this.findOne({ email, isDeleted: 0 });
+  }
+
   getAll() {
     return this.find({ isDeleted: 0 });
   }

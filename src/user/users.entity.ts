@@ -21,7 +21,7 @@ export class UsersEntity {
   @Column({ type: 'varchar', nullable: true })
   email: string;
 
-  @Column({ type: 'varchar', select: false })
+  @Column({ type: 'varchar', select: true })
   password: string;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })

@@ -6,8 +6,8 @@ import { UserRepository } from './user.repository';
 import { GroupsModule } from '../group/group.module';
 import { TaskModule } from 'src/task/task.module';
 import { ProjectModule } from '../project/project.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from '../authorization/role.guard';
+// import { APP_GUARD } from '@nestjs/core';
+// import { RolesGuard } from '../authorization/role.guard';
 
 @Module({
   imports: [
@@ -20,10 +20,10 @@ import { RolesGuard } from '../authorization/role.guard';
   controllers: [UsersController],
   providers: [
     UsersService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
   exports: [UsersService, TypeOrmModule],
 })
