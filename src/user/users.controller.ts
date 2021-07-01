@@ -8,6 +8,7 @@ import {
   Param,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDTO } from './dto/add-user.dto';
@@ -19,6 +20,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EditUserDTO } from './dto/edit-user.dto';
+import { Roles } from '../authorization/role.decorator';
+import { Role } from '../authorization/role.enum';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { RolesGuard } from "../authorization/role.guard";
 
 @ApiTags('User')
 @Controller('users')
@@ -35,6 +40,7 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(Role.Admin)
   async getAll() {
     return await this.usersService.getAll();
   }
@@ -61,11 +67,8 @@ export class UsersController {
     return await this.usersService.remove(id);
   }
 
-  // @Delete(':id/removeUserCreateTask/:code')
-  // async removeUserCreateTask(
-  //   @Param('id') idUser: number,
-  //   @Param('code') code: string,
-  // ) {
-  //   return await this.usersService.removeUserCreateTask(idUser, code);
+  // @Post('login')
+  // async login(@Body() user: LoginUserDTO) {
+  //   return await this.usersService.login(user);
   // }
 }

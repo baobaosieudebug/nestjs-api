@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
+import { Role } from '../authorization/role.enum';
 
 @Entity('users')
 export class UsersEntity {
@@ -25,6 +26,9 @@ export class UsersEntity {
 
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
+
+  @Column({ type: 'enum', enum: Role, default: Role.User })
+  roles: Role;
 
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.userAssign)
   tasksAssign: TaskEntity[];

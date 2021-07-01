@@ -23,7 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user) {
     if (err || !user) {
-      throw err || new UnauthorizedException('You Incorect Token');
+      throw err || new UnauthorizedException('You Incorrect Token');
     }
     return user;
   }

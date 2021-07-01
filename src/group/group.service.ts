@@ -24,11 +24,11 @@ export class GroupsService {
   }
 
   async getOneOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
+    const group = await this.getOneById(id);
+    if (!group) {
       throw new NotFoundException('Group not found');
     }
-    return response;
+    return group;
   }
 
   async getAll(): Promise<GroupsEntity[]> {
@@ -45,46 +45,38 @@ export class GroupsService {
   }
 
   async update(id: number, dto: EditGroupDTO) {
-    const checkGroup = await this.getOneOrFail(id);
-    if (checkGroup) {
-      try {
-        return await this.groupRepo.update(id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneOrFail(id);
+    try {
+      return await this.groupRepo.update(id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async remove(id: number) {
-    const checkGroup = await this.getOneOrFail(id);
-    if (checkGroup) {
-      try {
-        return this.groupRepo.update(id, { isDeleted: id });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneOrFail(id);
+    try {
+      return this.groupRepo.update(id, { isDeleted: id });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async addUser(idUser: number, id: number) {
-    const checkGroup = await this.getOneOrFail(id);
-    if (checkGroup) {
-      try {
-        return this.userService.addUser(idUser, id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneOrFail(id);
+    try {
+      return this.userService.addUser(idUser, id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async getAllUserById(id: number) {
-    const checkGroup = await this.getOneOrFail(id);
-    if (checkGroup) {
-      try {
-        return await this.userService.getAllUserByIdGroup(id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneOrFail(id);
+    try {
+      return await this.userService.getAllUserByIdGroup(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 }

@@ -16,11 +16,11 @@ export class TaskService {
   }
 
   async getOneByIdOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
+    const task = await this.getOneById(id);
+    if (!task) {
       throw new NotFoundException('Task Not Found');
     }
-    return response;
+    return task;
   }
 
   async getOneByCode(code: string) {
@@ -28,11 +28,11 @@ export class TaskService {
   }
 
   async getOneByCodeOrFail(code: string) {
-    const response = await this.getOneByCode(code);
-    if (!response) {
+    const task = await this.getOneByCode(code);
+    if (!task) {
       throw new NotFoundException();
     }
-    return response;
+    return task;
   }
 
   async getAll() {
@@ -44,14 +44,12 @@ export class TaskService {
     if (checkExist) {
       throw new NotFoundException('Task Exist');
     }
-    return checkExist;
   }
 
   async create(dto: AddTaskDTO) {
     try {
       const task = this.taskRepo.create(dto);
       task.createdAt = new Date();
-      // task.createUserId = idUser;
       return await this.taskRepo.save(task);
     } catch (e) {
       throw new InternalServerErrorException();
@@ -60,58 +58,48 @@ export class TaskService {
 
   async addTaskInProject(code: string, projectId: number) {
     const task = await this.getOneByCodeOrFail(code);
-    const checkTask = await this.checkExistCode(code, projectId);
-    if (!checkTask) {
-      try {
-        return await this.taskRepo.update(task.id, { projectId: projectId });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.checkExistCode(code, projectId);
+    try {
+      return await this.taskRepo.update(task.id, { projectId: projectId });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async assignTask(code: string, idUser: number) {
     const task = await this.getOneByCodeOrFail(code);
-    const checkTask = await this.taskRepo.isAssignTask(idUser, code);
-    if (checkTask) {
-      try {
-        return await this.taskRepo.update(task.id, { assignUserId: idUser });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.taskRepo.isAssignTask(idUser, code);
+    try {
+      return await this.taskRepo.update(task.id, { assignUserId: idUser });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
   async edit(id: number, dto: EditTaskDTO) {
-    const checkTask = await this.getOneByIdOrFail(id);
-    if (checkTask) {
-      try {
-        return await this.taskRepo.update(id, dto);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id);
+    try {
+      return await this.taskRepo.update(id, dto);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async remove(id: number) {
-    const checkTask = await this.getOneByIdOrFail(id);
-    if (checkTask) {
-      try {
-        return await this.taskRepo.update(id, { isDeleted: id });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id);
+    try {
+      return await this.taskRepo.update(id, { isDeleted: id });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
   async removeTask(projectId: number, code: string) {
     const checkTask = await this.getOneByCodeOrFail(code);
-    const existTask = await this.taskRepo.isExistTaskCode(code, projectId);
-    if (existTask) {
-      try {
-        return await this.taskRepo.update(checkTask.id, { projectId: null });
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.taskRepo.isExistTaskCode(code, projectId);
+    try {
+      return await this.taskRepo.update(checkTask.id, { projectId: null });
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 

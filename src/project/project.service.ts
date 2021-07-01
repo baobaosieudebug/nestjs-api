@@ -22,11 +22,11 @@ export class ProjectService {
   }
 
   async getOneByIdOrFail(id: number) {
-    const response = await this.getOneById(id);
-    if (!response) {
+    const project = await this.getOneById(id);
+    if (!project) {
       throw new NotFoundException('Project not found');
     }
-    return response;
+    return project;
   }
 
   async getOneByCode(code: string) {
@@ -34,11 +34,11 @@ export class ProjectService {
   }
 
   async getOneByCodeOrFail(code: string) {
-    const response = await this.getOneByCode(code);
-    if (!response) {
+    const project = await this.getOneByCode(code);
+    if (!project) {
       throw new NotFoundException('Project not found');
     }
-    return response;
+    return project;
   }
 
   async getAllProject() {
@@ -54,13 +54,11 @@ export class ProjectService {
   }
 
   async getAllUserById(id: number) {
-    const checkProject = await this.getOneByIdOrFail(id);
-    if (checkProject) {
-      try {
-        return await this.userService.getAllUserByIdProject(id);
-      } catch (e) {
-        throw new InternalServerErrorException();
-      }
+    await this.getOneByIdOrFail(id);
+    try {
+      return await this.userService.getAllUserByIdProject(id);
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 
