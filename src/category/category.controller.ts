@@ -9,6 +9,8 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPi
 import { CategoryService } from './category.service';
 import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
+import { GetCategoryRO } from './ro/get-category.ro';
+import { HandleCategoryRO } from './ro/handle-category.ro';
 
 @ApiTags('Category')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -19,39 +21,45 @@ export class CategoryController {
 
   @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAll(@Param('projectId') projectId: number){
+  async getAll(@Param('projectId') projectId: number): Promise<GetCategoryRO[]> {
     return await this.categoryService.getAllCategoryByIdProject(projectId);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
-  async getCategoryById(@Param('projectId') projectId: number, @Param('id') id: number) {
-    return await this.categoryService.getOneByIdOrFail(id, projectId);
+  async getCategoryById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetCategoryRO> {
+    const category = await this.categoryService.getOneByIdOrFail(id, projectId);
+    return await this.categoryService.getCategoryResponse(category);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':code')
-  async getCategoryByCode(@Param('projectId') projectId: number, @Param('code') code: string) {
-    return await this.categoryService.getOneByCodeOrFail(code, projectId);
+  async getCategoryByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetCategoryRO> {
+    const category = await this.categoryService.getOneByCodeOrFail(code, projectId);
+    return await this.categoryService.getCategoryResponse(category);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createCategory(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO) {
+  async createCategory(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO): Promise<HandleCategoryRO> {
     return await this.categoryService.add(dto, projectId);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editCategory(@Param('projectId') projectId: number, @Param('id') id: number, @Body() dto: EditCategoryDTO) {
+  async editCategory(
+    @Param('projectId') projectId: number,
+    @Param('id') id: number,
+    @Body() dto: EditCategoryDTO,
+  ): Promise<HandleCategoryRO> {
     return await this.categoryService.edit(id, projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async deleteCategory(@Param('projectId') projectId: number, @Param('id') id: number) {
+  async deleteCategory(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleCategoryRO> {
     return await this.categoryService.delete(id, projectId);
   }
 }

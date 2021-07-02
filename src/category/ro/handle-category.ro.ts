@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddCategoryRO {
+export class HandleCategoryRO {
   @ApiProperty({
     type: String,
   })

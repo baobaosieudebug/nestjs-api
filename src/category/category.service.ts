@@ -8,33 +8,34 @@ import {
 import { CategoryRepository } from './category.repository';
 import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
-import { AddCategoryRO } from './ro/add-category.ro';
 import { CategoryEntity } from './category.entity';
+import { GetCategoryRO } from './ro/get-category.ro';
+import { HandleCategoryRO } from './ro/handle-category.ro';
 
 @Injectable()
 export class CategoryService {
   private readonly logger = new Logger(CategoryService.name);
   constructor(private readonly repo: CategoryRepository) {}
 
-  async getAllCategoryByIdProject(projectId: number) {
-    // const list = await this.repo.getAll(projectId);
-    // const foo: AddCategoryRO[] = [];
-    // for (let i = 0; i < list.length; i++) {
-    //   const object = await this.getCategoryResponse(list[i]);
-    //   foo.push(object);
-    // }
-    // return foo;
+  async getAllCategoryByIdProject(projectId: number): Promise<GetCategoryRO[]> {
+    const oldArray = await this.repo.getAll(projectId);
+    const newArray: GetCategoryRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const categoryRO = await this.getCategoryResponse(oldArray[i]);
+      newArray.push(categoryRO);
+    }
+    return newArray;
   }
 
-  async getOneById(id: number, projectId: number) {
+  async getOneById(id: number, projectId: number): Promise<CategoryEntity> {
     return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number) {
+  async getOneByCode(code: string, projectId: number): Promise<CategoryEntity> {
     return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number) {
+  async getOneByIdOrFail(id: number, projectId: number): Promise<CategoryEntity> {
     const category = await this.getOneById(id, projectId);
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -42,7 +43,7 @@ export class CategoryService {
     return category;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number) {
+  async getOneByCodeOrFail(code: string, projectId: number): Promise<CategoryEntity> {
     const category = await this.getOneByCode(code, projectId);
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -50,8 +51,16 @@ export class CategoryService {
     return category;
   }
 
-  async getCategoryResponse(category: CategoryEntity): Promise<AddCategoryRO> {
-    const response = new AddCategoryRO();
+  async getCategoryResponse(category: CategoryEntity): Promise<GetCategoryRO> {
+    const response = new GetCategoryRO();
+    response.name = category.name;
+    response.code = category.code;
+    response.description = category.description;
+    return response;
+  }
+
+  async handleCategoryResponse(category: CategoryEntity): Promise<HandleCategoryRO> {
+    const response = new HandleCategoryRO();
     response.name = category.name;
     response.code = category.code;
     response.description = category.description;
@@ -65,38 +74,38 @@ export class CategoryService {
     }
   }
 
-  async add(dto: AddCategoryDTO, projectId: number) {
+  async add(dto: AddCategoryDTO, projectId: number): Promise<HandleCategoryRO> {
     await this.checkExistCode(projectId, dto.code);
     try {
       const newCategory = this.repo.create(dto);
       newCategory.projectId = projectId;
       await this.repo.save(newCategory);
-      return this.getCategoryResponse(newCategory);
+      return this.handleCategoryResponse(newCategory);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditCategoryDTO) {
+  async edit(id: number, projectId: number, dto: EditCategoryDTO): Promise<HandleCategoryRO> {
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
       const category = await this.repo.merge(old, dto);
       await this.repo.update(id, category);
-      return id;
+      return this.handleCategoryResponse(category);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async delete(id: number, projectId: number) {
+  async delete(id: number, projectId: number): Promise<HandleCategoryRO> {
     const category = await this.getOneByIdOrFail(id, projectId);
     try {
       category.isDeleted = category.id;
       await this.repo.update(id, category);
-      return id;
+      return this.handleCategoryResponse(category);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
