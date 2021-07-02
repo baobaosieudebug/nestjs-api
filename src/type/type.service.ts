@@ -27,15 +27,15 @@ export class TypeService {
     return newArray;
   }
 
-  async getOneById(id: number, projectId: number): Promise<TypeEntity> {
+  async getOneById(projectId: number, id: number): Promise<TypeEntity> {
     return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number): Promise<TypeEntity> {
+  async getOneByCode(projectId: number, code: string): Promise<TypeEntity> {
     return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number): Promise<TypeEntity> {
+  async getOneByIdOrFail(projectId: number, id: number): Promise<TypeEntity> {
     const type = await this.getOneById(id, projectId);
     if (!type) {
       throw new NotFoundException('Type not found');
@@ -43,8 +43,8 @@ export class TypeService {
     return type;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number): Promise<TypeEntity> {
-    const type = await this.getOneByCode(code, projectId);
+  async getOneByCodeOrFail(projectId: number, code: string): Promise<TypeEntity> {
+    const type = await this.getOneByCode(projectId, code);
     if (!type) {
       throw new NotFoundException('Type not found');
     }
@@ -74,7 +74,7 @@ export class TypeService {
     }
   }
 
-  async add(dto: AddTypeDTO, projectId: number): Promise<HandleTypeRO> {
+  async add(projectId: number, dto: AddTypeDTO): Promise<HandleTypeRO> {
     await this.checkExistCode(projectId, dto.code);
     try {
       const newType = this.repo.create(dto);
@@ -87,7 +87,7 @@ export class TypeService {
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditTypeDTO): Promise<HandleTypeRO> {
+  async edit(projectId: number, id: number, dto: EditTypeDTO): Promise<HandleTypeRO> {
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
@@ -100,7 +100,7 @@ export class TypeService {
     }
   }
 
-  async delete(id: number, projectId: number): Promise<HandleTypeRO> {
+  async delete(projectId: number, id: number): Promise<HandleTypeRO> {
     const type = await this.getOneByIdOrFail(id, projectId);
     try {
       type.isDeleted = type.id;

@@ -28,38 +28,38 @@ export class StatusController {
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
   async getStatusById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetStatusRO> {
-    const status = await this.statusService.getOneByIdOrFail(id, projectId);
+    const status = await this.statusService.getOneByIdOrFail(projectId, id);
     return await this.statusService.getStatusResponse(status);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':code')
   async getStatusByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetStatusRO> {
-    const status = await this.statusService.getOneByCodeOrFail(code, projectId);
+    const status = await this.statusService.getOneByCodeOrFail(projectId, code);
     return await this.statusService.getStatusResponse(status);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createStatus(@Param('projectId') projectId: number, @Body() dto: AddStatusDTO): Promise<HandleStatusRO> {
-    return await this.statusService.add(dto, projectId);
+  async create(@Param('projectId') projectId: number, @Body() dto: AddStatusDTO): Promise<HandleStatusRO> {
+    return await this.statusService.add(projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editStatus(
+  async edit(
     @Param('projectId') projectId: number,
     @Param('id') id: number,
     @Body() dto: EditStatusDTO,
   ): Promise<HandleStatusRO> {
-    return await this.statusService.edit(id, projectId, dto);
+    return await this.statusService.edit(projectId, id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async deleteStatus(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleStatusRO> {
-    return await this.statusService.delete(id, projectId);
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleStatusRO> {
+    return await this.statusService.delete(projectId, id);
   }
 }

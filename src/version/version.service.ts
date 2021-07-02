@@ -11,6 +11,7 @@ import { EditVersionDTO } from './dto/edit-version.dto';
 import { VersionEntity } from './version.entity';
 import { GetVersionRO } from './ro/get-version.ro';
 import { HandleVersionRO } from './ro/handle-version.ro';
+
 @Injectable()
 export class VersionService {
   private readonly logger = new Logger(VersionService.name);
@@ -26,15 +27,15 @@ export class VersionService {
     return newArray;
   }
 
-  async getOneById(id: number, projectId: number): Promise<VersionEntity> {
+  async getOneById(projectId: number, id: number): Promise<VersionEntity> {
     return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number): Promise<VersionEntity> {
+  async getOneByCode(projectId: number, code: string): Promise<VersionEntity> {
     return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number): Promise<VersionEntity> {
+  async getOneByIdOrFail(projectId: number, id: number): Promise<VersionEntity> {
     const version = await this.getOneById(id, projectId);
     if (!version) {
       throw new NotFoundException('Version not found');
@@ -42,8 +43,8 @@ export class VersionService {
     return version;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number): Promise<VersionEntity> {
-    const version = await this.getOneByCode(code, projectId);
+  async getOneByCodeOrFail(projectId: number, code: string): Promise<VersionEntity> {
+    const version = await this.getOneByCode(projectId, code);
     if (!version) {
       throw new NotFoundException('Version not found');
     }
@@ -73,7 +74,7 @@ export class VersionService {
     }
   }
 
-  async add(dto: AddVersionDTO, projectId: number): Promise<HandleVersionRO> {
+  async add(projectId: number, dto: AddVersionDTO): Promise<HandleVersionRO> {
     await this.checkExistCode(projectId, dto.code);
     try {
       const newVersion = this.repo.create(dto);
@@ -86,7 +87,7 @@ export class VersionService {
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditVersionDTO): Promise<HandleVersionRO> {
+  async edit(projectId: number, id: number, dto: EditVersionDTO): Promise<HandleVersionRO> {
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
@@ -99,7 +100,7 @@ export class VersionService {
     }
   }
 
-  async delete(id: number, projectId: number): Promise<HandleVersionRO> {
+  async delete(projectId: number, id: number): Promise<HandleVersionRO> {
     const version = await this.getOneByIdOrFail(id, projectId);
     try {
       version.isDeleted = version.id;

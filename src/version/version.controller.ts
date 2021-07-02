@@ -28,38 +28,38 @@ export class VersionController {
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
   async getVersionById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetVersionRO> {
-    const version = await this.versionService.getOneByIdOrFail(id, projectId);
+    const version = await this.versionService.getOneByIdOrFail(projectId, id);
     return await this.versionService.getVersionResponse(version);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':code')
   async getVersionByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetVersionRO> {
-    const version = await this.versionService.getOneByCodeOrFail(code, projectId);
+    const version = await this.versionService.getOneByCodeOrFail(projectId, code);
     return await this.versionService.getVersionResponse(version);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createVersion(@Param('projectId') projectId: number, @Body() dto: AddVersionDTO): Promise<HandleVersionRO> {
-    return await this.versionService.add(dto, projectId);
+  async create(@Param('projectId') projectId: number, @Body() dto: AddVersionDTO): Promise<HandleVersionRO> {
+    return await this.versionService.add(projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editVersion(
+  async edit(
     @Param('projectId') projectId: number,
     @Param('id') id: number,
     @Body() dto: EditVersionDTO,
   ): Promise<HandleVersionRO> {
-    return await this.versionService.edit(id, projectId, dto);
+    return await this.versionService.edit(projectId, id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async deleteVersion(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleVersionRO> {
-    return await this.versionService.delete(id, projectId);
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleVersionRO> {
+    return await this.versionService.delete(projectId, id);
   }
 }

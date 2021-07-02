@@ -27,15 +27,15 @@ export class StatusService {
     return newArray;
   }
 
-  async getOneById(id: number, projectId: number): Promise<StatusEntity> {
+  async getOneById(projectId: number, id: number): Promise<StatusEntity> {
     return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number): Promise<StatusEntity> {
+  async getOneByCode(projectId: number, code: string): Promise<StatusEntity> {
     return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number): Promise<StatusEntity> {
+  async getOneByIdOrFail(projectId: number, id: number): Promise<StatusEntity> {
     const status = await this.getOneById(id, projectId);
     if (!status) {
       throw new NotFoundException('Status not found');
@@ -43,8 +43,8 @@ export class StatusService {
     return status;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number): Promise<StatusEntity> {
-    const status = await this.getOneByCode(code, projectId);
+  async getOneByCodeOrFail(projectId: number, code: string): Promise<StatusEntity> {
+    const status = await this.getOneByCode(projectId, code);
     if (!status) {
       throw new NotFoundException('Status not found');
     }
@@ -74,7 +74,7 @@ export class StatusService {
     }
   }
 
-  async add(dto: AddStatusDTO, projectId: number): Promise<HandleStatusRO> {
+  async add(projectId: number, dto: AddStatusDTO): Promise<HandleStatusRO> {
     await this.checkExistCode(projectId, dto.code);
     try {
       const newStatus = this.repo.create(dto);
@@ -87,7 +87,7 @@ export class StatusService {
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditStatusDTO): Promise<HandleStatusRO> {
+  async edit(projectId: number, id: number, dto: EditStatusDTO): Promise<HandleStatusRO> {
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
@@ -100,7 +100,7 @@ export class StatusService {
     }
   }
 
-  async delete(id: number, projectId: number): Promise<HandleStatusRO> {
+  async delete(projectId: number, id: number): Promise<HandleStatusRO> {
     const status = await this.getOneByIdOrFail(id, projectId);
     try {
       status.isDeleted = status.id;

@@ -28,38 +28,38 @@ export class CategoryController {
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
   async getCategoryById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetCategoryRO> {
-    const category = await this.categoryService.getOneByIdOrFail(id, projectId);
+    const category = await this.categoryService.getOneByIdOrFail(projectId, id);
     return await this.categoryService.getCategoryResponse(category);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':code')
   async getCategoryByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetCategoryRO> {
-    const category = await this.categoryService.getOneByCodeOrFail(code, projectId);
+    const category = await this.categoryService.getOneByCodeOrFail(projectId, code);
     return await this.categoryService.getCategoryResponse(category);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createCategory(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO): Promise<HandleCategoryRO> {
-    return await this.categoryService.add(dto, projectId);
+  async create(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO): Promise<HandleCategoryRO> {
+    return await this.categoryService.add(projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editCategory(
+  async edit(
     @Param('projectId') projectId: number,
     @Param('id') id: number,
     @Body() dto: EditCategoryDTO,
   ): Promise<HandleCategoryRO> {
-    return await this.categoryService.edit(id, projectId, dto);
+    return await this.categoryService.edit(projectId, id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async deleteCategory(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleCategoryRO> {
-    return await this.categoryService.delete(id, projectId);
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleCategoryRO> {
+    return await this.categoryService.delete(projectId, id);
   }
 }

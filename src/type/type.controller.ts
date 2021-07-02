@@ -28,38 +28,38 @@ export class TypeController {
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
   async getTypeById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetTypeRO> {
-    const type = await this.typeService.getOneByIdOrFail(id, projectId);
+    const type = await this.typeService.getOneByIdOrFail(projectId, id);
     return await this.typeService.getTypeResponse(type);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':code')
   async getTypeByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetTypeRO> {
-    const type = await this.typeService.getOneByCodeOrFail(code, projectId);
+    const type = await this.typeService.getOneByCodeOrFail(projectId, code);
     return await this.typeService.getTypeResponse(type);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createType(@Param('projectId') projectId: number, @Body() dto: AddTypeDTO): Promise<HandleTypeRO> {
-    return await this.typeService.add(dto, projectId);
+  async create(@Param('projectId') projectId: number, @Body() dto: AddTypeDTO): Promise<HandleTypeRO> {
+    return await this.typeService.add(projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editType(
+  async edit(
     @Param('projectId') projectId: number,
     @Param('id') id: number,
     @Body() dto: EditTypeDTO,
   ): Promise<HandleTypeRO> {
-    return await this.typeService.edit(id, projectId, dto);
+    return await this.typeService.edit(projectId, id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async deleteType(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleTypeRO> {
-    return await this.typeService.delete(id, projectId);
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleTypeRO> {
+    return await this.typeService.delete(projectId, id);
   }
 }

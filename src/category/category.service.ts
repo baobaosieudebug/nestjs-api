@@ -27,15 +27,15 @@ export class CategoryService {
     return newArray;
   }
 
-  async getOneById(id: number, projectId: number): Promise<CategoryEntity> {
+  async getOneById(projectId: number, id: number): Promise<CategoryEntity> {
     return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number): Promise<CategoryEntity> {
+  async getOneByCode(projectId: number, code: string): Promise<CategoryEntity> {
     return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number): Promise<CategoryEntity> {
+  async getOneByIdOrFail(projectId: number, id: number): Promise<CategoryEntity> {
     const category = await this.getOneById(id, projectId);
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -43,8 +43,8 @@ export class CategoryService {
     return category;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number): Promise<CategoryEntity> {
-    const category = await this.getOneByCode(code, projectId);
+  async getOneByCodeOrFail(projectId: number, code: string): Promise<CategoryEntity> {
+    const category = await this.getOneByCode(projectId, code);
     if (!category) {
       throw new NotFoundException('Category not found');
     }
@@ -74,7 +74,7 @@ export class CategoryService {
     }
   }
 
-  async add(dto: AddCategoryDTO, projectId: number): Promise<HandleCategoryRO> {
+  async add(projectId: number, dto: AddCategoryDTO): Promise<HandleCategoryRO> {
     await this.checkExistCode(projectId, dto.code);
     try {
       const newCategory = this.repo.create(dto);
@@ -87,7 +87,7 @@ export class CategoryService {
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditCategoryDTO): Promise<HandleCategoryRO> {
+  async edit(projectId: number, id: number, dto: EditCategoryDTO): Promise<HandleCategoryRO> {
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
@@ -100,7 +100,7 @@ export class CategoryService {
     }
   }
 
-  async delete(id: number, projectId: number): Promise<HandleCategoryRO> {
+  async delete(projectId: number, id: number): Promise<HandleCategoryRO> {
     const category = await this.getOneByIdOrFail(id, projectId);
     try {
       category.isDeleted = category.id;
