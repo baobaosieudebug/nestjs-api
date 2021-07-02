@@ -1,13 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { OrganizationEntity } from '../organization/organization.entity';
 import { UsersEntity } from '../user/users.entity';
@@ -37,10 +28,7 @@ export class ProjectEntity {
   @Column({ name: 'organization_id', nullable: true })
   organizationId: number;
 
-  @ManyToOne(
-    () => OrganizationEntity,
-    (organization: OrganizationEntity) => organization.projects,
-  )
+  @ManyToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.projects)
   @JoinColumn({ name: 'organization_id' })
   organization: OrganizationEntity;
 
@@ -50,16 +38,16 @@ export class ProjectEntity {
   @JoinTable()
   users: UsersEntity[];
 
-  @OneToMany(() => CategoryEntity, (task) => task.project)
+  @OneToMany(() => CategoryEntity, (category) => category.project)
   categories: CategoryEntity[];
 
-  @OneToMany(() => TypeEntity, (task) => task.project)
+  @OneToMany(() => TypeEntity, (type) => type.project)
   types: TypeEntity[];
 
-  @OneToMany(() => StatusEntity, (task) => task.project)
+  @OneToMany(() => StatusEntity, (status) => status.project)
   statuses: StatusEntity[];
 
-  @OneToMany(() => VersionEntity, (task) => task.project)
+  @OneToMany(() => VersionEntity, (version) => version.project)
   versions: VersionEntity[];
 
   @OneToMany(() => TaskEntity, (task) => task.project)

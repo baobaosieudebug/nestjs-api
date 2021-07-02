@@ -23,7 +23,7 @@ import { EditUserDTO } from './dto/edit-user.dto';
 import { Roles } from '../authorization/role.decorator';
 import { Role } from '../authorization/role.enum';
 // import { LoginUserDTO } from './dto/login-user.dto';
-import { RolesGuard } from '../authorization/role.guard';
+import { RolesGuard } from '../authorization/guard/role.guard';
 
 @ApiTags('User')
 @Controller('users')

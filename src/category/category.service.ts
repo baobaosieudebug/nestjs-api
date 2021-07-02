@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CategoryRepository } from './category.repository';
@@ -12,18 +13,25 @@ import { CategoryEntity } from './category.entity';
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly categoryRepo: CategoryRepository) {}
+  private readonly logger = new Logger(CategoryService.name);
+  constructor(private readonly repo: CategoryRepository) {}
 
   async getAllCategoryByIdProject(projectId: number) {
-    return await this.categoryRepo.getAll(projectId);
+    // const list = await this.repo.getAll(projectId);
+    // const foo: AddCategoryRO[] = [];
+    // for (let i = 0; i < list.length; i++) {
+    //   const object = await this.getCategoryResponse(list[i]);
+    //   foo.push(object);
+    // }
+    // return foo;
   }
 
   async getOneById(id: number, projectId: number) {
-    return await this.categoryRepo.getById(id, projectId);
+    return await this.repo.getById(id, projectId);
   }
 
   async getOneByCode(code: string, projectId: number) {
-    return await this.categoryRepo.getByCode(code, projectId);
+    return await this.repo.getByCode(code, projectId);
   }
 
   async getOneByIdOrFail(id: number, projectId: number) {
@@ -50,46 +58,47 @@ export class CategoryService {
     return response;
   }
 
-  async checkExistCode(id: number, code: string, projectId: number) {
-    const checkExist = await this.categoryRepo.isCategoryExistCode(
-      id,
-      code,
-      projectId,
-    );
-    if (checkExist) {
+  async checkExistCode(projectId: number, code: string, id: number = null) {
+    const count = await this.repo.countCategory(projectId, code, id);
+    if (count > 0) {
       throw new BadRequestException('Code Exist');
     }
   }
 
-  async add(dto: AddCategoryDTO, projectId: number): Promise<AddCategoryRO> {
-    await this.checkExistCode(0, dto.code, projectId);
+  async add(dto: AddCategoryDTO, projectId: number) {
+    await this.checkExistCode(projectId, dto.code);
     try {
-      const newCategory = this.categoryRepo.create(dto);
+      const newCategory = this.repo.create(dto);
       newCategory.projectId = projectId;
-      await this.categoryRepo.save(newCategory);
+      await this.repo.save(newCategory);
       return this.getCategoryResponse(newCategory);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
   async edit(id: number, projectId: number, dto: EditCategoryDTO) {
-    await this.getOneByIdOrFail(id, projectId);
-    await this.checkExistCode(id, dto.code, projectId);
+    const old = await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(projectId, dto.code, id);
     try {
-      await this.categoryRepo.update(id, dto);
+      const category = await this.repo.merge(old, dto);
+      await this.repo.update(id, category);
       return id;
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async remove(id: number, projectId: number) {
-    await this.getOneByIdOrFail(id, projectId);
+  async delete(id: number, projectId: number) {
+    const category = await this.getOneByIdOrFail(id, projectId);
     try {
-      await this.categoryRepo.update(id, { isDeleted: id });
+      category.isDeleted = category.id;
+      await this.repo.update(id, category);
       return id;
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }

@@ -5,75 +5,53 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
 
 @ApiTags('Category')
-@ApiOkResponse({ description: 'Success' })
-@ApiCreatedResponse({ description: 'Created' })
 @ApiNotFoundResponse({ description: 'Not Found' })
 @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-@Controller('projects/:id/categories')
+@Controller('projects/:projectId/categories')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
+  @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAll(@Param('id') projectId: number) {
+  async getAll(@Param('projectId') projectId: number){
     return await this.categoryService.getAllCategoryByIdProject(projectId);
   }
 
-  @Get(':idCategory')
-  async getCategoryById(
-    @Param('idCategory') id: number,
-    @Param('id') projectId: number,
-  ) {
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':id')
+  async getCategoryById(@Param('projectId') projectId: number, @Param('id') id: number) {
     return await this.categoryService.getOneByIdOrFail(id, projectId);
   }
 
+  @ApiOkResponse({ description: 'Success' })
   @Get(':code')
-  async getCategoryByCode(
-    @Param('code') code: string,
-    @Param('id') projectId: number,
-  ) {
+  async getCategoryByCode(@Param('projectId') projectId: number, @Param('code') code: string) {
     return await this.categoryService.getOneByCodeOrFail(code, projectId);
   }
 
+  @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createCategory(
-    @Body() dto: AddCategoryDTO,
-    @Param('id') projectId: number,
-  ) {
+  async createCategory(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO) {
     return await this.categoryService.add(dto, projectId);
   }
 
-  @Put(':idCategory')
+  @ApiOkResponse({ description: 'Success' })
+  @Put(':id')
   @UsePipes(ValidationPipe)
-  async editCategory(
-    @Param('id') projectId: number,
-    @Param('idCategory') id: number,
-    @Body() dto: EditCategoryDTO,
-  ) {
+  async editCategory(@Param('projectId') projectId: number, @Param('id') id: number, @Body() dto: EditCategoryDTO) {
     return await this.categoryService.edit(id, projectId, dto);
   }
 
-  @Delete(':idCategory')
-  async removeCategory(
-    @Param('id') projectId: number,
-    @Param('idCategory') id: number,
-  ) {
-    return await this.categoryService.remove(id, projectId);
+  @ApiOkResponse({ description: 'Success' })
+  @Delete(':id')
+  async deleteCategory(@Param('projectId') projectId: number, @Param('id') id: number) {
+    return await this.categoryService.delete(id, projectId);
   }
 }

@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectEntity } from '../project/project.entity';
+// import { Role } from "../authorization/role.enum";
 
 @Entity('organization')
 export class OrganizationEntity {
