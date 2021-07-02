@@ -2,31 +2,40 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
 import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
 import { StatusEntity } from './status.entity';
-import { AddStatusRO } from './ro/add-status.ro';
+import { GetStatusRO } from './ro/get-status.ro';
+import { HandleStatusRO } from './ro/handle-status.ro';
 
 @Injectable()
 export class StatusService {
-  constructor(private readonly statusRepo: StatusRepository) {}
+  private readonly logger = new Logger(StatusService.name);
+  constructor(private readonly repo: StatusRepository) {}
 
-  async getAllStatusByIdProject(projectId: number) {
-    return await this.statusRepo.getAll(projectId);
+  async getAllStatusByIdProject(projectId: number): Promise<GetStatusRO[]> {
+    const oldArray = await this.repo.getAll(projectId);
+    const newArray: GetStatusRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const statusRO = await this.getStatusResponse(oldArray[i]);
+      newArray.push(statusRO);
+    }
+    return newArray;
   }
 
-  async getOneById(id: number, projectId: number) {
-    return await this.statusRepo.getById(id, projectId);
+  async getOneById(id: number, projectId: number): Promise<StatusEntity> {
+    return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number) {
-    return await this.statusRepo.getByCode(code, projectId);
+  async getOneByCode(code: string, projectId: number): Promise<StatusEntity> {
+    return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number) {
+  async getOneByIdOrFail(id: number, projectId: number): Promise<StatusEntity> {
     const status = await this.getOneById(id, projectId);
     if (!status) {
       throw new NotFoundException('Status not found');
@@ -34,7 +43,7 @@ export class StatusService {
     return status;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number) {
+  async getOneByCodeOrFail(code: string, projectId: number): Promise<StatusEntity> {
     const status = await this.getOneByCode(code, projectId);
     if (!status) {
       throw new NotFoundException('Status not found');
@@ -42,54 +51,63 @@ export class StatusService {
     return status;
   }
 
-  async getStatusResponse(status: StatusEntity): Promise<AddStatusRO> {
-    const response = new AddStatusRO();
+  async getStatusResponse(status: StatusEntity): Promise<GetStatusRO> {
+    const response = new GetStatusRO();
     response.name = status.name;
     response.code = status.code;
     response.description = status.description;
     return response;
   }
 
-  async checkExistCode(id: number, code: string, projectId: number) {
-    const checkExist = await this.statusRepo.isStatusExistCode(
-      id,
-      code,
-      projectId,
-    );
-    if (checkExist) {
+  async handleStatusResponse(status: StatusEntity): Promise<HandleStatusRO> {
+    const response = new HandleStatusRO();
+    response.name = status.name;
+    response.code = status.code;
+    response.description = status.description;
+    return response;
+  }
+
+  async checkExistCode(projectId: number, code: string, id: number = null) {
+    const count = await this.repo.countStatus(projectId, code, id);
+    if (count > 0) {
       throw new BadRequestException('Code Exist');
     }
   }
 
-  async add(dto: AddStatusDTO, projectId: number): Promise<AddStatusRO> {
-    await this.checkExistCode(0, dto.code, projectId);
+  async add(dto: AddStatusDTO, projectId: number): Promise<HandleStatusRO> {
+    await this.checkExistCode(projectId, dto.code);
     try {
-      const newStatus = this.statusRepo.create(dto);
+      const newStatus = this.repo.create(dto);
       newStatus.projectId = projectId;
-      await this.statusRepo.save(newStatus);
-      return this.getStatusResponse(newStatus);
+      await this.repo.save(newStatus);
+      return this.handleStatusResponse(newStatus);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditStatusDTO) {
-    await this.getOneByIdOrFail(id, projectId);
-    await this.checkExistCode(id, dto.code, projectId);
+  async edit(id: number, projectId: number, dto: EditStatusDTO): Promise<HandleStatusRO> {
+    const old = await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(projectId, dto.code, id);
     try {
-      await this.statusRepo.update(id, dto);
-      return id;
+      const status = await this.repo.merge(old, dto);
+      await this.repo.update(id, status);
+      return this.handleStatusResponse(status);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async remove(id: number, projectId: number) {
-    await this.getOneByIdOrFail(id, projectId);
+  async delete(id: number, projectId: number): Promise<HandleStatusRO> {
+    const status = await this.getOneByIdOrFail(id, projectId);
     try {
-      await this.statusRepo.update(id, { isDeleted: id });
-      return id;
+      status.isDeleted = status.id;
+      await this.repo.update(id, status);
+      return this.handleStatusResponse(status);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }

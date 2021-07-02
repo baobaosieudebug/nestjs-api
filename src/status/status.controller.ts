@@ -5,74 +5,61 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { AddStatusDTO } from './dto/add-status.dto';
 import { EditStatusDTO } from './dto/edit-status.dto';
+import { GetStatusRO } from './ro/get-status.ro';
+import { HandleStatusRO } from './ro/handle-status.ro';
 
 @ApiTags('Status')
-@ApiOkResponse({ description: 'Success' })
-@ApiCreatedResponse({ description: 'Created' })
 @ApiNotFoundResponse({ description: 'Not Found' })
 @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-@Controller('projects/:id/statuses')
+@Controller('projects/:projectId/categories')
 export class StatusController {
   constructor(private statusService: StatusService) {}
 
+  @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAll(@Param('id') projectId: number) {
+  async getAll(@Param('projectId') projectId: number): Promise<GetStatusRO[]> {
     return await this.statusService.getAllStatusByIdProject(projectId);
   }
 
-  @Get(':idStatus')
-  async getStatusById(
-    @Param('idStatus') id: number,
-    @Param('id') projectId: number,
-  ) {
-    return await this.statusService.getOneByIdOrFail(id, projectId);
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':id')
+  async getStatusById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetStatusRO> {
+    const status = await this.statusService.getOneByIdOrFail(id, projectId);
+    return await this.statusService.getStatusResponse(status);
   }
 
+  @ApiOkResponse({ description: 'Success' })
   @Get(':code')
-  async getStatusByCode(
-    @Param('code') code: string,
-    @Param('id') projectId: number,
-  ) {
-    return await this.statusService.getOneByCodeOrFail(code, projectId);
+  async getStatusByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetStatusRO> {
+    const status = await this.statusService.getOneByCodeOrFail(code, projectId);
+    return await this.statusService.getStatusResponse(status);
   }
+
+  @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createStatus(
-    @Body() dto: AddStatusDTO,
-    @Param('id') projectId: number,
-  ) {
+  async createStatus(@Param('projectId') projectId: number, @Body() dto: AddStatusDTO): Promise<HandleStatusRO> {
     return await this.statusService.add(dto, projectId);
   }
 
-  @Put(':idStatus')
+  @ApiOkResponse({ description: 'Success' })
+  @Put(':id')
   @UsePipes(ValidationPipe)
   async editStatus(
-    @Param('id') projectId: number,
-    @Param('idStatus') id: number,
+    @Param('projectId') projectId: number,
+    @Param('id') id: number,
     @Body() dto: EditStatusDTO,
-  ) {
+  ): Promise<HandleStatusRO> {
     return await this.statusService.edit(id, projectId, dto);
   }
 
-  @Delete(':idStatus')
-  async removeStatus(
-    @Param('id') projectId: number,
-    @Param('idStatus') id: number,
-  ) {
-    return await this.statusService.remove(id, projectId);
+  @ApiOkResponse({ description: 'Success' })
+  @Delete(':id')
+  async deleteStatus(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleStatusRO> {
+    return await this.statusService.delete(id, projectId);
   }
 }

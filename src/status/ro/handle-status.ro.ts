@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddStatusRO {
+export class HandleStatusRO {
   @ApiProperty({
     type: String,
   })
