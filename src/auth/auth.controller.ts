@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  Get,
-  HttpException,
-  HttpStatus,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
+import { BadRequestException, Get, HttpException, HttpStatus, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
@@ -47,10 +40,7 @@ export class AuthController {
   // }
 
   async uploadToS3(@UploadedFile() file: Express.Multer.File) {
-    const filePath = path.resolve(
-      `D:/intern/get-started-project/upload`,
-      file.originalname,
-    );
+    const filePath = path.resolve(`D:/intern/get-started-project/upload`, file.originalname);
     const fileStream = fs.createReadStream(filePath);
     const now = new Date();
     const fileName = `updated-at:${now.toISOString()} ` + file.originalname;

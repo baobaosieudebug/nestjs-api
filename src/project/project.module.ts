@@ -7,11 +7,7 @@ import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ProjectRepository]),
-    forwardRef(() => UsersModule),
-    TaskModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ProjectRepository]), forwardRef(() => UsersModule), TaskModule],
   providers: [ProjectService],
   controllers: [ProjectController],
   exports: [ProjectService, TypeOrmModule],

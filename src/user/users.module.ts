@@ -10,13 +10,7 @@ import { ProjectModule } from '../project/project.module';
 // import { RolesGuard } from '../authorization/role.guard';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserRepository]),
-    HttpModule,
-    TaskModule,
-    GroupsModule,
-    ProjectModule,
-  ],
+  imports: [TypeOrmModule.forFeature([UserRepository]), HttpModule, TaskModule, GroupsModule, ProjectModule],
   controllers: [UsersController],
   providers: [
     UsersService,

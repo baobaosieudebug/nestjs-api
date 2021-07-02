@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { HttpService } from '@nestjs/common';
@@ -12,11 +8,7 @@ import { UsersService } from '../user/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private httpService: HttpService,
-    private userService: UsersService,
-  ) {}
+  constructor(private jwtService: JwtService, private httpService: HttpService, private userService: UsersService) {}
 
   async getToken(user: any) {
     const payload = { email: user.email, name: user.name };

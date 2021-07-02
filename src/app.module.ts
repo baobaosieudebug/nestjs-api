@@ -1,9 +1,4 @@
-import {
-  CacheInterceptor,
-  CacheModule,
-  HttpModule,
-  Module,
-} from '@nestjs/common';
+import { CacheInterceptor, CacheModule, HttpModule, Module } from '@nestjs/common';
 import { UsersModule } from './user/users.module';
 import { GroupsModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';

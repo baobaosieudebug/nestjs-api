@@ -1,11 +1,5 @@
 import { ProjectEntity } from 'src/project/project.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToMany,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
 import { Role } from '../authorization/role.enum';

@@ -160,9 +160,10 @@ export class ProjectService {
   }
 
   async edit(id: number, dto: EditProjectDTO): Promise<HandleProjectRO> {
-    const project = await this.getOneByIdOrFail(id);
+    const old = await this.getOneByIdOrFail(id);
     try {
-      await this.repo.update(id, dto);
+      const project = await this.repo.merge(old, dto);
+      await this.repo.update(id, project);
       return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);

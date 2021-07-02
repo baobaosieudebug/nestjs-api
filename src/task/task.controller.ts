@@ -9,6 +9,8 @@ import {
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
 import { TaskService } from './task.service';
+import { GetTaskRO } from './ro/get-task.ro';
+import { HandleTaskRO } from './ro/handle-task.ro';
 
 @ApiTags('Task')
 @Controller('tasks')
@@ -19,39 +21,41 @@ export class TaskController {
 
   @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAllTask() {
+  async getAll(): Promise<GetTaskRO[]> {
     return await this.taskService.getAll();
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
-  async getTaskByIdOrFail(@Param('id') id: number) {
-    return await this.taskService.getOneByIdOrFail(id);
+  async getTaskByIdOrFail(@Param('id') id: number): Promise<GetTaskRO> {
+    const task = await this.taskService.getOneByIdOrFail(id);
+    return this.taskService.getTaskResponse(task);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get('code/:code')
-  async getOneTaskByCode(@Param('code') code: string) {
-    return await this.taskService.getOneByCodeOrFail(code);
+  async getOneTaskByCode(@Param('code') code: string): Promise<GetTaskRO> {
+    const task = await this.taskService.getOneByCodeOrFail(code);
+    return this.taskService.getTaskResponse(task);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createTask(@Body() dto: AddTaskDTO) {
+  async createTask(@Body() dto: AddTaskDTO): Promise<HandleTaskRO> {
     return await this.taskService.create(dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async editTask(@Param('id') id: number, @Body() dto: EditTaskDTO) {
+  async edit(@Param('id') id: number, @Body() dto: EditTaskDTO): Promise<HandleTaskRO> {
     return await this.taskService.edit(id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async removeTask(@Param('id') id: number) {
+  async remove(@Param('id') id: number): Promise<HandleTaskRO> {
     return await this.taskService.remove(id);
   }
 }

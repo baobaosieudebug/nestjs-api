@@ -6,10 +6,7 @@ import { GroupRepository } from './group.repository';
 import { UsersModule } from '../user/users.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([GroupRepository]),
-    forwardRef(() => UsersModule),
-  ],
+  imports: [TypeOrmModule.forFeature([GroupRepository]), forwardRef(() => UsersModule)],
   controllers: [GroupsController],
   providers: [GroupsService],
   exports: [GroupsService, TypeOrmModule],
