@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from './project.repository';
 import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
@@ -7,6 +7,7 @@ import { TaskService } from '../task/task.service';
 
 @Injectable()
 export class ProjectService {
+  private readonly logger = new Logger(ProjectService.name);
   constructor(
     private readonly projectRepo: ProjectRepository,
     private readonly userService: UsersService,
@@ -45,6 +46,7 @@ export class ProjectService {
     try {
       return await this.taskService.getAllTaskByIdProject(id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -54,8 +56,13 @@ export class ProjectService {
     try {
       return await this.userService.getAllUserByIdProject(id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
+  }
+
+  async getAllProjectByIdOrg(orgId: number) {
+    return await this.projectRepo.getProjectByIdOrg(orgId);
   }
 
   async checkExistCode(code: string, orgId: number) {
@@ -78,6 +85,7 @@ export class ProjectService {
       const project = this.projectRepo.create(dto);
       return await this.projectRepo.save(project);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -90,6 +98,7 @@ export class ProjectService {
         organizationId: orgId,
       });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -99,6 +108,7 @@ export class ProjectService {
     try {
       return this.userService.addUserInProject(idUser, checkProject.id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -109,6 +119,7 @@ export class ProjectService {
     try {
       return this.taskService.addTaskInProject(codeTask, checkProject.id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -118,6 +129,7 @@ export class ProjectService {
     try {
       return await this.projectRepo.update(id, dto);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -128,6 +140,7 @@ export class ProjectService {
     try {
       return await this.projectRepo.update(id, { isDeleted: id });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -138,6 +151,7 @@ export class ProjectService {
     try {
       return this.projectRepo.removeUserInProject(idUser, project.id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -147,6 +161,7 @@ export class ProjectService {
     try {
       return this.taskService.removeTask(checkProject.id, codeTask);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -159,11 +174,8 @@ export class ProjectService {
         organizationId: null,
       });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
-  }
-
-  async getAllProjectByIdOrg(orgId: number) {
-    return await this.projectRepo.getProjectByIdOrg(orgId);
   }
 }
