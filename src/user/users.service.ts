@@ -7,7 +7,10 @@ import { ProjectRepository } from '../project/project.repository';
 import { GroupRepository } from '../group/group.repository';
 import { TaskService } from '../task/task.service';
 import { LoginUserDTO } from './dto/login-user.dto';
+import { GetUserRO } from './ro/get-user.ro';
+import { UsersEntity } from './users.entity';
 import * as jwt from 'jsonwebtoken';
+import { HandleUserRO } from './ro/edit-user.ro';
 
 @Injectable()
 export class UsersService {
@@ -46,6 +49,20 @@ export class UsersService {
     return await this.userRepo.getAll();
   }
 
+  async getUserResponse(user: UsersEntity): Promise<GetUserRO> {
+    const response = new GetUserRO();
+    response.name = user.name;
+    response.email = user.email;
+    return response;
+  }
+
+  async handleUserResponse(user: UsersEntity): Promise<HandleUserRO> {
+    const response = new HandleUserRO();
+    response.name = user.name;
+    response.email = user.email;
+    return response;
+  }
+
   async create(user: AddUserDTO) {
     try {
       user.password = await bcrypt.hash(user.password, 12);
@@ -72,12 +89,13 @@ export class UsersService {
     }
   }
 
-  async addUserInProject(idUser: number, projectId: number) {
+  async addUserInProject(idUser: number, projectId: number): Promise<HandleUserRO> {
     const checkUser = await this.getOneByIdOrFail(idUser);
     try {
       const project = await this.projectRepo.getOneAndUserRelation(projectId);
       await project.users.push(checkUser);
-      return await this.projectRepo.save(project);
+      await this.projectRepo.save(project);
+      return this.handleUserResponse(checkUser);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -114,9 +132,15 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-  async getAllUserByIdProject(projectId: number) {
+  async getAllUserByIdProject(projectId: number): Promise<GetUserRO[]> {
     try {
-      return await this.userRepo.getAllUserByIdProject(projectId);
+      const oldArray = await this.userRepo.getAllUserByIdProject(projectId);
+      const newArray: GetUserRO[] = [];
+      for (let i = 0; i < oldArray.length; i++) {
+        const userRO = await this.getUserResponse(oldArray[i]);
+        newArray.push(userRO);
+      }
+      return newArray;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

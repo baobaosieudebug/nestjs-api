@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class HandleUserRO {
+export class GetUserRO {
   @ApiProperty({ type: String })
   name: string;
 

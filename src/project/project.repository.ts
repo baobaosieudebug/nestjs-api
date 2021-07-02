@@ -45,9 +45,6 @@ export class ProjectRepository extends Repository<ProjectEntity> {
   }
 
   async removeUserInProject(idUser: number, id: number) {
-    return this.createQueryBuilder('project')
-      .relation(UsersEntity, 'projects')
-      .of(idUser)
-      .remove(id);
+    return this.createQueryBuilder('project').relation(UsersEntity, 'projects').of(idUser).remove(id);
   }
 }

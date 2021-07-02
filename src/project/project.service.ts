@@ -4,25 +4,28 @@ import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { UsersService } from '../user/users.service';
 import { TaskService } from '../task/task.service';
-import { GetProjectRO } from "./ro/get-project.ro";
-import { GetOrganizationRO } from "../organization/ro/get-organization.ro";
-import { OrganizationEntity } from "../organization/organization.entity";
-import { ProjectEntity } from "./project.entity";
+import { GetProjectRO } from './ro/get-project.ro';
+import { ProjectEntity } from './project.entity';
+import { GetTaskRO } from '../task/ro/get-task.ro';
+import { GetUserRO } from '../user/ro/get-user.ro';
+import { HandleProjectRO } from './ro/handle-project.ro';
+import { HandleTaskRO } from '../task/ro/handle-task.ro';
+import { HandleUserRO } from '../user/ro/edit-user.ro';
 
 @Injectable()
 export class ProjectService {
   private readonly logger = new Logger(ProjectService.name);
   constructor(
-    private readonly projectRepo: ProjectRepository,
+    private readonly repo: ProjectRepository,
     private readonly userService: UsersService,
     private readonly taskService: TaskService,
   ) {}
 
-  async getOneById(id: number) {
-    return await this.projectRepo.getById(id);
+  async getOneById(id: number): Promise<ProjectEntity> {
+    return await this.repo.getById(id);
   }
 
-  async getOneByIdOrFail(id: number) {
+  async getOneByIdOrFail(id: number): Promise<ProjectEntity> {
     const project = await this.getOneById(id);
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -30,11 +33,11 @@ export class ProjectService {
     return project;
   }
 
-  async getOneByCode(code: string) {
-    return await this.projectRepo.getByCode(code);
+  async getOneByCode(code: string): Promise<ProjectEntity> {
+    return await this.repo.getByCode(code);
   }
 
-  async getOneByCodeOrFail(code: string) {
+  async getOneByCodeOrFail(code: string): Promise<ProjectEntity> {
     const project = await this.getOneByCode(code);
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -42,11 +45,17 @@ export class ProjectService {
     return project;
   }
 
-  async getAllProject() {
-    return await this.projectRepo.getAll();
+  async getAll(): Promise<GetProjectRO[]> {
+    const oldArray = await this.repo.getAll();
+    const newArray: GetProjectRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const projectRO = await this.getProjectResponse(oldArray[i]);
+      newArray.push(projectRO);
+    }
+    return newArray;
   }
 
-  async getAllTaskById(id: number) {
+  async getAllTaskById(id: number): Promise<GetTaskRO[]> {
     try {
       return await this.taskService.getAllTaskByIdProject(id);
     } catch (e) {
@@ -55,7 +64,7 @@ export class ProjectService {
     }
   }
 
-  async getAllUserById(id: number) {
+  async getAllUserById(id: number): Promise<GetUserRO[]> {
     await this.getOneByIdOrFail(id);
     try {
       return await this.userService.getAllUserByIdProject(id);
@@ -66,13 +75,21 @@ export class ProjectService {
   }
 
   async getAllProjectByIdOrg(orgId: number): Promise<GetProjectRO[]> {
-    const oldArray = await this.projectRepo.getProjectByIdOrg(orgId);
+    const oldArray = await this.repo.getProjectByIdOrg(orgId);
     const newArray: GetProjectRO[] = [];
     for (let i = 0; i < oldArray.length; i++) {
       const projectRO = await this.getProjectResponse(oldArray[i]);
       newArray.push(projectRO);
     }
     return newArray;
+  }
+
+  async handleProjectResponse(project: ProjectEntity): Promise<HandleProjectRO> {
+    const response = new HandleProjectRO();
+    response.name = project.name;
+    response.code = project.code;
+    response.organizationId = project.organizationId;
+    return response;
   }
 
   async getProjectResponse(project: ProjectEntity): Promise<GetProjectRO> {
@@ -84,44 +101,45 @@ export class ProjectService {
   }
 
   async checkExistCode(code: string, orgId: number) {
-    const project = await this.projectRepo.isProjectExist(orgId, code);
+    const project = await this.repo.isProjectExist(orgId, code);
     if (project) {
       throw new NotFoundException('Project Exist');
     }
   }
 
   async checkProjectExist(id: number) {
-    const project = await this.projectRepo.checkProjectExist(id);
+    const project = await this.repo.checkProjectExist(id);
     if (!project) {
       throw new NotFoundException('Project not found');
     }
     return project;
   }
 
-  async createProject(dto: AddProjectDTO) {
+  async createProject(dto: AddProjectDTO): Promise<HandleProjectRO> {
     try {
-      const project = this.projectRepo.create(dto);
-      return await this.projectRepo.save(project);
+      const project = this.repo.create(dto);
+      await this.repo.save(project);
+      return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async addProject(orgId: number, code: string): Promise<GetProjectRO> {
+  async addProject(orgId: number, code: string): Promise<HandleProjectRO> {
     const project = await this.getOneByCodeOrFail(code);
     await this.checkExistCode(code, orgId);
     try {
       project.organizationId = orgId;
-      await this.projectRepo.update(project.id, project);
-      return await this.getProjectResponse(project);
+      await this.repo.update(project.id, project);
+      return await this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async addUser(code: string, idUser: number) {
+  async addUser(code: string, idUser: number): Promise<HandleUserRO> {
     const checkProject = await this.getOneByCodeOrFail(code);
     try {
       return this.userService.addUserInProject(idUser, checkProject.id);
@@ -131,9 +149,8 @@ export class ProjectService {
     }
   }
 
-  async addTask(code: string, codeTask: string) {
+  async addTask(code: string, codeTask: string): Promise<HandleTaskRO> {
     const checkProject = await this.getOneByCodeOrFail(code);
-
     try {
       return this.taskService.addTaskInProject(codeTask, checkProject.id);
     } catch (e) {
@@ -142,39 +159,41 @@ export class ProjectService {
     }
   }
 
-  async edit(id: number, dto: EditProjectDTO) {
-    await this.getOneByIdOrFail(id);
+  async edit(id: number, dto: EditProjectDTO): Promise<HandleProjectRO> {
+    const project = await this.getOneByIdOrFail(id);
     try {
-      return await this.projectRepo.update(id, dto);
+      await this.repo.update(id, dto);
+      return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async remove(id: number) {
-    await this.getOneByIdOrFail(id);
-
+  async delete(id: number): Promise<HandleProjectRO> {
+    const project = await this.getOneByIdOrFail(id);
     try {
-      return await this.projectRepo.update(id, { isDeleted: id });
+      project.isDeleted = project.id;
+      await this.repo.update(id, project);
+      return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async removeUserInProject(idUser: number, code: string) {
+  async removeUserInProject(idUser: number, code: string): Promise<unknown> {
     const project = await this.getOneByCodeOrFail(code);
-    await this.projectRepo.isUserExist(idUser);
+    await this.repo.isUserExist(idUser);
     try {
-      return this.projectRepo.removeUserInProject(idUser, project.id);
+      return this.repo.removeUserInProject(idUser, project.id);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async removeTaskInProject(code: string, codeTask: string) {
+  async removeTaskInProject(code: string, codeTask: string): Promise<HandleTaskRO> {
     const checkProject = await this.getOneByCodeOrFail(code);
     try {
       return this.taskService.removeTask(checkProject.id, codeTask);
@@ -184,13 +203,13 @@ export class ProjectService {
     }
   }
 
-  async removeProject(orgId: number, code: string): Promise<GetProjectRO> {
+  async removeProject(orgId: number, code: string): Promise<HandleProjectRO> {
     const project = await this.getOneByCodeOrFail(code);
     await this.checkExistCode(code, orgId);
     try {
       project.organizationId = null;
-      await this.projectRepo.update(project.id, project);
-      return this.getProjectResponse(project);
+      await this.repo.update(project.id, project);
+      return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

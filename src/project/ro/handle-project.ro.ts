@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class HandleUserRO {
+export class HandleProjectRO {
   @ApiProperty({ type: String })
   name: string;
 
   @ApiProperty({ type: String })
-  email: string;
+  code: string;
+
+  @ApiProperty({ type: Number })
+  organizationId: number;
 }

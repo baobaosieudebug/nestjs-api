@@ -7,6 +7,7 @@ import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { GetOrganizationRO } from './ro/get-organization.ro';
+import { HandleProjectRO } from '../project/ro/handle-project.ro';
 
 @Injectable()
 export class OrganizationService {
@@ -82,7 +83,7 @@ export class OrganizationService {
     }
   }
 
-  async addProject(codeOrg: string, codeProject: string): Promise<GetProjectRO> {
+  async addProject(codeOrg: string, codeProject: string): Promise<HandleProjectRO> {
     const checkExist = await this.getOneByCodeOrFail(codeOrg);
     try {
       return this.projectService.addProject(checkExist.id, codeProject);
@@ -123,7 +124,7 @@ export class OrganizationService {
     }
   }
 
-  async removeProject(code: string, codeProject: string): Promise<GetProjectRO> {
+  async removeProject(code: string, codeProject: string): Promise<HandleProjectRO> {
     const checkExist = await this.getOneByCodeOrFail(code);
     try {
       return this.projectService.removeProject(checkExist.id, codeProject);

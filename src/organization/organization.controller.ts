@@ -13,6 +13,7 @@ import { OrganizationService } from './organization.service';
 import { GetOrganizationRO } from './ro/get-organization.ro';
 import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
+import { HandleProjectRO } from '../project/ro/handle-project.ro';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -56,7 +57,10 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Success' })
   @Post(':code/addProject/:codeProject')
-  async addProject(@Param('code') codeOrg: string, @Param('codeProject') codeProject: string): Promise<GetProjectRO> {
+  async addProject(
+    @Param('code') codeOrg: string,
+    @Param('codeProject') codeProject: string,
+  ): Promise<HandleProjectRO> {
     return await this.organizationService.addProject(codeOrg, codeProject);
   }
 
@@ -69,7 +73,7 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<GetOrganizationRO> {
+  async delete(@Param('id') id: number): Promise<HandleOrganizationRO> {
     return await this.organizationService.delete(id);
   }
 
@@ -77,7 +81,7 @@ export class OrganizationController {
   async removeProjectInOrg(
     @Param('codeProject') codeProject: string,
     @Param('code') code: string,
-  ): Promise<GetProjectRO> {
+  ): Promise<HandleProjectRO> {
     return await this.organizationService.removeProject(code, codeProject);
   }
 }

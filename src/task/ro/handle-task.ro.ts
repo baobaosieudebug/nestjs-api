@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetTaskRO {
+export class HandleTaskRO {
   @ApiProperty({ type: String })
   name: string;
 
