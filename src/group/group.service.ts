@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
@@ -13,6 +14,7 @@ import { AddGroupDTO } from './dto/add-group.dto';
 
 @Injectable()
 export class GroupsService {
+  private readonly logger = new Logger(GroupsService.name);
   constructor(
     private readonly groupRepo: GroupRepository,
     @Inject(forwardRef(() => UsersService))
@@ -40,6 +42,7 @@ export class GroupsService {
       const group = this.groupRepo.create(dto);
       return await this.groupRepo.save(group);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -49,6 +52,7 @@ export class GroupsService {
     try {
       return await this.groupRepo.update(id, dto);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -58,6 +62,7 @@ export class GroupsService {
     try {
       return this.groupRepo.update(id, { isDeleted: id });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -67,6 +72,7 @@ export class GroupsService {
     try {
       return this.userService.addUser(idUser, id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -76,6 +82,7 @@ export class GroupsService {
     try {
       return await this.userService.getAllUserByIdGroup(id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
