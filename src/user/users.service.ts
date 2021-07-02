@@ -10,7 +10,8 @@ import { LoginUserDTO } from './dto/login-user.dto';
 import { GetUserRO } from './ro/get-user.ro';
 import { UsersEntity } from './users.entity';
 import * as jwt from 'jsonwebtoken';
-import { HandleUserRO } from './ro/edit-user.ro';
+import { HandleUserRO } from './ro/handle-user.ro';
+import { HandleTaskRO } from "../task/ro/handle-task.ro";
 
 @Injectable()
 export class UsersService {
@@ -45,8 +46,14 @@ export class UsersService {
     return user;
   }
 
-  async getAll() {
-    return await this.userRepo.getAll();
+  async getAll(): Promise<GetUserRO[]> {
+    const oldArray = await this.userRepo.getAll();
+    const newArray: GetUserRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const userRO = await this.getUserResponse(oldArray[i]);
+      newArray.push(userRO);
+    }
+    return newArray;
   }
 
   async getUserResponse(user: UsersEntity): Promise<GetUserRO> {
@@ -63,11 +70,12 @@ export class UsersService {
     return response;
   }
 
-  async create(user: AddUserDTO) {
+  async create(user: AddUserDTO): Promise<HandleUserRO> {
     try {
       user.password = await bcrypt.hash(user.password, 12);
       const newUser = this.userRepo.create(user);
-      return await this.userRepo.save(newUser);
+      await this.userRepo.save(newUser);
+      return this.handleUserResponse(newUser);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -102,7 +110,7 @@ export class UsersService {
     }
   }
 
-  async assignTask(idUser: number, codeTask: string) {
+  async assignTask(idUser: number, codeTask: string): Promise<HandleTaskRO> {
     await this.getOneByIdOrFail(idUser);
     try {
       return this.taskService.assignTask(codeTask, idUser);
@@ -112,21 +120,25 @@ export class UsersService {
     }
   }
 
-  async update(id: number, dto: EditUserDTO) {
-    await this.getOneByIdOrFail(id);
+  async edit(id: number, dto: EditUserDTO): Promise<HandleUserRO> {
+    const old = await this.getOneByIdOrFail(id);
     try {
       dto.password = await bcrypt.hash(dto.password, 12);
-      return this.userRepo.update(id, dto);
+      const user = await this.userRepo.merge(old, dto);
+      await this.userRepo.update(id, user);
+      return this.handleUserResponse(user);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async remove(id: number) {
-    await this.getOneByIdOrFail(id);
+  async delete(id: number): Promise<HandleUserRO> {
+    const user = await this.getOneByIdOrFail(id);
     try {
-      return await this.userRepo.update(id, { isDeleted: id });
+      user.isDeleted = user.id;
+      await this.userRepo.update(id, user);
+      return this.handleUserResponse(user);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

@@ -97,11 +97,13 @@ export class TaskService {
     }
   }
 
-  async assignTask(code: string, idUser: number) {
+  async assignTask(code: string, idUser: number): Promise<HandleTaskRO> {
     const task = await this.getOneByCodeOrFail(code);
     await this.repo.isAssignTask(idUser, code);
     try {
-      return await this.repo.update(task.id, { assignUserId: idUser });
+      task.assignUserId = idUser;
+      await this.repo.update(task.id, task);
+      return this.handleTaskResponse(task);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

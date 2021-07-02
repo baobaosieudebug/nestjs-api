@@ -14,7 +14,7 @@ import { HandleProjectRO } from './ro/handle-project.ro';
 import { GetTaskRO } from '../task/ro/get-task.ro';
 import { GetUserRO } from '../user/ro/get-user.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
-import { HandleUserRO } from '../user/ro/edit-user.ro';
+import { HandleUserRO } from '../user/ro/handle-user.ro';
 
 @ApiTags('Project')
 @ApiNotFoundResponse({ description: 'Not Found' })
