@@ -90,7 +90,7 @@ export class ProjectController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':code/removeUser/:id')
-  async removeUserInProject(@Param('id') idUser: number, @Param('code') code: string): Promise<unknown> {
+  async removeUserInProject(@Param('id') idUser: number, @Param('code') code: string): Promise<HandleProjectRO> {
     return await this.projectService.removeUserInProject(idUser, code);
   }
 

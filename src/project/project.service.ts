@@ -183,11 +183,12 @@ export class ProjectService {
     }
   }
 
-  async removeUserInProject(idUser: number, code: string): Promise<unknown> {
+  async removeUserInProject(idUser: number, code: string): Promise<HandleProjectRO> {
     const project = await this.getOneByCodeOrFail(code);
     await this.repo.isUserExist(idUser);
     try {
-      return this.repo.removeUserInProject(idUser, project.id);
+      await this.repo.removeUserInProject(idUser, project.id);
+      return this.handleProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
