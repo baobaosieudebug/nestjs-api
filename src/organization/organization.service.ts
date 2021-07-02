@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { OrganizationRepository } from './organization.repository';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
@@ -10,6 +6,7 @@ import { ProjectService } from '../project/project.service';
 
 @Injectable()
 export class OrganizationService {
+  private readonly logger = new Logger(ProjectService.name);
   constructor(
     private readonly organizationRepo: OrganizationRepository,
     private readonly projectService: ProjectService,
@@ -48,6 +45,7 @@ export class OrganizationService {
     try {
       return await this.projectService.getAllProjectByIdOrg(id);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -58,6 +56,7 @@ export class OrganizationService {
       const newOrg = this.organizationRepo.create(dto);
       return await this.organizationRepo.save(newOrg);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -67,6 +66,7 @@ export class OrganizationService {
     try {
       return this.projectService.addProject(checkExist.id, codeProject);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -83,6 +83,7 @@ export class OrganizationService {
     try {
       return await this.organizationRepo.update(id, dto);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -92,6 +93,7 @@ export class OrganizationService {
     try {
       return this.organizationRepo.update(id, { isDeleted: id });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -101,6 +103,7 @@ export class OrganizationService {
     try {
       return this.projectService.removeProject(checkExist.id, codeProject);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
