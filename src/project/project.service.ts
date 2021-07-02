@@ -4,6 +4,10 @@ import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { UsersService } from '../user/users.service';
 import { TaskService } from '../task/task.service';
+import { GetProjectRO } from "./ro/get-project.ro";
+import { GetOrganizationRO } from "../organization/ro/get-organization.ro";
+import { OrganizationEntity } from "../organization/organization.entity";
+import { ProjectEntity } from "./project.entity";
 
 @Injectable()
 export class ProjectService {
@@ -61,8 +65,22 @@ export class ProjectService {
     }
   }
 
-  async getAllProjectByIdOrg(orgId: number) {
-    return await this.projectRepo.getProjectByIdOrg(orgId);
+  async getAllProjectByIdOrg(orgId: number): Promise<GetProjectRO[]> {
+    const oldArray = await this.projectRepo.getProjectByIdOrg(orgId);
+    const newArray: GetProjectRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const projectRO = await this.getProjectResponse(oldArray[i]);
+      newArray.push(projectRO);
+    }
+    return newArray;
+  }
+
+  async getProjectResponse(project: ProjectEntity): Promise<GetProjectRO> {
+    const response = new GetProjectRO();
+    response.name = project.name;
+    response.code = project.code;
+    response.organizationId = project.organizationId;
+    return response;
   }
 
   async checkExistCode(code: string, orgId: number) {
@@ -90,13 +108,13 @@ export class ProjectService {
     }
   }
 
-  async addProject(orgId: number, code: string) {
+  async addProject(orgId: number, code: string): Promise<GetProjectRO> {
     const project = await this.getOneByCodeOrFail(code);
     await this.checkExistCode(code, orgId);
     try {
-      return await this.projectRepo.update(project.id, {
-        organizationId: orgId,
-      });
+      project.organizationId = orgId;
+      await this.projectRepo.update(project.id, project);
+      return await this.getProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -166,13 +184,13 @@ export class ProjectService {
     }
   }
 
-  async removeProject(orgId: number, code: string) {
+  async removeProject(orgId: number, code: string): Promise<GetProjectRO> {
     const project = await this.getOneByCodeOrFail(code);
     await this.checkExistCode(code, orgId);
     try {
-      return await this.projectRepo.update(project.id, {
-        organizationId: null,
-      });
+      project.organizationId = null;
+      await this.projectRepo.update(project.id, project);
+      return this.getProjectResponse(project);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

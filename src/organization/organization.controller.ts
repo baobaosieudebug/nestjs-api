@@ -10,6 +10,9 @@ import {
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { OrganizationService } from './organization.service';
+import { GetOrganizationRO } from './ro/get-organization.ro';
+import { GetProjectRO } from '../project/ro/get-project.ro';
+import { HandleOrganizationRO } from './ro/handle-organization.ro';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -20,56 +23,61 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAllOrganization() {
-    return await this.organizationService.getAllOrganization();
+  async getAll(): Promise<GetOrganizationRO[]> {
+    return await this.organizationService.getAll();
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
-  async getOrganizationByIdOrFail(@Param('id') id: number) {
-    return await this.organizationService.getOneByIdOrFail(id);
+  async getOneById(@Param('id') id: number): Promise<GetOrganizationRO> {
+    const organization = await this.organizationService.getOneByIdOrFail(id);
+    return await this.organizationService.getOrganizationResponse(organization);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get('code/:code')
-  async getOneTaskByCode(@Param('code') code: string) {
-    return await this.organizationService.getOneByCodeOrFail(code);
+  async getOneTaskByCode(@Param('code') code: string): Promise<GetOrganizationRO> {
+    const organization = await this.organizationService.getOneByCodeOrFail(code);
+    return await this.organizationService.getOrganizationResponse(organization);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id/projects')
-  async getAllProjectById(@Param('id') id: number) {
+  async getAllProjectById(@Param('id') id: number): Promise<GetProjectRO[]> {
     return await this.organizationService.getAllProjectById(id);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddOrganizationDTO) {
-    return await this.organizationService.createOrganization(dto);
+  async create(@Body() dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
+    return await this.organizationService.create(dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Post(':code/addProject/:codeProject')
-  async addProject(@Param('code') codeOrg: string, @Param('codeProject') codeProject: string) {
+  async addProject(@Param('code') codeOrg: string, @Param('codeProject') codeProject: string): Promise<GetProjectRO> {
     return await this.organizationService.addProject(codeOrg, codeProject);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number) {
-    return await this.organizationService.editOrganization(id, dto);
+  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number): Promise<HandleOrganizationRO> {
+    return await this.organizationService.edit(id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async remove(@Param('id') id: number) {
-    return await this.organizationService.removeOrganization(id);
+  async delete(@Param('id') id: number): Promise<GetOrganizationRO> {
+    return await this.organizationService.delete(id);
   }
 
   @Delete(':code/removeProject/:codeProject')
-  async removeProjectInOrg(@Param('codeProject') codeProject: string, @Param('code') code: string) {
+  async removeProjectInOrg(
+    @Param('codeProject') codeProject: string,
+    @Param('code') code: string,
+  ): Promise<GetProjectRO> {
     return await this.organizationService.removeProject(code, codeProject);
   }
 }

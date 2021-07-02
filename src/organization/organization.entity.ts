@@ -20,9 +20,6 @@ export class OrganizationEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
-  @OneToMany(
-    () => ProjectEntity,
-    (project: ProjectEntity) => project.organization,
-  )
+  @OneToMany(() => ProjectEntity, (project: ProjectEntity) => project.organization)
   projects: ProjectEntity[];
 }
