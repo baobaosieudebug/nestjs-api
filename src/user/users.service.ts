@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AddUserDTO } from './dto/add-user.dto';
 import { EditUserDTO } from './dto/edit-user.dto';
@@ -17,6 +11,7 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     private readonly userRepo: UserRepository,
     private readonly taskService: TaskService,
@@ -57,6 +52,7 @@ export class UsersService {
       const newUser = this.userRepo.create(user);
       return await this.userRepo.save(newUser);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -71,6 +67,7 @@ export class UsersService {
       checkUser.groups.push(group);
       return await this.userRepo.save(checkUser);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -82,6 +79,7 @@ export class UsersService {
       await project.users.push(checkUser);
       return await this.projectRepo.save(project);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -91,6 +89,7 @@ export class UsersService {
     try {
       return this.taskService.assignTask(codeTask, idUser);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -101,6 +100,7 @@ export class UsersService {
       dto.password = await bcrypt.hash(dto.password, 12);
       return this.userRepo.update(id, dto);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -110,6 +110,7 @@ export class UsersService {
     try {
       return await this.userRepo.update(id, { isDeleted: id });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -117,6 +118,7 @@ export class UsersService {
     try {
       return await this.userRepo.getAllUserByIdProject(projectId);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -125,6 +127,7 @@ export class UsersService {
     try {
       return await this.userRepo.getAllUserByIdGroup(idGroup);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }

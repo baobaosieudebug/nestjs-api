@@ -1,14 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
 import { EditTaskDTO } from './dto/edit-task.dto';
 
 @Injectable()
 export class TaskService {
+  private readonly logger = new Logger(TaskService.name);
   constructor(private readonly taskRepo: TaskRepository) {}
 
   async getOneById(id: number) {
@@ -52,6 +49,7 @@ export class TaskService {
       task.createdAt = new Date();
       return await this.taskRepo.save(task);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -62,6 +60,7 @@ export class TaskService {
     try {
       return await this.taskRepo.update(task.id, { projectId: projectId });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -72,6 +71,7 @@ export class TaskService {
     try {
       return await this.taskRepo.update(task.id, { assignUserId: idUser });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -80,6 +80,7 @@ export class TaskService {
     try {
       return await this.taskRepo.update(id, dto);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -89,6 +90,7 @@ export class TaskService {
     try {
       return await this.taskRepo.update(id, { isDeleted: id });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -99,6 +101,7 @@ export class TaskService {
     try {
       return await this.taskRepo.update(checkTask.id, { projectId: null });
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
@@ -107,6 +110,7 @@ export class TaskService {
     try {
       return await this.taskRepo.getAllTaskByIdProject(projectId);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
