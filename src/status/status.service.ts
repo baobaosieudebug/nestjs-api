@@ -100,12 +100,12 @@ export class StatusService {
     }
   }
 
-  async delete(projectId: number, id: number): Promise<HandleStatusRO> {
+  async delete(projectId: number, id: number): Promise<number> {
     const status = await this.getOneByIdOrFail(id, projectId);
     try {
       status.isDeleted = status.id;
       await this.repo.update(id, status);
-      return this.handleStatusResponse(status);
+      return id;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');

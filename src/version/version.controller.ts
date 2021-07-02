@@ -59,7 +59,7 @@ export class VersionController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleVersionRO> {
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
     return await this.versionService.delete(projectId, id);
   }
 }

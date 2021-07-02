@@ -59,7 +59,7 @@ export class StatusController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleStatusRO> {
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
     return await this.statusService.delete(projectId, id);
   }
 }

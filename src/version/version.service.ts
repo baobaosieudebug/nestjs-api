@@ -100,12 +100,12 @@ export class VersionService {
     }
   }
 
-  async delete(projectId: number, id: number): Promise<HandleVersionRO> {
+  async delete(projectId: number, id: number): Promise<number> {
     const version = await this.getOneByIdOrFail(id, projectId);
     try {
       version.isDeleted = version.id;
       await this.repo.update(id, version);
-      return this.handleVersionResponse(version);
+      return id;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');

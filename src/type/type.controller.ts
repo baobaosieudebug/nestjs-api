@@ -59,7 +59,7 @@ export class TypeController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleTypeRO> {
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
     return await this.typeService.delete(projectId, id);
   }
 }

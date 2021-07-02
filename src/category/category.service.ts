@@ -100,12 +100,12 @@ export class CategoryService {
     }
   }
 
-  async delete(projectId: number, id: number): Promise<HandleCategoryRO> {
+  async delete(projectId: number, id: number): Promise<number> {
     const category = await this.getOneByIdOrFail(id, projectId);
     try {
       category.isDeleted = category.id;
       await this.repo.update(id, category);
-      return this.handleCategoryResponse(category);
+      return id;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');

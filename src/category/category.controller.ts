@@ -59,7 +59,7 @@ export class CategoryController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleCategoryRO> {
+  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
     return await this.categoryService.delete(projectId, id);
   }
 }

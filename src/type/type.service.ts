@@ -100,12 +100,12 @@ export class TypeService {
     }
   }
 
-  async delete(projectId: number, id: number): Promise<HandleTypeRO> {
+  async delete(projectId: number, id: number): Promise<number> {
     const type = await this.getOneByIdOrFail(id, projectId);
     try {
       type.isDeleted = type.id;
       await this.repo.update(id, type);
-      return this.handleTypeResponse(type);
+      return id;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
