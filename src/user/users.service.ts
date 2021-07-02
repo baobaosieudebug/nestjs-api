@@ -11,24 +11,24 @@ import { GetUserRO } from './ro/get-user.ro';
 import { UsersEntity } from './users.entity';
 import * as jwt from 'jsonwebtoken';
 import { HandleUserRO } from './ro/handle-user.ro';
-import { HandleTaskRO } from "../task/ro/handle-task.ro";
+import { HandleTaskRO } from '../task/ro/handle-task.ro';
 
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
   constructor(
-    private readonly userRepo: UserRepository,
+    private readonly repo: UserRepository,
     private readonly taskService: TaskService,
     private readonly projectRepo: ProjectRepository,
     private readonly groupRepo: GroupRepository,
   ) {}
 
   async getOneById(id: number) {
-    return await this.userRepo.getOneById(id);
+    return await this.repo.getOneById(id);
   }
 
   async getOneByEmail(email: string) {
-    return await this.userRepo.getOneByEmail(email);
+    return await this.repo.getOneByEmail(email);
   }
   async getOneByEmailOrFail(email: string) {
     const user = await this.getOneByEmail(email);
@@ -47,7 +47,7 @@ export class UsersService {
   }
 
   async getAll(): Promise<GetUserRO[]> {
-    const oldArray = await this.userRepo.getAll();
+    const oldArray = await this.repo.getAll();
     const newArray: GetUserRO[] = [];
     for (let i = 0; i < oldArray.length; i++) {
       const userRO = await this.getUserResponse(oldArray[i]);
@@ -73,8 +73,8 @@ export class UsersService {
   async create(user: AddUserDTO): Promise<HandleUserRO> {
     try {
       user.password = await bcrypt.hash(user.password, 12);
-      const newUser = this.userRepo.create(user);
-      await this.userRepo.save(newUser);
+      const newUser = this.repo.create(user);
+      await this.repo.save(newUser);
       return this.handleUserResponse(newUser);
     } catch (e) {
       this.logger.error(e);
@@ -82,15 +82,16 @@ export class UsersService {
     }
   }
 
-  async addUser(idUser: number, idGroup: number) {
-    const checkUser = await this.userRepo.getOneAndGroupRelation(idUser);
+  async addUser(idUser: number, idGroup: number): Promise<HandleUserRO> {
+    const checkUser = await this.repo.getOneAndGroupRelation(idUser);
     if (!checkUser) {
       throw new NotFoundException('User not found');
     }
     try {
       const group = await this.groupRepo.getOneById(idGroup);
       checkUser.groups.push(group);
-      return await this.userRepo.save(checkUser);
+      await this.repo.save(checkUser);
+      return this.handleUserResponse(checkUser);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -124,8 +125,8 @@ export class UsersService {
     const old = await this.getOneByIdOrFail(id);
     try {
       dto.password = await bcrypt.hash(dto.password, 12);
-      const user = await this.userRepo.merge(old, dto);
-      await this.userRepo.update(id, user);
+      const user = await this.repo.merge(old, dto);
+      await this.repo.update(id, user);
       return this.handleUserResponse(user);
     } catch (e) {
       this.logger.error(e);
@@ -137,7 +138,7 @@ export class UsersService {
     const user = await this.getOneByIdOrFail(id);
     try {
       user.isDeleted = user.id;
-      await this.userRepo.update(id, user);
+      await this.repo.update(id, user);
       return this.handleUserResponse(user);
     } catch (e) {
       this.logger.error(e);
@@ -146,7 +147,7 @@ export class UsersService {
   }
   async getAllUserByIdProject(projectId: number): Promise<GetUserRO[]> {
     try {
-      const oldArray = await this.userRepo.getAllUserByIdProject(projectId);
+      const oldArray = await this.repo.getAllUserByIdProject(projectId);
       const newArray: GetUserRO[] = [];
       for (let i = 0; i < oldArray.length; i++) {
         const userRO = await this.getUserResponse(oldArray[i]);
@@ -159,9 +160,15 @@ export class UsersService {
     }
   }
 
-  async getAllUserByIdGroup(idGroup: number) {
+  async getAllUserByIdGroup(idGroup: number): Promise<GetUserRO[]> {
     try {
-      return await this.userRepo.getAllUserByIdGroup(idGroup);
+      const oldArray = await this.repo.getAllUserByIdGroup(idGroup);
+      const newArray: GetUserRO[] = [];
+      for (let i = 0; i < oldArray.length; i++) {
+        const userRO = await this.getUserResponse(oldArray[i]);
+        newArray.push(userRO);
+      }
+      return newArray;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
@@ -170,7 +177,7 @@ export class UsersService {
 
   async login(data: LoginUserDTO) {
     // find username exist in db
-    const user = await this.userRepo.findOne({ email: data.email });
+    const user = await this.repo.findOne({ email: data.email });
     // if ((await bcrypt.compare(data.password, user.password)) == false) {
     //   throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
     // }

@@ -30,6 +30,6 @@ export class UserRepository extends Repository<UsersEntity> {
     return await this.createQueryBuilder('user')
       .leftJoinAndSelect('user.groups', 'group')
       .where('group.id = :idGroup', { idGroup })
-      .getRawMany();
+      .getMany();
   }
 }
