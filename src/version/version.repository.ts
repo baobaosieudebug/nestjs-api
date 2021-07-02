@@ -15,14 +15,13 @@ export class VersionRepository extends Repository<VersionEntity> {
     return this.findOne({ code, projectId, isDeleted: 0 });
   }
 
-  async isVersionExistCode(
-    id: number,
-    code: string,
-    projectId: number,
-  ): Promise<boolean> {
-    const checkExist = await this.count({
-      where: { id: Not(id), code, projectId, isDeleted: 0 },
-    });
-    return checkExist > 0;
+  async countVersion(projectId: number, code: string, id: number = null) {
+    const options: any = {
+      where: { code, projectId, isDeleted: 0 },
+    };
+    if (id !== null) {
+      options.where.id = Not(id);
+    }
+    return await this.count(options);
   }
 }

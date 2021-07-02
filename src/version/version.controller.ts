@@ -1,69 +1,65 @@
-import { ApiTags } from '@nestjs/swagger';
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { VersionService } from './version.service';
 import { AddVersionDTO } from './dto/add-version.dto';
 import { EditVersionDTO } from './dto/edit-version.dto';
+import { GetVersionRO } from './ro/get-version.ro';
+import { HandleVersionRO } from './ro/handle-version.ro';
 
 @ApiTags('Version')
-@Controller('projects/:id/versions')
+@ApiNotFoundResponse({ description: 'Not Found' })
+@ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+@Controller('projects/:projectId/categories')
 export class VersionController {
   constructor(private versionService: VersionService) {}
 
+  @ApiOkResponse({ description: 'Success' })
   @Get()
-  async getAll(@Param('id') projectId: number) {
+  async getAll(@Param('projectId') projectId: number): Promise<GetVersionRO[]> {
     return await this.versionService.getAllVersionByIdProject(projectId);
   }
 
-  @Get(':idVersion')
-  async getVersionById(
-    @Param('idVersion') id: number,
-    @Param('id') projectId: number,
-  ) {
-    return await this.versionService.getOneByIdOrFail(id, projectId);
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':id')
+  async getVersionById(@Param('projectId') projectId: number, @Param('id') id: number): Promise<GetVersionRO> {
+    const version = await this.versionService.getOneByIdOrFail(id, projectId);
+    return await this.versionService.getVersionResponse(version);
   }
 
+  @ApiOkResponse({ description: 'Success' })
   @Get(':code')
-  async getVersionByCode(
-    @Param('code') code: string,
-    @Param('id') projectId: number,
-  ) {
-    return await this.versionService.getOneByCodeOrFail(code, projectId);
+  async getVersionByCode(@Param('projectId') projectId: number, @Param('code') code: string): Promise<GetVersionRO> {
+    const version = await this.versionService.getOneByCodeOrFail(code, projectId);
+    return await this.versionService.getVersionResponse(version);
   }
 
+  @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createVersion(
-    @Body() dto: AddVersionDTO,
-    @Param('id') projectId: number,
-  ) {
+  async createVersion(@Param('projectId') projectId: number, @Body() dto: AddVersionDTO): Promise<HandleVersionRO> {
     return await this.versionService.add(dto, projectId);
   }
 
-  @Put(':idVersion')
+  @ApiOkResponse({ description: 'Success' })
+  @Put(':id')
   @UsePipes(ValidationPipe)
   async editVersion(
-    @Param('id') projectId: number,
-    @Param('idVersion') id: number,
+    @Param('projectId') projectId: number,
+    @Param('id') id: number,
     @Body() dto: EditVersionDTO,
-  ) {
+  ): Promise<HandleVersionRO> {
     return await this.versionService.edit(id, projectId, dto);
   }
 
-  @Delete(':idVersion')
-  async removeVersion(
-    @Param('id') projectId: number,
-    @Param('idVersion') id: number,
-  ) {
-    return await this.versionService.remove(id, projectId);
+  @ApiOkResponse({ description: 'Success' })
+  @Delete(':id')
+  async deleteVersion(@Param('projectId') projectId: number, @Param('id') id: number): Promise<HandleVersionRO> {
+    return await this.versionService.delete(id, projectId);
   }
 }

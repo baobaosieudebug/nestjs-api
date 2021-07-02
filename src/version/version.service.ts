@@ -2,30 +2,39 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { VersionRepository } from './version.repository';
 import { AddVersionDTO } from './dto/add-version.dto';
 import { EditVersionDTO } from './dto/edit-version.dto';
 import { VersionEntity } from './version.entity';
-import { AddVersionRO } from './ro/add-version.ro';
+import { GetVersionRO } from './ro/get-version.ro';
+import { HandleVersionRO } from './ro/handle-version.ro';
 @Injectable()
 export class VersionService {
-  constructor(private readonly versionRepo: VersionRepository) {}
+  private readonly logger = new Logger(VersionService.name);
+  constructor(private readonly repo: VersionRepository) {}
 
-  async getAllVersionByIdProject(projectId: number) {
-    return await this.versionRepo.getAll(projectId);
+  async getAllVersionByIdProject(projectId: number): Promise<GetVersionRO[]> {
+    const oldArray = await this.repo.getAll(projectId);
+    const newArray: GetVersionRO[] = [];
+    for (let i = 0; i < oldArray.length; i++) {
+      const versionRO = await this.getVersionResponse(oldArray[i]);
+      newArray.push(versionRO);
+    }
+    return newArray;
   }
 
-  async getOneById(id: number, projectId: number) {
-    return await this.versionRepo.getById(id, projectId);
+  async getOneById(id: number, projectId: number): Promise<VersionEntity> {
+    return await this.repo.getById(id, projectId);
   }
 
-  async getOneByCode(code: string, projectId: number) {
-    return await this.versionRepo.getByCode(code, projectId);
+  async getOneByCode(code: string, projectId: number): Promise<VersionEntity> {
+    return await this.repo.getByCode(code, projectId);
   }
 
-  async getOneByIdOrFail(id: number, projectId: number) {
+  async getOneByIdOrFail(id: number, projectId: number): Promise<VersionEntity> {
     const version = await this.getOneById(id, projectId);
     if (!version) {
       throw new NotFoundException('Version not found');
@@ -33,7 +42,7 @@ export class VersionService {
     return version;
   }
 
-  async getOneByCodeOrFail(code: string, projectId: number) {
+  async getOneByCodeOrFail(code: string, projectId: number): Promise<VersionEntity> {
     const version = await this.getOneByCode(code, projectId);
     if (!version) {
       throw new NotFoundException('Version not found');
@@ -41,54 +50,63 @@ export class VersionService {
     return version;
   }
 
-  async getVersionResponse(version: VersionEntity): Promise<AddVersionRO> {
-    const response = new AddVersionRO();
+  async getVersionResponse(version: VersionEntity): Promise<GetVersionRO> {
+    const response = new GetVersionRO();
     response.name = version.name;
     response.code = version.code;
     response.description = version.description;
     return response;
   }
 
-  async checkExistCode(id: number, code: string, projectId: number) {
-    const checkExist = await this.versionRepo.isVersionExistCode(
-      id,
-      code,
-      projectId,
-    );
-    if (checkExist) {
+  async handleVersionResponse(version: VersionEntity): Promise<HandleVersionRO> {
+    const response = new HandleVersionRO();
+    response.name = version.name;
+    response.code = version.code;
+    response.description = version.description;
+    return response;
+  }
+
+  async checkExistCode(projectId: number, code: string, id: number = null) {
+    const count = await this.repo.countVersion(projectId, code, id);
+    if (count > 0) {
       throw new BadRequestException('Code Exist');
     }
   }
 
-  async add(dto: AddVersionDTO, projectId: number): Promise<AddVersionRO> {
-    await this.checkExistCode(0, dto.code, projectId);
+  async add(dto: AddVersionDTO, projectId: number): Promise<HandleVersionRO> {
+    await this.checkExistCode(projectId, dto.code);
     try {
-      const newVersion = this.versionRepo.create(dto);
+      const newVersion = this.repo.create(dto);
       newVersion.projectId = projectId;
-      await this.versionRepo.save(newVersion);
-      return this.getVersionResponse(newVersion);
+      await this.repo.save(newVersion);
+      return this.handleVersionResponse(newVersion);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async edit(id: number, projectId: number, dto: EditVersionDTO) {
-    await this.getOneByIdOrFail(id, projectId);
-    await this.checkExistCode(id, dto.code, projectId);
+  async edit(id: number, projectId: number, dto: EditVersionDTO): Promise<HandleVersionRO> {
+    const old = await this.getOneByIdOrFail(id, projectId);
+    await this.checkExistCode(projectId, dto.code, id);
     try {
-      await this.versionRepo.update(id, dto);
-      return id;
+      const version = await this.repo.merge(old, dto);
+      await this.repo.update(id, version);
+      return this.handleVersionResponse(version);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
 
-  async remove(id: number, projectId: number) {
-    await this.getOneByIdOrFail(id, projectId);
+  async delete(id: number, projectId: number): Promise<HandleVersionRO> {
+    const version = await this.getOneByIdOrFail(id, projectId);
     try {
-      await this.versionRepo.update(id, { isDeleted: id });
-      return id;
+      version.isDeleted = version.id;
+      await this.repo.update(id, version);
+      return this.handleVersionResponse(version);
     } catch (e) {
+      this.logger.error(e);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
