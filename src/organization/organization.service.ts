@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -97,6 +98,11 @@ export class OrganizationService {
     return decoded['organizationCode'];
   }
   async create(dto: AddOrganizationDTO, req: any) {
+    const token = req.headers.authorization;
+    const decoded = jwt_decode(token);
+    if (decoded['organizationCode']) {
+      throw new BadRequestException('User created Organization');
+    }
     let found = true;
     while (found) {
       dto.code = randomString();
@@ -104,8 +110,6 @@ export class OrganizationService {
         found = false;
       }
     }
-    const token = req.headers.authorization;
-    const decoded = jwt_decode(token);
     try {
       const newOrg = this.repo.create(dto);
       newOrg.owner = decoded['id'];
