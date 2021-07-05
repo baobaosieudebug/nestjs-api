@@ -20,7 +20,7 @@ export class DatabaseModule {
             password: configService.get<string>('db.password'),
             database: configService.get<string>('db.database'),
             entities: ['dist/**/*.entity{.ts,.js}'],
-            synchronize: true, //this is a auto drop record when you restart server: https://docs.nestjs.com/techniques/database(typeorm intergration/warning)
+            synchronize: false, //this is a auto drop record when you restart server: https://docs.nestjs.com/techniques/database(typeorm intergration/warning)
             logging: configService.get<boolean>('db.logging'),
           }),
         }),

@@ -1,4 +1,4 @@
-import { Delete, Get, Param, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Delete, Get, Param, Put, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -14,6 +14,9 @@ import { GetOrganizationRO } from './ro/get-organization.ro';
 import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
+import { RolesGuard } from '../authorization/guard/role.guard';
+import { Role } from '../authorization/role.enum';
+import { Roles } from '../authorization/role.decorator';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -23,6 +26,8 @@ export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
   @ApiOkResponse({ description: 'Success' })
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @Get()
   async getAll(): Promise<GetOrganizationRO[]> {
     return await this.organizationService.getAll();
@@ -30,9 +35,11 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id')
-  async getOneById(@Param('id') id: number): Promise<GetOrganizationRO> {
-    const organization = await this.organizationService.getOneByIdOrFail(id);
-    return await this.organizationService.getOrganizationResponse(organization);
+  async getOneById(@Param('id') id: number, @Req() req): Promise<GetOrganizationRO> {
+    // const organization = await this.organizationService.getOneByIdOrFail(id);
+    // return await this.organizationService.getOrganizationResponse(organization);
+    const org = await this.organizationService.checkOwner(id, req);
+    return await this.organizationService.getOrganizationResponse(org);
   }
 
   @ApiOkResponse({ description: 'Success' })
@@ -49,10 +56,12 @@ export class OrganizationController {
   }
 
   @ApiCreatedResponse({ description: 'Created' })
+  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
-    return await this.organizationService.create(dto);
+  async create(@Body() dto: AddOrganizationDTO, @Req() req) {
+    return await this.organizationService.create(dto, req);
   }
 
   @ApiOkResponse({ description: 'Success' })
@@ -73,7 +82,7 @@ export class OrganizationController {
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<HandleOrganizationRO> {
+  async delete(@Param('id') id: number): Promise<number> {
     return await this.organizationService.delete(id);
   }
 

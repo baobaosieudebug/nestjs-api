@@ -33,8 +33,6 @@ export class UsersController {
 
   @ApiOkResponse({ description: 'Success' })
   @Get()
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.Admin)
   async getAll(): Promise<GetUserRO[]> {
     return await this.usersService.getAll();
   }

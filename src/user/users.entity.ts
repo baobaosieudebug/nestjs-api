@@ -3,6 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany } from 't
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
 import { Role } from '../authorization/role.enum';
+import { OrganizationEntity } from '../organization/organization.entity';
 
 @Entity('users')
 export class UsersEntity {
@@ -39,4 +40,7 @@ export class UsersEntity {
     cascade: ['insert'],
   })
   projects: ProjectEntity[];
+
+  @OneToMany(() => OrganizationEntity, (organization: OrganizationEntity) => organization.user)
+  organizations: OrganizationEntity[];
 }

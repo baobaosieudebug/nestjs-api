@@ -1,4 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { OrganizationRepository } from './organization.repository';
 import { ProjectService } from '../project/project.service';
 import { OrganizationEntity } from './organization.entity';
@@ -8,6 +14,7 @@ import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { GetOrganizationRO } from './ro/get-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
+import jwt_decode from 'jwt-decode';
 
 @Injectable()
 export class OrganizationService {
@@ -71,10 +78,22 @@ export class OrganizationService {
     }
   }
 
-  async create(dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
+  async checkOwner(orgId: number, req: any) {
+    const token = req.headers.authorization;
+    const decoded = jwt_decode(token);
+    const org = await this.getOneByIdOrFail(orgId);
+    if (org.owner !== decoded['id']) {
+      throw new ForbiddenException('Forbidden');
+    }
+    return org;
+  }
+  async create(dto: AddOrganizationDTO, req: any) {
+    const token = req.headers.authorization;
+    const decoded = jwt_decode(token);
     await this.checkOrgByCode(dto.code);
     try {
       const newOrg = this.repo.create(dto);
+      newOrg.owner = decoded['id'];
       await this.repo.save(newOrg);
       return this.handleOrganizationResponse(newOrg);
     } catch (e) {
@@ -112,12 +131,12 @@ export class OrganizationService {
     }
   }
 
-  async delete(id: number): Promise<HandleOrganizationRO> {
+  async delete(id: number): Promise<number> {
     const organization = await this.getOneByIdOrFail(id);
     try {
       organization.isDeleted = organization.id;
       await this.repo.update(id, organization);
-      return this.handleOrganizationResponse(organization);
+      return id;
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

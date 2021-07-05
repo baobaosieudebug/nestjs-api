@@ -10,29 +10,6 @@ import { UsersService } from '../user/users.service';
 export class AuthService {
   constructor(private jwtService: JwtService, private httpService: HttpService, private userService: UsersService) {}
 
-  async getToken(user: any) {
-    const payload = { email: user.email, name: user.name };
-    return {
-      token: this.jwtService.sign(payload),
-    };
-  }
-
-  // async login(user: LoginUserDTO) {
-  //   const response = await this.httpService
-  //     .post('http://localhost:5001/auth/login', {
-  //       email: user.email,
-  //       password: user.password,
-  //     })
-  //     .toPromise();
-  //   if (!response) {
-  //     throw new BadRequestException(
-  //       'Bad Request ! Check My Email And Password !',
-  //     );
-  //   } else {
-  //     return response.data;
-  //   }
-  // }
-
   async login(data: LoginUserDTO) {
     const user = await this.userService.getOneByEmailOrFail(data.email);
     if ((await bcrypt.compare(data.password, user.password)) == false) {
@@ -56,6 +33,29 @@ export class AuthService {
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
     return token;
   }
+
+  // async getToken(user: any) {
+  //   const payload = { email: user.email, name: user.name };
+  //   return {
+  //     token: this.jwtService.sign(payload),
+  //   };
+  // }
+
+  // async login(user: LoginUserDTO) {
+  //   const response = await this.httpService
+  //     .post('http://localhost:5001/auth/login', {
+  //       email: user.email,
+  //       password: user.password,
+  //     })
+  //     .toPromise();
+  //   if (!response) {
+  //     throw new BadRequestException(
+  //       'Bad Request ! Check My Email And Password !',
+  //     );
+  //   } else {
+  //     return response.data;
+  //   }
+  // }
 
   // async verifyToken(user: LoginUserDTO) {
   //   const response = await this.httpService
