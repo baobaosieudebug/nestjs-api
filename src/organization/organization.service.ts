@@ -91,10 +91,9 @@ export class OrganizationService {
       throw new NotFoundException('Not found organization');
     }
     const user = await this.userService.getOneByEmailOrFail(decoded['email']);
-    if (decoded['organizationCode'].code != user.organizations.code) {
+    if (decoded['organizationCode'].code !== user.organizations.code) {
       throw new ForbiddenException('Forbidden');
     }
-
     return decoded['organizationCode'];
   }
   async create(dto: AddOrganizationDTO, req: any) {
@@ -135,12 +134,11 @@ export class OrganizationService {
     }
   }
 
-  async edit(id: number, dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
-    // const old = await this.checkOwner(id, req);
-    const old = await this.getOneByIdOrFail(id);
+  async edit(dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
+    const old = await this.checkOwner(req);
     try {
       const organization = await this.repo.merge(old, dto);
-      await this.repo.update(id, organization);
+      await this.repo.update(old.id, organization);
       return this.handleOrganizationResponse(organization);
     } catch (e) {
       this.logger.error(e);

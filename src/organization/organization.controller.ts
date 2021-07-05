@@ -32,6 +32,7 @@ export class OrganizationController {
   // }
 
   @ApiOkResponse({ description: 'Success' })
+  @UseGuards(RolesGuard)
   @Get()
   async getOneById(@Req() req) {
     const org = await this.organizationService.checkOwner(req);
@@ -72,9 +73,9 @@ export class OrganizationController {
   @ApiOkResponse({ description: 'Success' })
   @UseGuards(RolesGuard)
   @UsePipes(ValidationPipe)
-  @Put(':id')
-  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number, @Req() req): Promise<HandleOrganizationRO> {
-    return await this.organizationService.edit(id, dto, req);
+  @Put()
+  async edit(@Body() dto: EditOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
+    return await this.organizationService.edit(dto, req);
   }
 
   @ApiOkResponse({ description: 'Success' })
