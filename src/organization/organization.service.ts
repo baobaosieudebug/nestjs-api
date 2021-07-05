@@ -14,12 +14,18 @@ import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { GetOrganizationRO } from './ro/get-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
+import { randomString } from '@nestjs-query/query-typeorm/dist/src/common';
 import jwt_decode from 'jwt-decode';
+import { UsersService } from '../user/users.service';
 
 @Injectable()
 export class OrganizationService {
   private readonly logger = new Logger(ProjectService.name);
-  constructor(private readonly repo: OrganizationRepository, private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly repo: OrganizationRepository,
+    private readonly projectService: ProjectService,
+    private readonly userService: UsersService,
+  ) {}
 
   async getAll(): Promise<GetOrganizationRO[]> {
     const oldArray = await this.repo.getAll();
@@ -78,19 +84,29 @@ export class OrganizationService {
     }
   }
 
-  async checkOwner(orgId: number, req: any) {
+  async checkOwner(req: any) {
     const token = req.headers.authorization;
     const decoded = jwt_decode(token);
-    const org = await this.getOneByIdOrFail(orgId);
-    if (org.owner !== decoded['id']) {
+    if (!decoded['organizationCode']) {
+      throw new NotFoundException('Not found organization');
+    }
+    const user = await this.userService.getOneByEmailOrFail(decoded['email']);
+    if (decoded['organizationCode'].code != user.organizations.code) {
       throw new ForbiddenException('Forbidden');
     }
-    return org;
+
+    return decoded['organizationCode'];
   }
   async create(dto: AddOrganizationDTO, req: any) {
+    let found = true;
+    while (found) {
+      dto.code = randomString();
+      if ((await this.checkOrgByCode(dto.code)) == undefined) {
+        found = false;
+      }
+    }
     const token = req.headers.authorization;
     const decoded = jwt_decode(token);
-    await this.checkOrgByCode(dto.code);
     try {
       const newOrg = this.repo.create(dto);
       newOrg.owner = decoded['id'];
@@ -119,7 +135,8 @@ export class OrganizationService {
     }
   }
 
-  async edit(id: number, dto: EditOrganizationDTO): Promise<HandleOrganizationRO> {
+  async edit(id: number, dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
+    // const old = await this.checkOwner(id, req);
     const old = await this.getOneByIdOrFail(id);
     try {
       const organization = await this.repo.merge(old, dto);

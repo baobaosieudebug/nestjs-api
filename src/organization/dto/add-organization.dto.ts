@@ -9,9 +9,11 @@ export class AddOrganizationDTO {
   @Length(3, 30)
   name: string;
 
-  @ApiProperty({ type: String, example: 'AP-002' })
-  @Length(5, 10)
+  @ApiProperty({ type: String })
   code: string;
+
+  @ApiProperty({ type: String, example: 'Apple.com' })
+  domain: string;
 
   @ApiProperty({ type: String, example: 'Organization of Apple' })
   description: string;
@@ -24,7 +26,7 @@ export class AddOrganizationDTO {
   @Length(5, 50)
   city: string;
 
-  @ApiProperty({ type: String, example: 'Plan' })
+  @ApiProperty({ type: String, example: 'Planing' })
   @Length(5, 50)
   plan: string;
 

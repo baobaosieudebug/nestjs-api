@@ -15,8 +15,6 @@ import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
 import { RolesGuard } from '../authorization/guard/role.guard';
-import { Role } from '../authorization/role.enum';
-import { Roles } from '../authorization/role.decorator';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -25,20 +23,18 @@ import { Roles } from '../authorization/role.decorator';
 export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
-  @ApiOkResponse({ description: 'Success' })
-  @UseGuards(RolesGuard)
-  @Roles(Role.Admin)
-  @Get()
-  async getAll(): Promise<GetOrganizationRO[]> {
-    return await this.organizationService.getAll();
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.Admin)
+  // @Get()
+  // async getAll(): Promise<GetOrganizationRO[]> {
+  //   return await this.organizationService.getAll();
+  // }
 
   @ApiOkResponse({ description: 'Success' })
-  @Get(':id')
-  async getOneById(@Param('id') id: number, @Req() req): Promise<GetOrganizationRO> {
-    // const organization = await this.organizationService.getOneByIdOrFail(id);
-    // return await this.organizationService.getOrganizationResponse(organization);
-    const org = await this.organizationService.checkOwner(id, req);
+  @Get()
+  async getOneById(@Req() req) {
+    const org = await this.organizationService.checkOwner(req);
     return await this.organizationService.getOrganizationResponse(org);
   }
 
@@ -74,10 +70,11 @@ export class OrganizationController {
   }
 
   @ApiOkResponse({ description: 'Success' })
-  @Put(':id')
+  @UseGuards(RolesGuard)
   @UsePipes(ValidationPipe)
-  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number): Promise<HandleOrganizationRO> {
-    return await this.organizationService.edit(id, dto);
+  @Put(':id')
+  async edit(@Body() dto: EditOrganizationDTO, @Param('id') id: number, @Req() req): Promise<HandleOrganizationRO> {
+    return await this.organizationService.edit(id, dto, req);
   }
 
   @ApiOkResponse({ description: 'Success' })

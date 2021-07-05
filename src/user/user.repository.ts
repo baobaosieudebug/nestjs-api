@@ -8,7 +8,7 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async getOneByEmail(email: string) {
-    return this.findOne({ email, isDeleted: 0 });
+    return this.findOne({ email, isDeleted: 0 }, { relations: ['organizations'] });
   }
 
   getAll() {

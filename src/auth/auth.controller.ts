@@ -34,11 +34,6 @@ export class AuthController {
     return await this.authService.login(user);
   }
 
-  // @Get('verifyToken')
-  // async verifyToken(@Body() user: LoginUserDTO) {
-  //   return await this.authService.verifyToken(user);
-  // }
-
   async uploadToS3(@UploadedFile() file: Express.Multer.File) {
     const filePath = path.resolve(`D:/intern/get-started-project/upload`, file.originalname);
     const fileStream = fs.createReadStream(filePath);
@@ -80,11 +75,11 @@ export class AuthController {
 
   @Post('uploadImgToS3')
   @UseInterceptors(FileInterceptor('file', storage))
-  uploadImg(@UploadedFile() file) {
+  async uploadImg(@UploadedFile() file) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       throw new BadRequestException('Only images file is allowed!');
     } else {
-      this.uploadToS3(file);
+      await this.uploadToS3(file);
       throw new HttpException('Upload  Image Successfully!', HttpStatus.OK);
     }
   }

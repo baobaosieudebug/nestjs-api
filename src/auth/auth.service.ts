@@ -12,7 +12,7 @@ export class AuthService {
 
   async login(data: LoginUserDTO) {
     const user = await this.userService.getOneByEmailOrFail(data.email);
-    if ((await bcrypt.compare(data.password, user.password)) == false) {
+    if (!(await bcrypt.compare(data.password, user.password))) {
       throw new NotFoundException('User wrong password');
     }
     const token = this.getUserToken(user);
@@ -20,6 +20,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       roles: user.roles,
+      organizationCode: user.organizations,
       token,
     };
   }
@@ -29,6 +30,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       roles: user.roles,
+      organizationCode: user.organizations,
     };
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
     return token;

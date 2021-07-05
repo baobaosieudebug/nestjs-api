@@ -3,8 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,6 +21,9 @@ export class OrganizationEntity {
 
   @Column({ type: 'varchar', nullable: false })
   name: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  domain: string;
 
   @Column({ type: 'varchar', nullable: true })
   logo: string;
@@ -64,7 +67,7 @@ export class OrganizationEntity {
   @OneToMany(() => ProjectEntity, (project: ProjectEntity) => project.organization)
   projects: ProjectEntity[];
 
-  @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.organizations)
+  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.organizations)
   @JoinColumn({ name: 'owner_id' })
   user: UsersEntity;
 }
