@@ -11,9 +11,7 @@ import { ProjectService } from '../project/project.service';
 import { OrganizationEntity } from './organization.entity';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
-import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
-import { GetOrganizationRO } from './ro/get-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../user/users.service';
@@ -28,16 +26,7 @@ export class OrganizationService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getAll(): Promise<GetOrganizationRO[]> {
-    const oldArray = await this.repo.getAll();
-    const newArray: GetOrganizationRO[] = [];
-    for (let i = 0; i < oldArray.length; i++) {
-      const organizationRO = await this.handleOrganizationResponse(oldArray[i]);
-      newArray.push(organizationRO);
-    }
-    return newArray;
-  }
-  async handleOrganizationResponse(organization: OrganizationEntity): Promise<HandleOrganizationRO> {
+  handleOrganizationResponse(organization: OrganizationEntity): HandleOrganizationRO {
     const response = new HandleOrganizationRO();
     response.name = organization.name;
     response.code = organization.code;
@@ -75,7 +64,7 @@ export class OrganizationService {
     return organization;
   }
 
-  async getAllProjectById(id: number): Promise<GetProjectRO[]> {
+  async getAllProjectById(id: number): Promise<HandleProjectRO[]> {
     await this.getOneByIdOrFail(id);
     try {
       return await this.projectService.getAllProjectByIdOrg(id);
@@ -186,12 +175,12 @@ export class OrganizationService {
     }
   }
 
-  // async uploadLogo(req, file) {
-  //   const organization = await this.checkOwner(req);
-  //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-  //     throw new BadRequestException('Only images file is allowed!');
-  //   }
-  //   organization.logo = file.originalname;
-  //   return organization;
-  // }
+  async uploadLogo(req, file): Promise<HandleOrganizationRO> {
+    const organization = await this.checkOwner(req);
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      throw new BadRequestException('Only images file is allowed!');
+    }
+    organization.logo = file.originalname;
+    return this.handleOrganizationResponse(organization);
+  }
 }

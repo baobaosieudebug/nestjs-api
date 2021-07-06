@@ -74,11 +74,11 @@ export class ProjectService {
     }
   }
 
-  async getAllProjectByIdOrg(orgId: number): Promise<GetProjectRO[]> {
+  async getAllProjectByIdOrg(orgId: number): Promise<HandleProjectRO[]> {
     const oldArray = await this.repo.getProjectByIdOrg(orgId);
     const newArray: GetProjectRO[] = [];
     for (let i = 0; i < oldArray.length; i++) {
-      const projectRO = await this.getProjectResponse(oldArray[i]);
+      const projectRO = await this.handleProjectResponse(oldArray[i]);
       newArray.push(projectRO);
     }
     return newArray;

@@ -23,8 +23,6 @@ import {
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { OrganizationService } from './organization.service';
-import { GetOrganizationRO } from './ro/get-organization.ro';
-import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
 import { RolesGuard } from '../auth/role.guard';
@@ -43,19 +41,19 @@ export class OrganizationController {
   @Get()
   async getOneById(@Req() req): Promise<HandleOrganizationRO> {
     const org = await this.organizationService.checkOwner(req);
-    return await this.organizationService.handleOrganizationResponse(org);
+    return this.organizationService.handleOrganizationResponse(org);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get('code/:code')
-  async getOneTaskByCode(@Param('code') code: string): Promise<GetOrganizationRO> {
+  async getOneTaskByCode(@Param('code') code: string): Promise<HandleOrganizationRO> {
     const organization = await this.organizationService.getOneByCodeOrFail(code);
-    return await this.organizationService.handleOrganizationResponse(organization);
+    return this.organizationService.handleOrganizationResponse(organization);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get(':id/projects')
-  async getAllProjectById(@Param('id') id: number): Promise<GetProjectRO[]> {
+  async getAllProjectById(@Param('id') id: number): Promise<HandleProjectRO[]> {
     return await this.organizationService.getAllProjectById(id);
   }
 
@@ -85,13 +83,13 @@ export class OrganizationController {
     return await this.organizationService.edit(req, dto);
   }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @UseGuards(RolesGuard)
-  // @UseInterceptors(FileInterceptor('file', storage))
-  // @Put('/logo')
-  // async updateLogo(@Req() req, @UploadedFile() file: Express.Multer.File) {
-  //   return await this.organizationService.uploadLogo(req, file);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @UseGuards(RolesGuard)
+  @UseInterceptors(FileInterceptor('file', storage))
+  @Put('/logo')
+  async updateLogo(@Req() req, @UploadedFile() file: Express.Multer.File): Promise<HandleOrganizationRO> {
+    return await this.organizationService.uploadLogo(req, file);
+  }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
