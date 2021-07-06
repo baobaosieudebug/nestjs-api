@@ -93,7 +93,7 @@ export class OrganizationService {
       throw new NotFoundException('Not found organization');
     }
     const user = await this.userService.getOneByEmailOrFail(payload.email);
-    if (payload.organizationCode !== user.organizations.code) {
+    if (payload.organizationCode.code !== user.organizations.code) {
       throw new ForbiddenException('Forbidden');
     }
     return user.organizations;
@@ -114,7 +114,7 @@ export class OrganizationService {
     return code;
   }
 
-  async create(dto: AddOrganizationDTO, req: any) {
+  async create(req: any, dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
     const token = req.headers.authorization;
     const newToken = token.substring(7, token.length);
     const payload: any = this.jwtService.decode(newToken);
@@ -152,17 +152,17 @@ export class OrganizationService {
     }
   }
 
-  // async edit(dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
-  // const old = await this.checkOwner(req);
-  // try {
-  //   const organization = await this.repo.merge(old, dto);
-  //   await this.repo.update(old.id, organization);
-  //   return this.handleOrganizationResponse(organization);
-  // } catch (e) {
-  //   this.logger.error(e);
-  //   throw new InternalServerErrorException();
-  // }
-  // }
+  async edit(req: any, dto: EditOrganizationDTO): Promise<HandleOrganizationRO> {
+    const old = await this.checkOwner(req);
+    try {
+      const organization = await this.repo.merge(old, dto);
+      await this.repo.update(old.id, organization);
+      return this.handleOrganizationResponse(organization);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
 
   async delete(id: number): Promise<number> {
     const organization = await this.getOneByIdOrFail(id);

@@ -38,18 +38,10 @@ import { storage } from '../config/storage.config';
 export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.Admin)
-  // @Get()
-  // async getAll(): Promise<GetOrganizationRO[]> {
-  //   return await this.organizationService.getAll();
-  // }
-
   @ApiOkResponse({ description: 'Success' })
   @UseGuards(RolesGuard)
   @Get()
-  async getOneById(@Req() req) {
+  async getOneById(@Req() req): Promise<HandleOrganizationRO> {
     const org = await this.organizationService.checkOwner(req);
     return await this.organizationService.handleOrganizationResponse(org);
   }
@@ -72,8 +64,8 @@ export class OrganizationController {
   // @Roles(Role.Admin)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddOrganizationDTO, @Req() req) {
-    return await this.organizationService.create(dto, req);
+  async create(@Req() req, @Body() dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
+    return await this.organizationService.create(req, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
@@ -85,13 +77,13 @@ export class OrganizationController {
     return await this.organizationService.addProject(codeOrg, codeProject);
   }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @UseGuards(RolesGuard)
-  // @UsePipes(ValidationPipe)
-  // @Put()
-  // async edit(@Body() dto: EditOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
-  //   return await this.organizationService.edit(dto, req);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @UseGuards(RolesGuard)
+  @UsePipes(ValidationPipe)
+  @Put()
+  async edit(@Req() req, @Body() dto: EditOrganizationDTO): Promise<HandleOrganizationRO> {
+    return await this.organizationService.edit(req, dto);
+  }
 
   // @ApiOkResponse({ description: 'Success' })
   // @UseGuards(RolesGuard)
