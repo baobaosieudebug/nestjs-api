@@ -15,8 +15,7 @@ import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { GetOrganizationRO } from './ro/get-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
-import { randomString } from '@nestjs-query/query-typeorm/dist/src/common';
-import jwt_decode from 'jwt-decode';
+import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../user/users.service';
 
 @Injectable()
@@ -26,6 +25,7 @@ export class OrganizationService {
     private readonly repo: OrganizationRepository,
     private readonly projectService: ProjectService,
     private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async getAll(): Promise<GetOrganizationRO[]> {
@@ -41,6 +41,13 @@ export class OrganizationService {
     const response = new HandleOrganizationRO();
     response.name = organization.name;
     response.code = organization.code;
+    response.domain = organization.domain;
+    response.logo = organization.logo;
+    response.description = organization.description;
+    response.address = organization.address;
+    response.city = organization.city;
+    response.country = organization.country;
+    response.plan = organization.plan;
     return response;
   }
 
@@ -80,15 +87,16 @@ export class OrganizationService {
 
   async checkOwner(req: any): Promise<OrganizationEntity> {
     const token = req.headers.authorization;
-    const decoded = jwt_decode(token);
-    if (!decoded['organizationCode']) {
+    const newToken = token.substring(7, token.length);
+    const payload: any = this.jwtService.decode(newToken);
+    if (!payload.organizationCode) {
       throw new NotFoundException('Not found organization');
     }
-    const user = await this.userService.getOneByEmailOrFail(decoded['email']);
-    if (decoded['organizationCode'].code !== user.organizations.code) {
+    const user = await this.userService.getOneByEmailOrFail(payload.email);
+    if (payload.organizationCode !== user.organizations.code) {
       throw new ForbiddenException('Forbidden');
     }
-    return decoded['organizationCode'];
+    return user.organizations;
   }
 
   async createCodeOrganization(length: number) {
@@ -110,19 +118,21 @@ export class OrganizationService {
     const token = req.headers.authorization;
     const newToken = token.substring(7, token.length);
     const payload: any = this.jwtService.decode(newToken);
-    if (payload.organizationCode) {
+    const randomCode = await this.createCodeOrganization(10);
+    const user = await this.userService.getOneByEmailOrFail(payload.email);
+    if (user.organizations) {
       throw new BadRequestException('User created Organization');
     }
-    return this.createCodeOrganization(10);
-    // try {
-    //   const newOrg = this.repo.create(dto);
-    //   newOrg.owner = decoded['id'];
-    //   await this.repo.save(newOrg);
-    //   return this.handleOrganizationResponse(newOrg);
-    // } catch (e) {
-    //   this.logger.error(e);
-    //   throw new InternalServerErrorException();
-    // }
+    try {
+      const newOrg = this.repo.create(dto);
+      newOrg.ownerId = payload.id;
+      newOrg.code = randomCode;
+      await this.repo.save(newOrg);
+      return this.handleOrganizationResponse(newOrg);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
   }
 
   async addProject(codeOrg: string, codeProject: string): Promise<HandleProjectRO> {
@@ -142,17 +152,17 @@ export class OrganizationService {
     }
   }
 
-  async edit(dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
-    const old = await this.checkOwner(req);
-    try {
-      const organization = await this.repo.merge(old, dto);
-      await this.repo.update(old.id, organization);
-      return this.handleOrganizationResponse(organization);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async edit(dto: EditOrganizationDTO, req): Promise<HandleOrganizationRO> {
+  // const old = await this.checkOwner(req);
+  // try {
+  //   const organization = await this.repo.merge(old, dto);
+  //   await this.repo.update(old.id, organization);
+  //   return this.handleOrganizationResponse(organization);
+  // } catch (e) {
+  //   this.logger.error(e);
+  //   throw new InternalServerErrorException();
+  // }
+  // }
 
   async delete(id: number): Promise<number> {
     const organization = await this.getOneByIdOrFail(id);
@@ -175,4 +185,13 @@ export class OrganizationService {
       throw new InternalServerErrorException();
     }
   }
+
+  // async uploadLogo(req, file) {
+  //   const organization = await this.checkOwner(req);
+  //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  //     throw new BadRequestException('Only images file is allowed!');
+  //   }
+  //   organization.logo = file.originalname;
+  //   return organization;
+  // }
 }

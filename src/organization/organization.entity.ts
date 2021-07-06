@@ -59,7 +59,7 @@ export class OrganizationEntity {
   updatedAt: Date;
 
   @Column({ name: 'owner_id', nullable: true })
-  owner: number;
+  ownerId: number;
 
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;

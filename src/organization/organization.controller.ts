@@ -1,5 +1,18 @@
-import { Delete, Get, Param, Put, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Delete,
+  Get,
+  Param,
+  Put,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+  Body,
+  Controller,
+  Post,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -14,7 +27,9 @@ import { GetOrganizationRO } from './ro/get-organization.ro';
 import { GetProjectRO } from '../project/ro/get-project.ro';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
-import { RolesGuard } from '../authorization/guard/role.guard';
+import { RolesGuard } from '../auth/role.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage } from '../config/storage.config';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -70,13 +85,21 @@ export class OrganizationController {
     return await this.organizationService.addProject(codeOrg, codeProject);
   }
 
-  @ApiOkResponse({ description: 'Success' })
-  @UseGuards(RolesGuard)
-  @UsePipes(ValidationPipe)
-  @Put()
-  async edit(@Body() dto: EditOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
-    return await this.organizationService.edit(dto, req);
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @UseGuards(RolesGuard)
+  // @UsePipes(ValidationPipe)
+  // @Put()
+  // async edit(@Body() dto: EditOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
+  //   return await this.organizationService.edit(dto, req);
+  // }
+
+  // @ApiOkResponse({ description: 'Success' })
+  // @UseGuards(RolesGuard)
+  // @UseInterceptors(FileInterceptor('file', storage))
+  // @Put('/logo')
+  // async updateLogo(@Req() req, @UploadedFile() file: Express.Multer.File) {
+  //   return await this.organizationService.uploadLogo(req, file);
+  // }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
