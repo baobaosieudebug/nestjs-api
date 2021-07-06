@@ -85,7 +85,7 @@ export class OrganizationService {
     }
   }
 
-  async checkOwner(req: any) {
+  async checkOwner(req: any): Promise<OrganizationEntity> {
     const token = req.headers.authorization;
     const decoded = jwt_decode(token);
     if (!decoded['organizationCode']) {
@@ -97,7 +97,7 @@ export class OrganizationService {
     }
     return decoded['organizationCode'];
   }
-  async create(dto: AddOrganizationDTO, req: any) {
+  async create(dto: AddOrganizationDTO, req: any): Promise<HandleOrganizationRO> {
     const token = req.headers.authorization;
     const decoded = jwt_decode(token);
     if (decoded['organizationCode']) {
@@ -106,7 +106,8 @@ export class OrganizationService {
     let found = true;
     while (found) {
       dto.code = randomString();
-      if ((await this.checkOrgByCode(dto.code)) == undefined) {
+      const checkOrg = this.checkOrgByCode(dto.code);
+      if (!checkOrg) {
         found = false;
       }
     }

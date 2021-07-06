@@ -34,7 +34,7 @@ export class OrganizationController {
   @ApiOkResponse({ description: 'Success' })
   @UseGuards(RolesGuard)
   @Get()
-  async getOneById(@Req() req) {
+  async getOneById(@Req() req): Promise<HandleOrganizationRO> {
     const org = await this.organizationService.checkOwner(req);
     return await this.organizationService.getOrganizationResponse(org);
   }
@@ -57,7 +57,7 @@ export class OrganizationController {
   // @Roles(Role.Admin)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddOrganizationDTO, @Req() req) {
+  async create(@Body() dto: AddOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
     return await this.organizationService.create(dto, req);
   }
 
