@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { HttpService } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
+import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { UsersService } from '../user/users.service';
 
 @Injectable()

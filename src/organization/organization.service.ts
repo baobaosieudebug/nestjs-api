@@ -6,15 +6,15 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { OrganizationRepository } from './organization.repository';
 import { ProjectService } from '../project/project.service';
+import { UsersService } from '../user/users.service';
 import { OrganizationEntity } from './organization.entity';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../user/users.service';
 
 @Injectable()
 export class OrganizationService {

@@ -20,12 +20,12 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { OrganizationService } from './organization.service';
+import { RolesGuard } from '../auth/role.guard';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
-import { OrganizationService } from './organization.service';
 import { HandleOrganizationRO } from './ro/handle-organization.ro';
 import { HandleProjectRO } from '../project/ro/handle-project.ro';
-import { RolesGuard } from '../auth/role.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storage } from '../config/storage.config';
 

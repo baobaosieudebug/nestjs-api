@@ -1,13 +1,22 @@
-import { BadRequestException, Get, HttpException, HttpStatus, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Get,
+  HttpException,
+  HttpStatus,
+  UploadedFile,
+  UseInterceptors,
+  Body,
+  Controller,
+  Post,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import path = require('path');
 import { ApiTags } from '@nestjs/swagger';
+import path = require('path');
+import * as AWS from 'aws-sdk';
+import * as fs from 'fs';
 import { Public } from '../decorators/public.decorator';
 import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { AuthService } from './auth.service';
-import * as AWS from 'aws-sdk';
-import * as fs from 'fs';
 import { awsConfig } from '../config/aws.config';
 import { storage } from '../config/storage.config';
 

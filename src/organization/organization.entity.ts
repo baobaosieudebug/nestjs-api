@@ -43,19 +43,10 @@ export class OrganizationEntity {
   @Column({ type: 'varchar', nullable: false })
   country: string;
 
-  @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   @Column({ name: 'owner_id', nullable: true })
