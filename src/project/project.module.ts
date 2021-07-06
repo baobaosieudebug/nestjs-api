@@ -5,9 +5,20 @@ import { UsersModule } from '../user/users.module';
 import { ProjectRepository } from './project.repository';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
+import { JwtModule } from '@nestjs/jwt';
+import { OrganizationModule } from '../organization/organization.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectRepository]), forwardRef(() => UsersModule), TaskModule],
+  imports: [
+    TypeOrmModule.forFeature([ProjectRepository]),
+    forwardRef(() => UsersModule),
+    TaskModule,
+    OrganizationModule,
+    JwtModule.register({
+      secret: 'SECRET',
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],
   providers: [ProjectService],
   controllers: [ProjectController],
   exports: [ProjectService, TypeOrmModule],

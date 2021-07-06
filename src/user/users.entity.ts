@@ -43,4 +43,10 @@ export class UsersEntity {
 
   @OneToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.user)
   organizations: OrganizationEntity;
+
+  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.createBy)
+  project: ProjectEntity;
+
+  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.admin)
+  projectAdmin: ProjectEntity;
 }

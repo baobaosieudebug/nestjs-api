@@ -11,6 +11,8 @@ import { GetUserRO } from '../user/ro/get-user.ro';
 import { HandleProjectRO } from './ro/handle-project.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
 import { HandleUserRO } from '../user/ro/handle-user.ro';
+import { JwtService } from '@nestjs/jwt';
+import { OrganizationService } from '../organization/organization.service';
 
 @Injectable()
 export class ProjectService {
@@ -19,6 +21,8 @@ export class ProjectService {
     private readonly repo: ProjectRepository,
     private readonly userService: UsersService,
     private readonly taskService: TaskService,
+    private readonly jwtService: JwtService,
+    private readonly orgService: OrganizationService,
   ) {}
 
   async getOneById(id: number): Promise<ProjectEntity> {
@@ -115,9 +119,18 @@ export class ProjectService {
     return project;
   }
 
-  async createProject(dto: AddProjectDTO): Promise<HandleProjectRO> {
+  async createProject(req: any, dto: AddProjectDTO) {
+    const token = req.headers.authorization;
+    const newToken = token.substring(7, token.length);
+    const payload: any = this.jwtService.decode(newToken);
+    const organization = await this.orgService.checkOwner(req);
+    const randomCode = await this.orgService.createCode(10);
     try {
       const project = this.repo.create(dto);
+      project.createById = payload.id;
+      project.adminId = payload.id;
+      project.organizationId = organization.id;
+      project.code = randomCode;
       await this.repo.save(project);
       return this.handleProjectResponse(project);
     } catch (e) {

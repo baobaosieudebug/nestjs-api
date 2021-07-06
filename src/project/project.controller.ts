@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -15,6 +27,7 @@ import { GetTaskRO } from '../task/ro/get-task.ro';
 import { GetUserRO } from '../user/ro/get-user.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
 import { HandleUserRO } from '../user/ro/handle-user.ro';
+import { RolesGuard } from '../auth/role.guard';
 
 @ApiTags('Project')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -57,10 +70,11 @@ export class ProjectController {
   }
 
   @ApiCreatedResponse({ description: 'Created' })
+  @UseGuards(RolesGuard)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddProjectDTO): Promise<HandleProjectRO> {
-    return await this.projectService.createProject(dto);
+  async create(@Req() req, @Body() dto: AddProjectDTO) {
+    return await this.projectService.createProject(req, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
