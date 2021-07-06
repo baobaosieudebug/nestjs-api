@@ -13,9 +13,11 @@ export class AddOrganizationDTO {
   code: string;
 
   @ApiProperty({ type: String, example: 'Apple.com' })
+  @Length(5, 50)
   domain: string;
 
   @ApiProperty({ type: String, example: 'Organization of Apple' })
+  @Length(5, 255)
   description: string;
 
   @ApiProperty({ type: String, example: '19111 Pruners Avenue Cupertino, CA 95014' })

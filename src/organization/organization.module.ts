@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrganizationRepository } from './organization.repository';
 import { ProjectModule } from '../project/project.module';
@@ -10,8 +10,8 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrganizationRepository]),
-    ProjectModule,
-    UsersModule,
+    forwardRef(() => ProjectModule),
+    forwardRef(() => UsersModule),
     JwtModule.register({
       secret: 'SECRET',
       signOptions: { expiresIn: '60s' },

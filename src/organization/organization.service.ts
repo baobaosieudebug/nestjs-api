@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -21,6 +23,7 @@ export class OrganizationService {
   private readonly logger = new Logger(ProjectService.name);
   constructor(
     private readonly repo: OrganizationRepository,
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
@@ -88,7 +91,7 @@ export class OrganizationService {
     return user.organizations;
   }
 
-  async createCodeOrganization(length: number) {
+  async createCode(length: number) {
     let found = true;
     let code = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -107,7 +110,7 @@ export class OrganizationService {
     const token = req.headers.authorization;
     const newToken = token.substring(7, token.length);
     const payload: any = this.jwtService.decode(newToken);
-    const randomCode = await this.createCodeOrganization(10);
+    const randomCode = await this.createCode(10);
     const user = await this.userService.getOneByEmailOrFail(payload.email);
     if (user.organizations) {
       throw new BadRequestException('User created Organization');
