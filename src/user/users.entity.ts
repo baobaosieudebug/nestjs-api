@@ -2,7 +2,7 @@ import { ProjectEntity } from 'src/project/project.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
-import { Role } from '../authorization/role.enum';
+import { Role } from '../auth/role.enum';
 import { OrganizationEntity } from '../organization/organization.entity';
 
 @Entity('users')

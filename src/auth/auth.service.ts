@@ -30,7 +30,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       roles: user.roles,
-      organizationCode: user.organizations,
+      organizationCode: user.organizations.code,
     };
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
     return token;
