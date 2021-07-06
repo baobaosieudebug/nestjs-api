@@ -32,18 +32,11 @@ export class OrganizationService {
     const oldArray = await this.repo.getAll();
     const newArray: GetOrganizationRO[] = [];
     for (let i = 0; i < oldArray.length; i++) {
-      const organizationRO = await this.getOrganizationResponse(oldArray[i]);
+      const organizationRO = await this.handleOrganizationResponse(oldArray[i]);
       newArray.push(organizationRO);
     }
     return newArray;
   }
-  async getOrganizationResponse(organization: OrganizationEntity): Promise<GetOrganizationRO> {
-    const response = new GetOrganizationRO();
-    response.name = organization.name;
-    response.code = organization.code;
-    return response;
-  }
-
   async handleOrganizationResponse(organization: OrganizationEntity): Promise<HandleOrganizationRO> {
     const response = new HandleOrganizationRO();
     response.name = organization.name;
@@ -97,29 +90,39 @@ export class OrganizationService {
     }
     return decoded['organizationCode'];
   }
-  async create(dto: AddOrganizationDTO, req: any): Promise<HandleOrganizationRO> {
+
+  async createCodeOrganization(length: number) {
+    let found = true;
+    let code = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    while (found) {
+      for (let i = 0; i < length; i++) {
+        code += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      await this.checkOrgByCode(code);
+      found = false;
+    }
+    return code;
+  }
+
+  async create(dto: AddOrganizationDTO, req: any) {
     const token = req.headers.authorization;
-    const decoded = jwt_decode(token);
-    if (decoded['organizationCode']) {
+    const newToken = token.substring(7, token.length);
+    const payload: any = this.jwtService.decode(newToken);
+    if (payload.organizationCode) {
       throw new BadRequestException('User created Organization');
     }
-    let found = true;
-    while (found) {
-      dto.code = randomString();
-      const checkOrg = this.checkOrgByCode(dto.code);
-      if (!checkOrg) {
-        found = false;
-      }
-    }
-    try {
-      const newOrg = this.repo.create(dto);
-      newOrg.owner = decoded['id'];
-      await this.repo.save(newOrg);
-      return this.handleOrganizationResponse(newOrg);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
+    return this.createCodeOrganization(10);
+    // try {
+    //   const newOrg = this.repo.create(dto);
+    //   newOrg.owner = decoded['id'];
+    //   await this.repo.save(newOrg);
+    //   return this.handleOrganizationResponse(newOrg);
+    // } catch (e) {
+    //   this.logger.error(e);
+    //   throw new InternalServerErrorException();
+    // }
   }
 
   async addProject(codeOrg: string, codeProject: string): Promise<HandleProjectRO> {

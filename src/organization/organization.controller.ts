@@ -34,16 +34,16 @@ export class OrganizationController {
   @ApiOkResponse({ description: 'Success' })
   @UseGuards(RolesGuard)
   @Get()
-  async getOneById(@Req() req): Promise<HandleOrganizationRO> {
+  async getOneById(@Req() req) {
     const org = await this.organizationService.checkOwner(req);
-    return await this.organizationService.getOrganizationResponse(org);
+    return await this.organizationService.handleOrganizationResponse(org);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Get('code/:code')
   async getOneTaskByCode(@Param('code') code: string): Promise<GetOrganizationRO> {
     const organization = await this.organizationService.getOneByCodeOrFail(code);
-    return await this.organizationService.getOrganizationResponse(organization);
+    return await this.organizationService.handleOrganizationResponse(organization);
   }
 
   @ApiOkResponse({ description: 'Success' })
@@ -57,7 +57,7 @@ export class OrganizationController {
   // @Roles(Role.Admin)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Body() dto: AddOrganizationDTO, @Req() req): Promise<HandleOrganizationRO> {
+  async create(@Body() dto: AddOrganizationDTO, @Req() req) {
     return await this.organizationService.create(dto, req);
   }
 
