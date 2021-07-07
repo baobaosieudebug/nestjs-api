@@ -14,6 +14,9 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
   getByCode(code: string) {
     return this.findOne({ code, isDeleted: 0 });
   }
+  getOrgByOwnerId(ownerId: number) {
+    return this.findOne({ ownerId, isDeleted: 0 });
+  }
 
   async isOrgExistCode(code: string): Promise<boolean> {
     const checkExist = await this.count({

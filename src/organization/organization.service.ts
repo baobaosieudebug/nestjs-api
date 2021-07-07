@@ -84,11 +84,11 @@ export class OrganizationService {
     if (!payload.organizationCode) {
       throw new NotFoundException('Not found organization');
     }
-    const user = await this.userService.getOneByEmailOrFail(payload.email);
-    if (payload.organizationCode.code !== user.organizations.code) {
+    const org = await this.repo.getOrgByOwnerId(payload.id);
+    if (payload.organizationCode.code !== org.code) {
       throw new ForbiddenException('Forbidden');
     }
-    return user.organizations;
+    return org;
   }
 
   async createCode(length: number) {
