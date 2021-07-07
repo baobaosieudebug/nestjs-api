@@ -15,7 +15,7 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return this.findOne({ code, isDeleted: 0 });
   }
   getOrgByOwnerId(ownerId: number) {
-    return this.findOne({ ownerId, isDeleted: 0 });
+    return this.findOne({ ownerId, isDeleted: 0 }, { relations: ['users'] });
   }
 
   async isOrgExistCode(code: string): Promise<boolean> {
@@ -23,5 +23,9 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
       where: { code, isDeleted: 0 },
     });
     return checkExist > 0;
+  }
+
+  async getOneAndUserRelation(code: string) {
+    return this.findOne({ code, isDeleted: 0 }, { relations: ['users'] });
   }
 }

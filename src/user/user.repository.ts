@@ -8,7 +8,7 @@ export class UserRepository extends Repository<UsersEntity> {
   }
 
   async getOneByEmail(email: string) {
-    return this.findOne({ email, isDeleted: 0 }, { relations: ['organizations'] });
+    return this.findOne({ email, isDeleted: 0 }, { relations: ['organization'] });
   }
 
   getAll() {
@@ -17,6 +17,10 @@ export class UserRepository extends Repository<UsersEntity> {
 
   getOneAndGroupRelation(id) {
     return this.findOne({ id, isDeleted: 0 }, { relations: ['groups'] });
+  }
+
+  getOneAndOrgRelation(id: number) {
+    return this.findOne({ id, isDeleted: 0 }, { relations: ['organizations'] });
   }
 
   async getAllUserByIdProject(projectId: number) {

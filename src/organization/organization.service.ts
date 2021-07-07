@@ -137,6 +137,16 @@ export class OrganizationService {
     }
   }
 
+  async addUser(codeOrg: string, idUser: number) {
+    await this.getOneByCodeOrFail(codeOrg);
+    try {
+      return this.userService.addUserOrganization(codeOrg, idUser);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
   async checkOrgByCode(code: string) {
     const organization = await this.repo.isOrgExistCode(code);
     if (organization) {

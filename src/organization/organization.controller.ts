@@ -76,6 +76,12 @@ export class OrganizationController {
   }
 
   @ApiOkResponse({ description: 'Success' })
+  @Post(':code/addUser/:id')
+  async addUser(@Param('code') codeOrg: string, @Param('id') idUser: number) {
+    return await this.organizationService.addUser(codeOrg, idUser);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
   @UseGuards(RolesGuard)
   @UsePipes(ValidationPipe)
   @Put()

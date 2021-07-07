@@ -6,12 +6,11 @@ import { UserRepository } from './user.repository';
 import { ProjectRepository } from '../project/project.repository';
 import { GroupRepository } from '../group/group.repository';
 import { TaskService } from '../task/task.service';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { GetUserRO } from './ro/get-user.ro';
 import { UsersEntity } from './users.entity';
-import * as jwt from 'jsonwebtoken';
 import { HandleUserRO } from './ro/handle-user.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
+import { OrganizationRepository } from '../organization/organization.repository';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +20,7 @@ export class UsersService {
     private readonly taskService: TaskService,
     private readonly projectRepo: ProjectRepository,
     private readonly groupRepo: GroupRepository,
+    private readonly orgRepo: OrganizationRepository,
   ) {}
 
   async getOneById(id: number) {
@@ -111,6 +111,19 @@ export class UsersService {
     }
   }
 
+  async addUserOrganization(code: string, idUser: number) {
+    const userExist = await this.getOneByIdOrFail(idUser);
+    try {
+      const organization = await this.orgRepo.getOneAndUserRelation(code);
+      await organization.users.push(userExist);
+      await this.orgRepo.save(organization);
+      return this.handleUserResponse(userExist);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
   async assignTask(idUser: number, codeTask: string): Promise<HandleTaskRO> {
     await this.getOneByIdOrFail(idUser);
     try {
@@ -173,30 +186,5 @@ export class UsersService {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
-  }
-
-  async login(data: LoginUserDTO) {
-    // find username exist in db
-    const user = await this.repo.findOne({ email: data.email });
-    // if ((await bcrypt.compare(data.password, user.password)) == false) {
-    //   throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
-    // }
-    const token = this.getUserToken(user);
-    return {
-      id: user.id,
-      email: user.email,
-      roles: user.roles,
-      token,
-    };
-  }
-
-  private getUserToken(user) {
-    const payload = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
-    const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
-    return token;
   }
 }
