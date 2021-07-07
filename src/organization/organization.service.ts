@@ -8,15 +8,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { OrganizationRepository } from './organization.repository';
 import { ProjectService } from '../project/project.service';
-import { UsersService } from '../user/users.service';
 import { OrganizationEntity } from './organization.entity';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
-import { HandleOrganizationRO } from './ro/handle-organization.ro';
-import { HandleProjectRO } from '../project/ro/handle-project.ro';
+import { OrganizationRO } from './ro/organization.ro';
+import { RandomString } from '../common/utils/random-string';
 
 @Injectable()
 export class OrganizationService {
@@ -25,15 +23,11 @@ export class OrganizationService {
     private readonly repo: OrganizationRepository,
     @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
-    private readonly userService: UsersService,
-    private readonly jwtService: JwtService,
   ) {}
 
-  handleOrganizationResponse(organization: OrganizationEntity): HandleOrganizationRO {
-    const response = new HandleOrganizationRO();
+  mappingOrganizationRO(organization: OrganizationEntity): OrganizationRO {
+    const response = new OrganizationRO();
     response.name = organization.name;
-    response.code = organization.code;
-    response.domain = organization.domain;
     response.logo = organization.logo;
     response.description = organization.description;
     response.address = organization.address;
@@ -43,76 +37,42 @@ export class OrganizationService {
     return response;
   }
 
-  async getOneById(id: number): Promise<OrganizationEntity> {
-    return await this.repo.getById(id);
-  }
-
-  async getOneByIdOrFail(id: number): Promise<OrganizationEntity> {
-    const organization = await this.getOneById(id);
-    if (!organization) {
-      throw new NotFoundException('Organization not found');
-    }
-    return organization;
-  }
-
   getOneByCode(code: string): Promise<OrganizationEntity> {
     return this.repo.getByCode(code);
   }
 
-  async getOneByCodeOrFail(code: string): Promise<OrganizationEntity> {
-    const organization = await this.getOneByCode(code);
-    if (!organization) {
-      throw new NotFoundException('Organization not found');
-    }
-    return organization;
+  async getOneOrFail(payload): Promise<OrganizationEntity> {
+    await this.isOwner(payload);
+    return await this.getOneByCode(payload.organizationCode.code);
   }
 
-  async getAllProjectById(id: number): Promise<HandleProjectRO[]> {
-    await this.getOneByIdOrFail(id);
-    try {
-      return await this.projectService.getAllProjectByIdOrg(id);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async checkOwner(req: any): Promise<OrganizationEntity> {
-    const token = req.headers.authorization;
-    const newToken = token.substring(7, token.length);
-    const payload: any = this.jwtService.decode(newToken);
+  async isOwner(payload) {
     if (!payload.organizationCode) {
       throw new NotFoundException('Not found organization');
     }
-    const org = await this.repo.getOrgByOwnerId(payload.id);
-    if (payload.organizationCode.code !== org.code) {
+    const org = await this.repo.isOwnerOrg(payload.organizationCode.code, payload.id);
+    if (!org) {
       throw new ForbiddenException('Forbidden');
     }
-    return org;
   }
 
-  async createCode(length: number) {
-    let found = true;
+  async createCode(): Promise<string> {
     let code = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
+    let found = true;
     while (found) {
-      for (let i = 0; i < length; i++) {
-        code += characters.charAt(Math.floor(Math.random() * charactersLength));
+      code = RandomString(10);
+      const existCode = await this.repo.isOrgExistCode(code);
+      if (!existCode) {
+        found = false;
       }
-      await this.checkOrgByCode(code);
-      found = false;
     }
     return code;
   }
 
-  async create(req: any, dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
-    const token = req.headers.authorization;
-    const newToken = token.substring(7, token.length);
-    const payload: any = this.jwtService.decode(newToken);
-    const randomCode = await this.createCode(10);
-    const user = await this.userService.getOneByEmailOrFail(payload.email);
-    if (user.organizations) {
+  async create(payload, dto: AddOrganizationDTO): Promise<OrganizationRO> {
+    const randomCode = await this.createCode();
+    const org = await this.repo.isExistOwner(payload.id);
+    if (org) {
       throw new BadRequestException('User created Organization');
     }
     try {
@@ -120,80 +80,44 @@ export class OrganizationService {
       newOrg.ownerId = payload.id;
       newOrg.code = randomCode;
       await this.repo.save(newOrg);
-      return this.handleOrganizationResponse(newOrg);
+      return this.mappingOrganizationRO(newOrg);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async addProject(codeOrg: string, codeProject: string): Promise<HandleProjectRO> {
-    const checkExist = await this.getOneByCodeOrFail(codeOrg);
-    try {
-      return this.projectService.addProject(checkExist.id, codeProject);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async addUser(codeOrg: string, idUser: number) {
-    await this.getOneByCodeOrFail(codeOrg);
-    try {
-      return this.userService.addUserOrganization(codeOrg, idUser);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async checkOrgByCode(code: string) {
-    const organization = await this.repo.isOrgExistCode(code);
-    if (organization) {
-      throw new NotFoundException('Organization Exist');
-    }
-  }
-
-  async edit(req: any, dto: EditOrganizationDTO): Promise<HandleOrganizationRO> {
-    const old = await this.checkOwner(req);
+  async edit(payload, dto: EditOrganizationDTO): Promise<OrganizationRO> {
+    await this.isOwner(payload);
+    const old = await this.getOneByCode(payload.organizationCode.code);
     try {
       const organization = await this.repo.merge(old, dto);
       await this.repo.update(old.id, organization);
-      return this.handleOrganizationResponse(organization);
+      return this.mappingOrganizationRO(organization);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
 
-  async delete(id: number): Promise<number> {
-    const organization = await this.getOneByIdOrFail(id);
-    try {
-      organization.isDeleted = organization.id;
-      await this.repo.update(id, organization);
-      return id;
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async delete(id: number): Promise<number> {
+  //   const organization = await this.getOneByIdOrFail(id);
+  //   try {
+  //     organization.isDeleted = organization.id;
+  //     await this.repo.update(id, organization);
+  //     return id;
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
-  async removeProject(code: string, codeProject: string): Promise<HandleProjectRO> {
-    const checkExist = await this.getOneByCodeOrFail(code);
-    try {
-      return this.projectService.removeProject(checkExist.id, codeProject);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async uploadLogo(req, file): Promise<HandleOrganizationRO> {
-    const organization = await this.checkOwner(req);
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      throw new BadRequestException('Only images file is allowed!');
-    }
-    organization.logo = file.originalname;
-    return this.handleOrganizationResponse(organization);
-  }
+  // async uploadLogo(req, file): Promise<OrganizationRO> {
+  //   const organization = await this.isOwner(req);
+  //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  //     throw new BadRequestException('Only images file is allowed!');
+  //   }
+  //   organization.logo = file.originalname;
+  //   return this.mappingOrganizationRO(organization);
+  // }
 }

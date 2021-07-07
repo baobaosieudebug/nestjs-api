@@ -1,18 +1,4 @@
-import {
-  Delete,
-  Get,
-  Param,
-  Put,
-  Req,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-  ValidationPipe,
-  Body,
-  Controller,
-  Post,
-} from '@nestjs/common';
+import { Get, Put, UsePipes, ValidationPipe, Body, Controller, Post } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -21,13 +7,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { OrganizationService } from './organization.service';
-import { RolesGuard } from '../auth/role.guard';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
-import { HandleOrganizationRO } from './ro/handle-organization.ro';
-import { HandleProjectRO } from '../project/ro/handle-project.ro';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { storage } from '../config/storage.config';
+import { OrganizationRO } from './ro/organization.ro';
+import { Payload } from '../decorators/payload.decorator';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -37,77 +20,37 @@ export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
   @ApiOkResponse({ description: 'Success' })
-  @UseGuards(RolesGuard)
   @Get()
-  async getOneById(@Req() req): Promise<HandleOrganizationRO> {
-    const org = await this.organizationService.checkOwner(req);
-    return this.organizationService.handleOrganizationResponse(org);
-  }
-
-  @ApiOkResponse({ description: 'Success' })
-  @Get('code/:code')
-  async getOneTaskByCode(@Param('code') code: string): Promise<HandleOrganizationRO> {
-    const organization = await this.organizationService.getOneByCodeOrFail(code);
-    return this.organizationService.handleOrganizationResponse(organization);
-  }
-
-  @ApiOkResponse({ description: 'Success' })
-  @Get(':id/projects')
-  async getAllProjectById(@Param('id') id: number): Promise<HandleProjectRO[]> {
-    return await this.organizationService.getAllProjectById(id);
+  async getOne(@Payload() payload): Promise<OrganizationRO> {
+    const org = await this.organizationService.getOneOrFail(payload);
+    return this.organizationService.mappingOrganizationRO(org);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
-  @UseGuards(RolesGuard)
-  // @Roles(Role.Admin)
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Req() req, @Body() dto: AddOrganizationDTO): Promise<HandleOrganizationRO> {
-    return await this.organizationService.create(req, dto);
+  async create(@Payload() payload, @Body() dto: AddOrganizationDTO): Promise<OrganizationRO> {
+    return await this.organizationService.create(payload, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
-  @Post(':code/addProject/:codeProject')
-  async addProject(
-    @Param('code') codeOrg: string,
-    @Param('codeProject') codeProject: string,
-  ): Promise<HandleProjectRO> {
-    return await this.organizationService.addProject(codeOrg, codeProject);
-  }
-
-  @ApiOkResponse({ description: 'Success' })
-  @Post(':code/addUser/:id')
-  async addUser(@Param('code') codeOrg: string, @Param('id') idUser: number) {
-    return await this.organizationService.addUser(codeOrg, idUser);
-  }
-
-  @ApiOkResponse({ description: 'Success' })
-  @UseGuards(RolesGuard)
   @UsePipes(ValidationPipe)
   @Put()
-  async edit(@Req() req, @Body() dto: EditOrganizationDTO): Promise<HandleOrganizationRO> {
-    return await this.organizationService.edit(req, dto);
+  async edit(@Payload() payload, @Body() dto: EditOrganizationDTO): Promise<OrganizationRO> {
+    return await this.organizationService.edit(payload, dto);
   }
 
-  @ApiOkResponse({ description: 'Success' })
-  @UseGuards(RolesGuard)
-  @UseInterceptors(FileInterceptor('file', storage))
-  @Put('/logo')
-  async updateLogo(@Req() req, @UploadedFile() file: Express.Multer.File): Promise<HandleOrganizationRO> {
-    return await this.organizationService.uploadLogo(req, file);
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @UseGuards(RolesGuard)
+  // @UseInterceptors(FileInterceptor('file', storage))
+  // @Put('/logo')
+  // async updateLogo(@Req() req, @UploadedFile() file: Express.Multer.File): Promise<OrganizationRO> {
+  //   return await this.organizationService.uploadLogo(req, file);
+  // }
 
-  @ApiOkResponse({ description: 'Success' })
-  @Delete(':id')
-  async delete(@Param('id') id: number): Promise<number> {
-    return await this.organizationService.delete(id);
-  }
-
-  @Delete(':code/removeProject/:codeProject')
-  async removeProjectInOrg(
-    @Param('codeProject') codeProject: string,
-    @Param('code') code: string,
-  ): Promise<HandleProjectRO> {
-    return await this.organizationService.removeProject(code, codeProject);
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @Delete(':id')
+  // async delete(@Param('id') id: number): Promise<number> {
+  //   return await this.organizationService.delete(id);
+  // }
 }

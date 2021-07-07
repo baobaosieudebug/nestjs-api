@@ -1,16 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class HandleOrganizationRO {
+export class OrganizationRO {
   @ApiProperty({
     type: String,
   })
   name: string;
-
-  @ApiProperty({ type: String })
-  code: string;
-
-  @ApiProperty({ type: String })
-  domain: string;
 
   @ApiProperty({ type: String })
   logo: string;
