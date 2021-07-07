@@ -98,18 +98,18 @@ export class UsersService {
     }
   }
 
-  async addUserInProject(idUser: number, projectId: number): Promise<HandleUserRO> {
-    const checkUser = await this.getOneByIdOrFail(idUser);
-    try {
-      const project = await this.projectRepo.getOneAndUserRelation(projectId);
-      await project.users.push(checkUser);
-      await this.projectRepo.save(project);
-      return this.handleUserResponse(checkUser);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async addUserInProject(idUser: number, projectId: number): Promise<HandleUserRO> {
+  //   const checkUser = await this.getOneByIdOrFail(idUser);
+  //   try {
+  //     const project = await this.projectRepo.getOneAndUserRelation(projectId);
+  //     await project.users.push(checkUser);
+  //     await this.projectRepo.save(project);
+  //     return this.handleUserResponse(checkUser);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   async addUserOrganization(code: string, idUser: number) {
     const userExist = await this.getOneByIdOrFail(idUser);
@@ -158,20 +158,20 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-  async getAllUserByIdProject(projectId: number): Promise<GetUserRO[]> {
-    try {
-      const oldArray = await this.repo.getAllUserByIdProject(projectId);
-      const newArray: GetUserRO[] = [];
-      for (let i = 0; i < oldArray.length; i++) {
-        const userRO = await this.getUserResponse(oldArray[i]);
-        newArray.push(userRO);
-      }
-      return newArray;
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllUserByIdProject(projectId: number): Promise<GetUserRO[]> {
+  //   try {
+  //     const oldArray = await this.repo.getAllUserByIdProject(projectId);
+  //     const newArray: GetUserRO[] = [];
+  //     for (let i = 0; i < oldArray.length; i++) {
+  //       const userRO = await this.getUserResponse(oldArray[i]);
+  //       newArray.push(userRO);
+  //     }
+  //     return newArray;
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   async getAllUserByIdGroup(idGroup: number): Promise<GetUserRO[]> {
     try {

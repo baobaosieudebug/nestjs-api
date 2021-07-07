@@ -84,18 +84,18 @@ export class TaskService {
     }
   }
 
-  async addTaskInProject(code: string, projectId: number): Promise<HandleTaskRO> {
-    const task = await this.getOneByCodeOrFail(code);
-    await this.checkExistCode(code, projectId);
-    try {
-      task.projectId = projectId;
-      await this.repo.update(task.id, task);
-      return this.handleTaskResponse(task);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async addTaskInProject(code: string, projectId: number): Promise<HandleTaskRO> {
+  //   const task = await this.getOneByCodeOrFail(code);
+  //   await this.checkExistCode(code, projectId);
+  //   try {
+  //     task.projectId = projectId;
+  //     await this.repo.update(task.id, task);
+  //     return this.handleTaskResponse(task);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   async assignTask(code: string, idUser: number): Promise<HandleTaskRO> {
     const task = await this.getOneByCodeOrFail(code);
@@ -133,31 +133,31 @@ export class TaskService {
     }
   }
 
-  async removeTask(projectId: number, code: string): Promise<HandleTaskRO> {
-    const checkTask = await this.getOneByCodeOrFail(code);
-    await this.repo.isExistTaskCode(code, projectId);
-    try {
-      checkTask.projectId = null;
-      await this.repo.update(checkTask.id, checkTask);
-      return this.handleTaskResponse(checkTask);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async removeTask(projectId: number, code: string): Promise<HandleTaskRO> {
+  //   const checkTask = await this.getOneByCodeOrFail(code);
+  //   await this.repo.isExistTaskCode(code, projectId);
+  //   try {
+  //     checkTask.projectId = null;
+  //     await this.repo.update(checkTask.id, checkTask);
+  //     return this.handleTaskResponse(checkTask);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
-  async getAllTaskByIdProject(projectId: number): Promise<GetTaskRO[]> {
-    try {
-      const oldArray = await this.repo.getAllTaskByIdProject(projectId);
-      const newArray: GetTaskRO[] = [];
-      for (let i = 0; i < oldArray.length; i++) {
-        const taskRO = await this.getTaskResponse(oldArray[i]);
-        newArray.push(taskRO);
-      }
-      return newArray;
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllTaskByIdProject(projectId: number): Promise<GetTaskRO[]> {
+  //   try {
+  //     const oldArray = await this.repo.getAllTaskByIdProject(projectId);
+  //     const newArray: GetTaskRO[] = [];
+  //     for (let i = 0; i < oldArray.length; i++) {
+  //       const taskRO = await this.getTaskResponse(oldArray[i]);
+  //       newArray.push(taskRO);
+  //     }
+  //     return newArray;
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 }
