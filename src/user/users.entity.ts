@@ -1,9 +1,9 @@
-import { ProjectEntity } from 'src/project/project.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, OneToOne } from 'typeorm';
+import { ProjectEntity } from '../project/project.entity';
 import { GroupsEntity } from '../group/group.entity';
 import { TaskEntity } from '../task/task.entity';
-import { Role } from '../auth/role.enum';
 import { OrganizationEntity } from '../organization/organization.entity';
+import { Role } from '../auth/role.enum';
 
 @Entity('users')
 export class UsersEntity {
@@ -25,6 +25,15 @@ export class UsersEntity {
   @Column({ type: 'enum', enum: Role, default: Role.User })
   roles: Role;
 
+  @OneToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.user)
+  organization: OrganizationEntity;
+
+  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.createBy)
+  project: ProjectEntity;
+
+  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.admin)
+  projectAdmin: ProjectEntity;
+
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.userAssign)
   tasksAssign: TaskEntity[];
 
@@ -41,12 +50,8 @@ export class UsersEntity {
   })
   projects: ProjectEntity[];
 
-  @OneToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.user)
-  organizations: OrganizationEntity;
-
-  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.createBy)
-  project: ProjectEntity;
-
-  @OneToOne(() => ProjectEntity, (project: ProjectEntity) => project.admin)
-  projectAdmin: ProjectEntity;
+  @ManyToMany(() => OrganizationEntity, (organizations: OrganizationEntity) => organizations.users, {
+    cascade: ['insert'],
+  })
+  organizations: OrganizationEntity[];
 }

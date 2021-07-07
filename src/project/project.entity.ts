@@ -58,10 +58,6 @@ export class ProjectEntity {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.projects)
-  @JoinColumn({ name: 'organization_id' })
-  organization: OrganizationEntity;
-
   @OneToOne(() => UsersEntity, (user: UsersEntity) => user.project)
   @JoinColumn({ name: 'create_by' })
   createBy: UsersEntity;
@@ -69,12 +65,6 @@ export class ProjectEntity {
   @OneToOne(() => UsersEntity, (user: UsersEntity) => user.projectAdmin)
   @JoinColumn({ name: 'admin_id' })
   admin: UsersEntity;
-
-  @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.projects, {
-    cascade: ['insert'],
-  })
-  @JoinTable()
-  users: UsersEntity[];
 
   @OneToMany(() => CategoryEntity, (category) => category.project)
   categories: CategoryEntity[];
@@ -90,4 +80,14 @@ export class ProjectEntity {
 
   @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];
+
+  @ManyToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.projects)
+  @JoinColumn({ name: 'organization_id' })
+  organization: OrganizationEntity;
+
+  @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.projects, {
+    cascade: ['insert'],
+  })
+  @JoinTable()
+  users: UsersEntity[];
 }

@@ -20,7 +20,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       roles: user.roles,
-      organizationCode: user.organizations,
+      organizationCode: user.organization,
       token,
     };
   }
@@ -30,7 +30,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       roles: user.roles,
-      organizationCode: user.organizations,
+      organizationCode: user.organization,
     };
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
     return token;

@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -55,10 +57,16 @@ export class OrganizationEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
+  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.organization)
+  @JoinColumn({ name: 'owner_id' })
+  user: UsersEntity;
+
   @OneToMany(() => ProjectEntity, (project: ProjectEntity) => project.organization)
   projects: ProjectEntity[];
 
-  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.organizations)
-  @JoinColumn({ name: 'owner_id' })
-  user: UsersEntity;
+  @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.organizations, {
+    cascade: ['insert'],
+  })
+  @JoinTable()
+  users: UsersEntity[];
 }
