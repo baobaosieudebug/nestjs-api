@@ -6,9 +6,17 @@ import { UserRepository } from './user.repository';
 import { GroupsModule } from '../group/group.module';
 import { TaskModule } from 'src/task/task.module';
 import { ProjectModule } from '../project/project.module';
+import { OrganizationModule } from '../organization/organization.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository]), HttpModule, TaskModule, GroupsModule, ProjectModule],
+  imports: [
+    TypeOrmModule.forFeature([UserRepository]),
+    HttpModule,
+    TaskModule,
+    GroupsModule,
+    ProjectModule,
+    OrganizationModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService, TypeOrmModule],
