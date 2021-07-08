@@ -61,6 +61,7 @@ export class AuthService {
   async register(user: RegisterUserDTO) {
     await this.isExistUser(user.email, user.username);
     try {
+      user.password = await bcrypt.hash(user.password, 12);
       const newUser = this.userRepo.create(user);
       newUser.code = await this.createCode();
       await this.userRepo.save(newUser);
