@@ -8,6 +8,8 @@ import {
   Body,
   Controller,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,6 +21,7 @@ import { LoginUserDTO } from '../user/dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { awsConfig } from '../config/aws.config';
 import { storage } from '../config/storage.config';
+import { RegisterUserDTO } from '../user/dto/register-user.dto';
 
 const credentials = {
   accessKeyId: awsConfig.AWS_ACCESS_ID,
@@ -37,8 +40,15 @@ const s3client = new AWS.S3({
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login')
   @Public()
+  @UsePipes(ValidationPipe)
+  @Post('register')
+  async register(@Body() user: RegisterUserDTO) {
+    return await this.authService.register(user);
+  }
+
+  @Public()
+  @Post('login')
   async login(@Body() user: LoginUserDTO) {
     return await this.authService.login(user);
   }
