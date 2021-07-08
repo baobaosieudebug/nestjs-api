@@ -58,19 +58,19 @@ export class UsersService {
 
   async getUserResponse(user: UsersEntity): Promise<GetUserRO> {
     const response = new GetUserRO();
-    response.name = user.name;
+    response.name = user.username;
     response.email = user.email;
     return response;
   }
 
-  async handleUserResponse(user: UsersEntity): Promise<HandleUserRO> {
-    const response = new HandleUserRO();
-    response.name = user.name;
+  async handleUserResponse(user: UsersEntity): Promise<UserRO> {
+    const response = new UserRO();
+    response.username = user.username;
     response.email = user.email;
     return response;
   }
 
-  async create(user: AddUserDTO): Promise<HandleUserRO> {
+  async create(user: AddUserDTO): Promise<UserRO> {
     try {
       user.password = await bcrypt.hash(user.password, 12);
       const newUser = this.repo.create(user);
@@ -82,7 +82,7 @@ export class UsersService {
     }
   }
 
-  async addUser(idUser: number, idGroup: number): Promise<HandleUserRO> {
+  async addUser(idUser: number, idGroup: number): Promise<UserRO> {
     const checkUser = await this.repo.getOneAndGroupRelation(idUser);
     if (!checkUser) {
       throw new NotFoundException('User not found');
@@ -111,18 +111,18 @@ export class UsersService {
   //   }
   // }
 
-  async addUserOrganization(code: string, idUser: number) {
-    const userExist = await this.getOneByIdOrFail(idUser);
-    try {
-      const organization = await this.orgRepo.getOneAndUserRelation(code);
-      await organization.users.push(userExist);
-      await this.orgRepo.save(organization);
-      return this.handleUserResponse(userExist);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async addUserOrganization(code: string, idUser: number) {
+  //   const userExist = await this.getOneByIdOrFail(idUser);
+  //   try {
+  //     const organization = await this.orgRepo.getOneAndUserRelation(code);
+  //     await organization.users.push(userExist);
+  //     await this.orgRepo.save(organization);
+  //     return this.handleUserResponse(userExist);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   async assignTask(idUser: number, codeTask: string): Promise<HandleTaskRO> {
     await this.getOneByIdOrFail(idUser);
@@ -134,7 +134,7 @@ export class UsersService {
     }
   }
 
-  async edit(id: number, dto: EditUserDTO): Promise<HandleUserRO> {
+  async edit(id: number, dto: EditUserDTO): Promise<UserRO> {
     const old = await this.getOneByIdOrFail(id);
     try {
       dto.password = await bcrypt.hash(dto.password, 12);
@@ -147,7 +147,7 @@ export class UsersService {
     }
   }
 
-  async delete(id: number): Promise<HandleUserRO> {
+  async delete(id: number): Promise<UserRO> {
     const user = await this.getOneByIdOrFail(id);
     try {
       user.isDeleted = user.id;

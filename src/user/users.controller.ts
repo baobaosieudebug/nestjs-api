@@ -40,7 +40,7 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async createUsers(@Body() dto: AddUserDTO): Promise<HandleUserRO> {
+  async createUsers(@Body() dto: AddUserDTO): Promise<UserRO> {
     return await this.usersService.create(dto);
   }
 
@@ -53,13 +53,13 @@ export class UsersController {
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
-  async edit(@Body() dto: EditUserDTO, @Param('id') id: number): Promise<HandleUserRO> {
+  async edit(@Body() dto: EditUserDTO, @Param('id') id: number): Promise<UserRO> {
     return await this.usersService.edit(id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<HandleUserRO> {
+  async delete(@Param('id') id: number): Promise<UserRO> {
     return await this.usersService.delete(id);
   }
 
