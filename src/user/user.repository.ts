@@ -3,8 +3,8 @@ import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(UsersEntity)
 export class UserRepository extends Repository<UsersEntity> {
-  getOneById(id) {
-    return this.findOne({ id, isDeleted: 0 });
+  getOneByUsername(username: string) {
+    return this.findOne({ username, isDeleted: 0 });
   }
 
   async getOneByEmail(email: string) {
@@ -15,9 +15,9 @@ export class UserRepository extends Repository<UsersEntity> {
     return this.find({ isDeleted: 0 });
   }
 
-  getOneAndGroupRelation(id) {
-    return this.findOne({ id, isDeleted: 0 }, { relations: ['groups'] });
-  }
+  // getOneAndGroupRelation(id) {
+  //   return this.findOne({ id, isDeleted: 0 }, { relations: ['groups'] });
+  // }
 
   // getOneAndOrgRelation(id: number) {
   //   return this.findOne({ id, isDeleted: 0 }, { relations: ['organizations'] });
@@ -30,12 +30,12 @@ export class UserRepository extends Repository<UsersEntity> {
   //     .getMany();
   // }
 
-  async getAllUserByIdGroup(idGroup: number) {
-    return await this.createQueryBuilder('user')
-      .leftJoinAndSelect('user.groups', 'group')
-      .where('group.id = :idGroup', { idGroup })
-      .getMany();
-  }
+  // async getAllUserByIdGroup(idGroup: number) {
+  //   return await this.createQueryBuilder('user')
+  //     .leftJoinAndSelect('user.groups', 'group')
+  //     .where('group.id = :idGroup', { idGroup })
+  //     .getMany();
+  // }
 
   async isExistEmail(email: string): Promise<boolean> {
     const checkExist = await this.count({

@@ -32,6 +32,9 @@ export class UsersEntity {
   password: string;
 
   @Column({ type: 'varchar', nullable: true })
+  status: string;
+
+  @Column({ type: 'varchar', nullable: true })
   phone: string;
 
   @Column({ type: 'varchar', nullable: true })

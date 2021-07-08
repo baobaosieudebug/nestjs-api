@@ -13,8 +13,6 @@ import { EditGroupDTO } from './dto/edit-group.dto';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { GetGroupRO } from './ro/get-group.ro';
 import { HandleGroupRO } from './ro/handle-group.ro';
-import { GetUserRO } from '../user/ro/get-user.ro';
-import { UserRO } from '../user/ro/user.ro';
 
 @Injectable()
 export class GroupsService {
@@ -94,23 +92,23 @@ export class GroupsService {
     }
   }
 
-  async addUser(idUser: number, id: number): Promise<UserRO> {
-    await this.getOneOrFail(id);
-    try {
-      return this.userService.addUser(idUser, id);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async addUser(idUser: number, id: number): Promise<UserRO> {
+  //   await this.getOneOrFail(id);
+  //   try {
+  //     return this.userService.addUser(idUser, id);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
-  async getAllUserById(id: number): Promise<GetUserRO[]> {
-    await this.getOneOrFail(id);
-    try {
-      return await this.userService.getAllUserByIdGroup(id);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async getAllUserById(id: number): Promise<GetUserRO[]> {
+  //   await this.getOneOrFail(id);
+  //   try {
+  //     return await this.userService.getAllUserByIdGroup(id);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 }

@@ -10,8 +10,8 @@ import { GroupsService } from './group.service';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { GetGroupRO } from './ro/get-group.ro';
-import { GetUserRO } from '../user/ro/get-user.ro';
-import { UserRO } from '../user/ro/user.ro';
+// import { GetUserRO } from '../user/ro/get-user.ro';
+// import { UserRO } from '../user/ro/user.ro';
 import { HandleGroupRO } from './ro/handle-group.ro';
 
 @ApiTags('Group')
@@ -34,11 +34,11 @@ export class GroupsController {
     return await this.groupsService.getAll();
   }
 
-  @ApiOkResponse({ description: 'Success' })
-  @Get('/:id/users')
-  async getAllUserById(@Param('id') id: number): Promise<GetUserRO[]> {
-    return await this.groupsService.getAllUserById(id);
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @Get('/:id/users')
+  // async getAllUserById(@Param('id') id: number): Promise<GetUserRO[]> {
+  //   return await this.groupsService.getAllUserById(id);
+  // }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
@@ -47,11 +47,11 @@ export class GroupsController {
     return await this.groupsService.createGroup(dto);
   }
 
-  @ApiOkResponse({ description: 'Success' })
-  @Post(':id/addUser/:idUser')
-  async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number): Promise<UserRO> {
-    return await this.groupsService.addUser(idUser, idGroup);
-  }
+  // @ApiOkResponse({ description: 'Success' })
+  // @Post(':id/addUser/:idUser')
+  // async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number): Promise<UserRO> {
+  //   return await this.groupsService.addUser(idUser, idGroup);
+  // }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')

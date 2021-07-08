@@ -53,8 +53,9 @@ export class AuthService {
 
   mappingUserRO(user: UsersEntity): UserRO {
     const response = new UserRO();
-    response.email = user.email;
     response.username = user.username;
+    response.avatar = user.avatar;
+    response.status = user.status;
     return response;
   }
 
@@ -80,8 +81,7 @@ export class AuthService {
     const token = this.getUserToken(user);
     return {
       id: user.id,
-      email: user.email,
-      roles: user.roles,
+      username: user.username,
       organizationCode: user.organization,
       token,
     };
@@ -90,8 +90,7 @@ export class AuthService {
   getUserToken(user) {
     const payload = {
       id: user.id,
-      email: user.email,
-      roles: user.roles,
+      username: user.username,
       organizationCode: user.organization,
     };
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 3000 });
