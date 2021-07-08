@@ -8,7 +8,7 @@ import { GroupRepository } from '../group/group.repository';
 import { TaskService } from '../task/task.service';
 import { GetUserRO } from './ro/get-user.ro';
 import { UsersEntity } from './users.entity';
-import { HandleUserRO } from './ro/handle-user.ro';
+import { UserRO } from './ro/user.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
 import { OrganizationRepository } from '../organization/organization.repository';
 

@@ -11,7 +11,7 @@ import { EditGroupDTO } from './dto/edit-group.dto';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { GetGroupRO } from './ro/get-group.ro';
 import { GetUserRO } from '../user/ro/get-user.ro';
-import { HandleUserRO } from '../user/ro/handle-user.ro';
+import { UserRO } from '../user/ro/user.ro';
 import { HandleGroupRO } from './ro/handle-group.ro';
 
 @ApiTags('Group')
@@ -49,7 +49,7 @@ export class GroupsController {
 
   @ApiOkResponse({ description: 'Success' })
   @Post(':id/addUser/:idUser')
-  async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number): Promise<HandleUserRO> {
+  async addUser(@Param('idUser') idUser: number, @Param('id') idGroup: number): Promise<UserRO> {
     return await this.groupsService.addUser(idUser, idGroup);
   }
 

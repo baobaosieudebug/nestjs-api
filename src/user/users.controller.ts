@@ -14,7 +14,7 @@ import { EditUserDTO } from './dto/edit-user.dto';
 // import { LoginUserDTO } from './dto/login-user.dto';
 // import { RolesGuard } from '../authorization/guard/role.guard';
 import { GetUserRO } from './ro/get-user.ro';
-import { HandleUserRO } from './ro/handle-user.ro';
+import { UserRO } from './ro/user.ro';
 import { HandleTaskRO } from '../task/ro/handle-task.ro';
 
 @ApiTags('User')
