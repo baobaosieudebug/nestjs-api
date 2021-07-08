@@ -2,21 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { UsersEntity } from './users.entity';
 import { SelfUserRO } from './ro/self-user.ro';
+import { UserRO } from './ro/user.ro';
 
 @Injectable()
 export class UsersService {
   // private readonly logger = new Logger(UsersService.name);
   constructor(private readonly repo: UserRepository) {}
 
-  // async isOwner(payload) {
-  //   if (!payload.organizationCode) {
-  //     throw new NotFoundException('Not found organization');
-  //   }
-  //   const org = await this.repo.isOwnerOrg(payload.organizationCode.code, payload.id);
-  //   if (!org) {
-  //     throw new ForbiddenException('Forbidden');
-  //   }
-  // }
+  async isOwner(payload, username: string): Promise<boolean> {
+    return payload.username === username;
+  }
 
   async mappingSelfUserRO(user: UsersEntity): Promise<SelfUserRO> {
     const response = new SelfUserRO();
@@ -25,6 +20,14 @@ export class UsersService {
     response.status = user.status;
     response.avatar = user.avatar;
     response.phone = user.phone;
+    return response;
+  }
+
+  mappingUserRO(user: UsersEntity): UserRO {
+    const response = new UserRO();
+    response.username = user.username;
+    response.avatar = user.avatar;
+    response.status = user.status;
     return response;
   }
 
@@ -43,9 +46,14 @@ export class UsersService {
     return user;
   }
 
-  // async getOneOrFail(payload) {
-  //   return await this.getOneByUsername(payload.username);
-  // }
+  async getOneWithOwner(payload, username: string) {
+    const checkOwner = await this.isOwner(payload, username);
+    const user = await this.getOneByUsername(payload.username);
+    if (checkOwner) {
+      return this.mappingSelfUserRO(user);
+    }
+    return this.mappingUserRO(user);
+  }
 
   // async getAll(): Promise<GetUserRO[]> {
   //   const oldArray = await this.repo.getAll();

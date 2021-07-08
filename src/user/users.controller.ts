@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Payload } from '../decorators/payload.decorator';
@@ -23,6 +23,12 @@ export class UsersController {
   async getProfile(@Payload() payload) {
     const user = await this.usersService.getOneByUsername(payload.username);
     return this.usersService.mappingSelfUserRO(user);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Get('/:username')
+  async getInfoByUsername(@Payload() payload, @Param('username') username: string) {
+    return await this.usersService.getOneWithOwner(payload, username);
   }
 
   // @ApiOkResponse({ description: 'Success' })
