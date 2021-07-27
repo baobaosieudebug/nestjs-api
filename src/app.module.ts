@@ -1,5 +1,5 @@
 import { CacheInterceptor, CacheModule, HttpModule, Module } from '@nestjs/common';
-import { UsersModule } from './user/users.module';
+import { UserModule } from './user/user.module';
 import { GroupsModule } from './group/group.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
@@ -18,7 +18,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     DatabaseModule.forRoot(),
     ConfigModule.forRoot(),
     CacheModule.register({ ttl: 604800, max: 100000 }),
-    UsersModule,
+    UserModule,
     GroupsModule,
     AuthModule,
     HttpModule,

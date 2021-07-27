@@ -1,22 +1,14 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Payload } from '../decorators/payload.decorator';
-// import { EditUserDTO } from './dto/edit-user.dto';
-// import { Roles } from '../authorization/role.decorator';
-// import { Role } from '../authorization/role.enum';
-// import { LoginUserDTO } from './dto/login-user.dto';
-// import { RolesGuard } from '../authorization/guard/role.guard';
-// import { GetUserRO } from './ro/get-user.ro';
-// import { UserRO } from './ro/user.ro';
-// import { HandleTaskRO } from '../task/ro/handle-task.ro';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('user')
 @ApiNotFoundResponse({ description: 'Not Found' })
 @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly usersService: UserService) {}
 
   @ApiOkResponse({ description: 'Success' })
   @Get('/profile')
@@ -31,6 +23,11 @@ export class UsersController {
     return await this.usersService.getOneWithOwner(payload, username);
   }
 
+  @Get('/join/organization')
+  async joinOrg(@Query('token') token) {
+    return await this.usersService.joinOrg(token);
+  }
+
   // @ApiOkResponse({ description: 'Success' })
   // @Get(':id')
   // async getOneById(@Param('id') id: number): Promise<GetUserRO> {
@@ -38,15 +35,9 @@ export class UsersController {
   //   return this.usersService.getUserResponse(user);
   // }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Get()
-  // async getAll(): Promise<GetUserRO[]> {
-  //   return await this.usersService.getAll();
-  // }
-
   // @ApiCreatedResponse({ description: 'Created' })
   // @Post()
-  // @UsePipes(ValidationPipe)
+  // // @UsePipes(ValidationPipe)
   // async createUsers(@Body() dto: AddUserDTO): Promise<UserRO> {
   //   return await this.usersService.create(dto);
   // }
@@ -68,10 +59,5 @@ export class UsersController {
   // @Delete(':id')
   // async delete(@Param('id') id: number): Promise<UserRO> {
   //   return await this.usersService.delete(id);
-  // }
-
-  // @Post('login')
-  // async login(@Body() user: LoginUserDTO) {
-  //   return await this.usersService.login(user);
   // }
 }

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="{{#if metaLanguage}}{{metaLanguage}}{{else}}en{{/if}}">
+<head>
+  <meta name="viewport" content="width=device-width"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Invite Organization</title>
+  {{> styles }}
+</head>
+
+<body class="">
+<span class="pre-header">Hello</span>
+<table  class="body">
+  <tr>
+    <td>&nbsp;</td>
+    <td class="container">
+      <div class="content">
+        {{> header }}
+        <table  class="main">
+          <tr>
+            <td class="wrapper">
+              {{> @partial-block }}
+            </td>
+          </tr>
+        </table>
+        {{> footer }}
+      </div>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>

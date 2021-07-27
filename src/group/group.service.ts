@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { GroupsEntity } from './group.entity';
 import { GroupRepository } from './group.repository';
-import { UsersService } from 'src/user/users.service';
+import { UserService } from 'src/user/user.service';
 import { EditGroupDTO } from './dto/edit-group.dto';
 import { AddGroupDTO } from './dto/add-group.dto';
 import { GetGroupRO } from './ro/get-group.ro';
@@ -19,8 +19,8 @@ export class GroupsService {
   private readonly logger = new Logger(GroupsService.name);
   constructor(
     private readonly repo: GroupRepository,
-    @Inject(forwardRef(() => UsersService))
-    private readonly userService: UsersService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
   ) {}
 
   async getOneById(id: number) {

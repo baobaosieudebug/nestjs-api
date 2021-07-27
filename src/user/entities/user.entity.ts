@@ -2,20 +2,20 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToMany,
   OneToMany,
   OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProjectEntity } from '../project/project.entity';
-import { GroupsEntity } from '../group/group.entity';
-import { TaskEntity } from '../task/task.entity';
-import { OrganizationEntity } from '../organization/organization.entity';
-import { Role } from '../auth/role.enum';
+import { ProjectEntity } from '../../project/project.entity';
+import { TaskEntity } from '../../task/task.entity';
+import { OrganizationEntity } from '../../organization/organization.entity';
+import { UserOrganizationEntity } from './user-organization.entity';
+import { UserProjectEntity } from './user-project.entity';
+import { UserRoleEntity } from './user-role.entity';
 
-@Entity('users')
-export class UsersEntity {
+@Entity('user')
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -43,9 +43,6 @@ export class UsersEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
-  roles: Role;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -67,18 +64,12 @@ export class UsersEntity {
   @OneToMany(() => TaskEntity, (task: TaskEntity) => task.user)
   tasks: TaskEntity[];
 
-  @ManyToMany(() => GroupsEntity, (group: GroupsEntity) => group.users, {
-    cascade: ['insert'],
-  })
-  groups: GroupsEntity[];
+  @OneToMany(() => UserOrganizationEntity, (userOrganization) => userOrganization.user)
+  userOrganization: UserOrganizationEntity;
 
-  @ManyToMany(() => ProjectEntity, (project: ProjectEntity) => project.users, {
-    cascade: ['insert'],
-  })
-  projects: ProjectEntity[];
+  @OneToMany(() => UserProjectEntity, (userProject) => userProject.user)
+  userProject: UserProjectEntity;
 
-  @ManyToMany(() => OrganizationEntity, (organizations: OrganizationEntity) => organizations.users, {
-    cascade: ['insert'],
-  })
-  organizations: OrganizationEntity[];
+  @OneToMany(() => UserRoleEntity, (userRole) => userRole.user)
+  userRole: UserRoleEntity;
 }

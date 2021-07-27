@@ -7,7 +7,7 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return this.findOne({ code, isDeleted: 0 });
   }
 
-  async isOrgExistCode(code: string): Promise<boolean> {
+  async isOrgCodeExist(code: string): Promise<boolean> {
     const checkExist = await this.count({
       where: { code, isDeleted: 0 },
     });
@@ -28,7 +28,10 @@ export class OrganizationRepository extends Repository<OrganizationEntity> {
     return checkExist > 0;
   }
 
-  async getOneAndUserRelation(code: string) {
-    return this.findOne({ code, isDeleted: 0 }, { relations: ['users'] });
+  async isOwnerDomain(domain: string, ownerId: number): Promise<boolean> {
+    const checkExist = await this.count({
+      where: { domain, ownerId, isDeleted: 0 },
+    });
+    return checkExist > 0;
   }
 }

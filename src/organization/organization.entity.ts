@@ -11,7 +11,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProjectEntity } from '../project/project.entity';
-import { UsersEntity } from '../user/users.entity';
+import { UserEntity } from '../user/entities/user.entity';
+import { UserOrganizationEntity } from '../user/entities/user-organization.entity';
+import { RoleEntity } from '../auth/entities/role.entity';
 
 @Entity('organization')
 export class OrganizationEntity {
@@ -57,16 +59,22 @@ export class OrganizationEntity {
   @Column({ name: 'is_deleted', type: 'varchar', default: 0 })
   isDeleted: number;
 
-  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.organization)
+  @OneToOne(() => UserEntity, (user: UserEntity) => user.organization)
   @JoinColumn({ name: 'owner_id' })
-  user: UsersEntity;
+  user: UserEntity;
 
   @OneToMany(() => ProjectEntity, (project: ProjectEntity) => project.organization)
   projects: ProjectEntity[];
 
-  @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.organizations, {
-    cascade: ['insert'],
-  })
-  @JoinTable()
-  users: UsersEntity[];
+  @OneToMany(() => UserOrganizationEntity, (userOrganization) => userOrganization.organization)
+  userOrganization: UserOrganizationEntity;
+
+  // @ManyToMany(() => UserEntity, (user: UserEntity) => user.organizations, {
+  //   cascade: ['insert'],
+  // })
+  // @JoinTable()
+  // users: UserEntity[];
+
+  @OneToMany(() => RoleEntity, (role) => role.organization)
+  roles: RoleEntity[];
 }

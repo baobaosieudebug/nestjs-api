@@ -1,4 +1,4 @@
-import { Get, Put, UsePipes, ValidationPipe, Body, Controller, Post } from '@nestjs/common';
+import { Get, Put, UsePipes, ValidationPipe, Body, Controller, Post, Param } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -6,11 +6,12 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Payload } from '../decorators/payload.decorator';
 import { OrganizationService } from './organization.service';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { OrganizationRO } from './ro/organization.ro';
-import { Payload } from '../decorators/payload.decorator';
+import { UserRO } from '../user/ro/user.ro';
 
 @ApiTags('Organization')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -20,10 +21,16 @@ export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
   @ApiOkResponse({ description: 'Success' })
-  @Get()
-  async getOne(@Payload() payload): Promise<OrganizationRO> {
-    const org = await this.organizationService.getOneOrFail(payload);
+  @Get(':code')
+  async getOne(@Payload() payload, @Param('code') code: string): Promise<OrganizationRO> {
+    const org = await this.organizationService.getOneOrFail(payload, code);
     return this.organizationService.mappingOrganizationRO(org);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':domain/users')
+  async getListUser(@Payload() payload, @Param('domain') domain: string): Promise<UserRO[]> {
+    return await this.organizationService.getListUser(payload, domain);
   }
 
   @ApiCreatedResponse({ description: 'Created' })
@@ -31,6 +38,12 @@ export class OrganizationController {
   @UsePipes(ValidationPipe)
   async create(@Payload() payload, @Body() dto: AddOrganizationDTO): Promise<OrganizationRO> {
     return await this.organizationService.create(payload, dto);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Post(':domain/invite')
+  async inviteOrg(@Payload() payload, @Param('domain') domain: string) {
+    return await this.organizationService.invite(payload, domain);
   }
 
   @ApiOkResponse({ description: 'Success' })

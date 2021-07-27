@@ -1,17 +1,17 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
-  // ApiOkResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Payload } from '../decorators/payload.decorator';
 import { ProjectService } from './project.service';
 import { AddProjectDTO } from './dto/add-project.dto';
-// import { EditProjectDTO } from './dto/edit-project.dto';
-// import { GetProjectRO } from './ro/get-project.ro';
-// import { ProjectRO } from './ro/project.ro';
-import { Payload } from '../decorators/payload.decorator';
+import { EditProjectDTO } from './dto/edit-project.dto';
+import { ProjectRO } from './ro/project.ro';
+import { UserRO } from '../user/ro/user.ro';
 
 @ApiTags('Project')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -20,66 +20,57 @@ import { Payload } from '../decorators/payload.decorator';
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Get('code/:code')
-  // async getOneByCode(@Param('code') code: string): Promise<GetProjectRO> {
-  //   const project = await this.projectService.getOneByCodeOrFail(code);
-  //   return await this.projectService.getProjectResponse(project);
-  // }
+  @Get('users')
+  async getListUserByUser(@Payload() payload, @Query('projectCode') projectCode: string): Promise<UserRO[]> {
+    return await this.projectService.getListUserByUser(payload, projectCode);
+  }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Get('/:id/tasks')
-  // async getAllTaskById(@Param('id') id: number): Promise<GetTaskRO[]> {
-  //   return await this.projectService.getAllTaskById(id);
-  // }
-
-  // @ApiOkResponse({ description: 'Success' })
-  // @Get('/:id/users')
-  // async getAllUserById(@Param('id') id: number): Promise<GetUserRO[]> {
-  //   return await this.projectService.getAllUserById(id);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':code')
+  async getInfo(@Payload() payload, @Param('code') code: string): Promise<ProjectRO> {
+    return await this.projectService.getInfo(payload, code);
+  }
 
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Payload() payload, @Body() dto: AddProjectDTO) {
+  async create(@Payload() payload, @Body() dto: AddProjectDTO): Promise<ProjectRO> {
     return await this.projectService.create(payload, dto);
   }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Post(':code/addUser/:id')
-  // async addUser(@Param('id') id: number, @Param('code') code: string): Promise<HandleUserRO> {
-  //   return await this.projectService.addUser(code, id);
-  // }
-  //
-  // @ApiOkResponse({ description: 'Success' })
-  // @Post(':code/addTask/:codeTask')
-  // async addTask(@Param('codeTask') codeTask: string, @Param('code') code: string): Promise<HandleTaskRO> {
-  //   return await this.projectService.addTask(code, codeTask);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Post(':projectCode/users/:id')
+  @UsePipes(ValidationPipe)
+  async addUser(
+    @Payload() payload,
+    @Param('projectCode') projectCode: string,
+    @Param('id') id: number,
+  ): Promise<UserRO> {
+    return await this.projectService.addUser(payload, projectCode, id);
+  }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Put()
-  // @UsePipes(ValidationPipe)
-  // async edit(@Payload() payload, @Body() dto: EditProjectDTO): Promise<ProjectRO> {
-  //   return await this.projectService.edit(payload, dto);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':code/users')
+  async getListUser(@Payload() payload, @Param('code') code: string): Promise<UserRO[]> {
+    return await this.projectService.getListUser(payload, code);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Get()
+  async getList(@Payload() payload): Promise<ProjectRO[]> {
+    return await this.projectService.getList(payload);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Put(':code')
+  @UsePipes(ValidationPipe)
+  async edit(@Payload() payload, @Param('code') code: string, @Body() dto: EditProjectDTO): Promise<ProjectRO> {
+    return await this.projectService.edit(payload, code, dto);
+  }
 
   // @ApiOkResponse({ description: 'Success' })
   // @Delete(':id')
   // async delete(@Param('id') id: string) {
   //   return await this.projectService.delete(id);
-  // }
-
-  // @ApiOkResponse({ description: 'Success' })
-  // @Delete(':code/removeUser/:id')
-  // async removeUserInProject(@Param('id') idUser: number, @Param('code') code: string): Promise<HandleProjectRO> {
-  //   return await this.projectService.removeUserInProject(idUser, code);
-  // }
-  //
-  // @ApiOkResponse({ description: 'Success' })
-  // @Delete(':code/removeTask/:codeTask')
-  // async removeTaskInProject(@Param('codeTask') codeTask: string, @Param('code') code: string): Promise<HandleTaskRO> {
-  //   return await this.projectService.removeTaskInProject(code, codeTask);
   // }
 }

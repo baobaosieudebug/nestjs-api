@@ -4,18 +4,20 @@ import { OrganizationRepository } from './organization.repository';
 import { ProjectModule } from '../project/project.module';
 import { OrganizationController } from './organization.controller';
 import { OrganizationService } from './organization.service';
-import { UsersModule } from '../user/users.module';
+import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrganizationRepository]),
     forwardRef(() => ProjectModule),
-    forwardRef(() => UsersModule),
+    forwardRef(() => UserModule),
     JwtModule.register({
       secret: 'SECRET',
       signOptions: { expiresIn: '60s' },
     }),
+    MailModule,
   ],
   providers: [OrganizationService],
   controllers: [OrganizationController],

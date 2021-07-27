@@ -13,12 +13,13 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { OrganizationEntity } from '../organization/organization.entity';
-import { UsersEntity } from '../user/users.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { TaskEntity } from '../task/task.entity';
 import { CategoryEntity } from '../category/category.entity';
 import { TypeEntity } from '../type/type.entity';
 import { StatusEntity } from '../status/status.entity';
 import { VersionEntity } from '../version/version.entity';
+import { UserProjectEntity } from '../user/entities/user-project.entity';
 
 @Entity('project')
 export class ProjectEntity {
@@ -46,10 +47,10 @@ export class ProjectEntity {
   @Column({ name: 'organization_id', nullable: true })
   organizationId: number;
 
-  @Column({ name: 'create_by', nullable: true })
+  @Column({ name: 'create_by', nullable: true, default: null })
   createById: number;
 
-  @Column({ name: 'admin_id', nullable: true })
+  @Column({ name: 'admin_id', nullable: true, default: null })
   adminId: number;
 
   @CreateDateColumn({ name: 'created_at' })
@@ -58,13 +59,13 @@ export class ProjectEntity {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.project)
-  @JoinColumn({ name: 'create_by' })
-  createBy: UsersEntity;
+  @OneToOne(() => UserEntity, (user: UserEntity) => user.project)
+  @JoinColumn({ name: 'created_by' })
+  createBy: UserEntity;
 
-  @OneToOne(() => UsersEntity, (user: UsersEntity) => user.projectAdmin)
+  @OneToOne(() => UserEntity, (user: UserEntity) => user.projectAdmin)
   @JoinColumn({ name: 'admin_id' })
-  admin: UsersEntity;
+  admin: UserEntity;
 
   @OneToMany(() => CategoryEntity, (category) => category.project)
   categories: CategoryEntity[];
@@ -81,13 +82,10 @@ export class ProjectEntity {
   @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];
 
+  @OneToMany(() => UserProjectEntity, (userProject) => userProject.project)
+  userProject: UserProjectEntity;
+
   @ManyToOne(() => OrganizationEntity, (organization: OrganizationEntity) => organization.projects)
   @JoinColumn({ name: 'organization_id' })
   organization: OrganizationEntity;
-
-  @ManyToMany(() => UsersEntity, (user: UsersEntity) => user.projects, {
-    cascade: ['insert'],
-  })
-  @JoinTable()
-  users: UsersEntity[];
 }

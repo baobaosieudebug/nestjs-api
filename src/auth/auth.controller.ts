@@ -22,6 +22,7 @@ import { AuthService } from './auth.service';
 import { awsConfig } from '../config/aws.config';
 import { storage } from '../config/storage.config';
 import { RegisterUserDTO } from '../user/dto/register-user.dto';
+import { Payload } from '../decorators/payload.decorator';
 
 const credentials = {
   accessKeyId: awsConfig.AWS_ACCESS_ID,
@@ -51,6 +52,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() user: LoginUserDTO) {
     return await this.authService.login(user);
+  }
+
+  @Post('role')
+  async addRole(@Payload() payload, @Body() data) {
+    return await this.authService.addRole(payload, data);
   }
 
   async uploadToS3(@UploadedFile() file: Express.Multer.File) {

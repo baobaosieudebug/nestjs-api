@@ -1,88 +1,120 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { OrganizationService } from '../organization/organization.service';
+import { ProjectService } from '../project/project.service';
 import { TaskRepository } from './task.respository';
 import { AddTaskDTO } from './dto/add-task.dto';
-import { EditTaskDTO } from './dto/edit-task.dto';
 import { TaskEntity } from './task.entity';
-import { GetTaskRO } from './ro/get-task.ro';
-import { HandleTaskRO } from './ro/handle-task.ro';
+import { TaskRO } from './ro/task.ro';
 
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
-  constructor(private readonly repo: TaskRepository) {}
+  constructor(
+    private readonly repo: TaskRepository,
+    private readonly orgService: OrganizationService,
+    private readonly projectService: ProjectService,
+  ) {}
 
-  async getOneById(id: number) {
-    return await this.repo.getById(id);
+  async mappingTaskRO(task: TaskEntity): Promise<TaskRO> {
+    const response = new TaskRO();
+    response.name = task.name;
+    response.code = task.code;
+    response.description = task.description;
+    response.dateBegin = task.dateBegin;
+    response.dateEnd = task.dateEnd;
+    return response;
   }
 
-  async getOneByIdOrFail(id: number) {
-    const task = await this.getOneById(id);
-    if (!task) {
-      throw new NotFoundException('Task Not Found');
-    }
-    return task;
-  }
-
-  async getOneByCode(code: string) {
-    return await this.repo.getByCode(code);
-  }
-
-  async getOneByCodeOrFail(code: string) {
-    const task = await this.getOneByCode(code);
-    if (!task) {
-      throw new NotFoundException();
-    }
-    return task;
-  }
-
-  async getAll(): Promise<GetTaskRO[]> {
-    const oldArray = await this.repo.getAll();
-    const newArray: GetTaskRO[] = [];
+  async mappingListTaskRO(oldArray: TaskEntity[]): Promise<TaskRO[]> {
+    const newArray: TaskRO[] = [];
     for (let i = 0; i < oldArray.length; i++) {
-      const taskRO = await this.getTaskResponse(oldArray[i]);
+      const taskRO = await this.mappingTaskRO(oldArray[i]);
       newArray.push(taskRO);
     }
     return newArray;
   }
 
-  async getTaskResponse(task: TaskEntity): Promise<GetTaskRO> {
-    const response = new GetTaskRO();
-    response.name = task.name;
-    response.code = task.code;
-    response.description = task.description;
-    response.dateBegin = task.dateBegin;
-    response.dateEnd = task.dateEnd;
-    return response;
-  }
-
-  async handleTaskResponse(task: TaskEntity): Promise<HandleTaskRO> {
-    const response = new HandleTaskRO();
-    response.name = task.name;
-    response.code = task.code;
-    response.description = task.description;
-    response.dateBegin = task.dateBegin;
-    response.dateEnd = task.dateEnd;
-    return response;
-  }
-
-  async checkExistCode(code: string, projectId: number) {
-    const checkExist = await this.repo.isExistTaskCode(code, projectId);
-    if (checkExist) {
-      throw new NotFoundException('Task Exist');
+  async getAll(payload, projectCode: string): Promise<TaskRO[]> {
+    const project = await this.projectService.getOneByCodeOrFail(projectCode);
+    if (payload.roles === 'user') {
+      await this.orgService.isOwner(payload);
     }
-  }
-
-  async create(dto: AddTaskDTO): Promise<HandleTaskRO> {
+    await this.projectService.isProjectExist(payload, projectCode);
     try {
-      const task = this.repo.create(dto);
-      task.createdAt = new Date();
-      await this.repo.save(task);
-      return this.handleTaskResponse(task);
+      const oldArray = await this.repo.getAll(project.id);
+      return this.mappingListTaskRO(oldArray);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
     }
   }
+
+  async isTaskExist(code: string, projectId: number) {
+    const isTaskExist = await this.repo.isExistTaskCode(code, projectId);
+    if (isTaskExist) {
+      throw new BadRequestException('Code must be unique in project');
+    }
+  }
+
+  async create(payload, projectCode: string, dto: AddTaskDTO): Promise<TaskRO> {
+    const project = await this.projectService.getOneByCodeOrFail(projectCode);
+    if (payload.roles === 'user') {
+      await this.orgService.isOwner(payload);
+    }
+    await this.projectService.isProjectExist(payload, projectCode);
+    await this.isTaskExist(dto.code, project.id);
+    try {
+      const task = this.repo.create(dto);
+      task.createdAt = new Date();
+      task.createUserId = payload.id;
+      task.projectId = project.id;
+      await this.repo.save(task);
+      return this.mappingTaskRO(task);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  // async delete(id: number){;
+  //   try {
+  //     return await this.repo.delete(id);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
+
+  // async getOneById(id: number) {
+  //   return await this.repo.getById(id);
+  // }
+  //
+  // async getOneByIdOrFail(id: number) {
+  //   const task = await this.getOneById(id);
+  //   if (!task) {
+  //     throw new NotFoundException('Task Not Found');
+  //   }
+  //   return task;
+  // }
+  //
+  // async getOneByCode(code: string) {
+  //   return await this.repo.getByCode(code);
+  // }
+  //
+  // async getOneByCodeOrFail(code: string) {
+  //   const task = await this.getOneByCode(code);
+  //   if (!task) {
+  //     throw new NotFoundException('Task not found');
+  //   }
+  //   return task;
+  // }
+
+  // async checkExistCode(code: string, projectId: number) {
+  //   const checkExist = await this.repo.isExistTaskCode(code, projectId);
+  //   if (checkExist) {
+  //     throw new NotFoundException('Task Exist');
+  //   }
+  // }
 
   // async addTaskInProject(code: string, projectId: number): Promise<HandleTaskRO> {
   //   const task = await this.getOneByCodeOrFail(code);
@@ -97,41 +129,29 @@ export class TaskService {
   //   }
   // }
 
-  async assignTask(code: string, idUser: number): Promise<HandleTaskRO> {
-    const task = await this.getOneByCodeOrFail(code);
-    await this.repo.isAssignTask(idUser, code);
-    try {
-      task.assignUserId = idUser;
-      await this.repo.update(task.id, task);
-      return this.handleTaskResponse(task);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-  async edit(id: number, dto: EditTaskDTO): Promise<HandleTaskRO> {
-    const old = await this.getOneByIdOrFail(id);
-    try {
-      const task = await this.repo.merge(old, dto);
-      await this.repo.update(id, task);
-      return this.handleTaskResponse(task);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async remove(id: number): Promise<HandleTaskRO> {
-    const task = await this.getOneByIdOrFail(id);
-    try {
-      task.isDeleted = task.id;
-      await this.repo.update(id, task);
-      return this.handleTaskResponse(task);
-    } catch (e) {
-      this.logger.error(e);
-      throw new InternalServerErrorException();
-    }
-  }
+  // async assignTask(code: string, idUser: number): Promise<HandleTaskRO> {
+  //   const task = await this.getOneByCodeOrFail(code);
+  //   await this.repo.isAssignTask(idUser, code);
+  //   try {
+  //     task.assignUserId = idUser;
+  //     await this.repo.update(task.id, task);
+  //     return this.handleTaskResponse(task);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
+  // async edit(id: number, dto: EditTaskDTO): Promise<HandleTaskRO> {
+  //   const old = await this.getOneByIdOrFail(id);
+  //   try {
+  //     const task = await this.repo.merge(old, dto);
+  //     await this.repo.update(id, task);
+  //     return this.handleTaskResponse(task);
+  //   } catch (e) {
+  //     this.logger.error(e);
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   // async removeTask(projectId: number, code: string): Promise<HandleTaskRO> {
   //   const checkTask = await this.getOneByCodeOrFail(code);

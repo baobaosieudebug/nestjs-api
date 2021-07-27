@@ -8,13 +8,15 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { OrganizationRepository } from './organization.repository';
-import { ProjectService } from '../project/project.service';
 import { OrganizationEntity } from './organization.entity';
+import { ProjectService } from '../project/project.service';
+import { UserService } from '../user/user.service';
+import { OrganizationRepository } from './organization.repository';
 import { AddOrganizationDTO } from './dto/add-organization.dto';
 import { EditOrganizationDTO } from './dto/edit-organization.dto';
-import { OrganizationRO } from './ro/organization.ro';
 import { RandomString } from '../common/utils/random-string';
+import { OrganizationRO } from './ro/organization.ro';
+import { UserRO } from '../user/ro/user.ro';
 
 @Injectable()
 export class OrganizationService {
@@ -23,6 +25,7 @@ export class OrganizationService {
     private readonly repo: OrganizationRepository,
     @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
+    private readonly userService: UserService,
   ) {}
 
   mappingOrganizationRO(organization: OrganizationEntity): OrganizationRO {
@@ -41,9 +44,19 @@ export class OrganizationService {
     return this.repo.getByCode(code);
   }
 
-  async getOneOrFail(payload): Promise<OrganizationEntity> {
+  async getOneOrFail(payload, code: string): Promise<OrganizationEntity> {
     await this.isOwner(payload);
-    return await this.getOneByCode(payload.organizationCode.code);
+    return await this.getOneByCode(code);
+  }
+
+  async getListUser(payload, domain: string): Promise<UserRO[]> {
+    await this.isOwnerDomain(payload, domain);
+    try {
+      return await this.userService.getListUserByDomain(payload);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
   }
 
   async isOwner(payload) {
@@ -55,13 +68,19 @@ export class OrganizationService {
       throw new ForbiddenException('Forbidden');
     }
   }
+  async isOwnerDomain(payload, domain: string) {
+    const isOwnerDomain = await this.repo.isOwnerDomain(domain, payload.id);
+    if (!isOwnerDomain) {
+      throw new ForbiddenException('Forbidden');
+    }
+  }
 
   async createCode(): Promise<string> {
     let code = '';
     let found = true;
     while (found) {
       code = RandomString(10);
-      const existCode = await this.repo.isOrgExistCode(code);
+      const existCode = await this.repo.isOrgCodeExist(code);
       if (!existCode) {
         found = false;
       }
@@ -84,6 +103,21 @@ export class OrganizationService {
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();
+    }
+  }
+
+  invite(payload, domain: string) {
+    if (!payload.organizationCode) {
+      throw new BadRequestException('Organization not null');
+    }
+    if (payload.organizationCode.domain !== domain) {
+      throw new ForbiddenException('Forbidden');
+    }
+    try {
+      return this.userService.invite(payload);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException('Internal Server Error');
     }
   }
 

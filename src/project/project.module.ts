@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskModule } from '../task/task.module';
-import { UsersModule } from '../user/users.module';
+import { UserModule } from '../user/user.module';
 import { ProjectRepository } from './project.repository';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
@@ -11,9 +11,9 @@ import { OrganizationModule } from '../organization/organization.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProjectRepository]),
-    forwardRef(() => UsersModule),
-    TaskModule,
-    OrganizationModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => TaskModule),
+    forwardRef(() => OrganizationModule),
     JwtModule.register({
       secret: 'SECRET',
       signOptions: { expiresIn: '60s' },

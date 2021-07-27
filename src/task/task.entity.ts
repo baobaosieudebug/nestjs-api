@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UsersEntity } from '../user/users.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { ProjectEntity } from 'src/project/project.entity';
 
 @Entity('task')
@@ -41,13 +41,13 @@ export class TaskEntity {
   @Column({ name: 'project_id', nullable: true })
   projectId: number;
 
-  @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasksAssign)
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.tasksAssign)
   @JoinColumn({ name: 'assign_user_id' })
-  userAssign: UsersEntity;
+  userAssign: UserEntity;
 
-  @ManyToOne(() => UsersEntity, (user: UsersEntity) => user.tasks)
+  @ManyToOne(() => UserEntity, (user: UserEntity) => user.tasks)
   @JoinColumn({ name: 'create_user_id' })
-  user: UsersEntity;
+  user: UserEntity;
 
   @ManyToOne(() => ProjectEntity, (project) => project.tasks)
   @JoinColumn({ name: 'project_id' })
