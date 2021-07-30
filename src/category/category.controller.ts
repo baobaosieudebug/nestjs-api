@@ -11,6 +11,7 @@ import { AddCategoryDTO } from './dto/add-category.dto';
 import { EditCategoryDTO } from './dto/edit-category.dto';
 import { GetCategoryRO } from './ro/get-category.ro';
 import { HandleCategoryRO } from './ro/handle-category.ro';
+import { Payload } from '../decorators/payload.decorator';
 
 @ApiTags('Category')
 @ApiNotFoundResponse({ description: 'Not Found' })
@@ -42,24 +43,29 @@ export class CategoryController {
   @ApiCreatedResponse({ description: 'Created' })
   @Post()
   @UsePipes(ValidationPipe)
-  async create(@Param('projectId') projectId: number, @Body() dto: AddCategoryDTO): Promise<HandleCategoryRO> {
-    return await this.categoryService.add(projectId, dto);
+  async create(
+    @Payload() payload,
+    @Param('projectId') projectId: number,
+    @Body() dto: AddCategoryDTO,
+  ): Promise<HandleCategoryRO> {
+    return await this.categoryService.add(payload, projectId, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Put(':id')
   @UsePipes(ValidationPipe)
   async edit(
+    @Payload() payload,
     @Param('projectId') projectId: number,
     @Param('id') id: number,
     @Body() dto: EditCategoryDTO,
   ): Promise<HandleCategoryRO> {
-    return await this.categoryService.edit(projectId, id, dto);
+    return await this.categoryService.edit(payload, projectId, id, dto);
   }
 
   @ApiOkResponse({ description: 'Success' })
   @Delete(':id')
-  async delete(@Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
-    return await this.categoryService.delete(projectId, id);
+  async delete(@Payload() payload, @Param('projectId') projectId: number, @Param('id') id: number): Promise<number> {
+    return await this.categoryService.delete(payload, projectId, id);
   }
 }

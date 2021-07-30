@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -11,11 +12,19 @@ import { EditCategoryDTO } from './dto/edit-category.dto';
 import { CategoryEntity } from './category.entity';
 import { GetCategoryRO } from './ro/get-category.ro';
 import { HandleCategoryRO } from './ro/handle-category.ro';
+import { AuthService } from '../auth/auth.service';
+import { ActionRepository } from '../auth/repository/action.repository';
+import { ResourceRepository } from '../auth/repository/resource.repository';
 
 @Injectable()
 export class CategoryService {
   private readonly logger = new Logger(CategoryService.name);
-  constructor(private readonly repo: CategoryRepository) {}
+  constructor(
+    private readonly repo: CategoryRepository,
+    private readonly authService: AuthService,
+    private readonly actionRepo: ActionRepository,
+    private readonly resourceRepo: ResourceRepository,
+  ) {}
 
   async getAllCategoryByIdProject(projectId: number): Promise<GetCategoryRO[]> {
     const oldArray = await this.repo.getAll(projectId);
@@ -74,7 +83,17 @@ export class CategoryService {
     }
   }
 
-  async add(projectId: number, dto: AddCategoryDTO): Promise<HandleCategoryRO> {
+  async isExistPermission(actionId: number, resourceId: number, roleId: number) {
+    const isExistPermission = await this.authService.isExistPermission(actionId, resourceId, roleId);
+    if (!isExistPermission) {
+      throw new ForbiddenException('Forbidden');
+    }
+  }
+
+  async add(payload, projectId: number, dto: AddCategoryDTO): Promise<HandleCategoryRO> {
+    const resourceId = await this.resourceRepo.getIdByCode('category');
+    const actionId = await this.actionRepo.getIdByCode('create', resourceId);
+    await this.isExistPermission(actionId, resourceId, payload.role);
     await this.checkExistCode(projectId, dto.code);
     try {
       const newCategory = this.repo.create(dto);
@@ -87,7 +106,10 @@ export class CategoryService {
     }
   }
 
-  async edit(projectId: number, id: number, dto: EditCategoryDTO): Promise<HandleCategoryRO> {
+  async edit(payload, projectId: number, id: number, dto: EditCategoryDTO): Promise<HandleCategoryRO> {
+    const resourceId = await this.resourceRepo.getIdByCode('category');
+    const actionId = await this.actionRepo.getIdByCode('edit', resourceId);
+    await this.isExistPermission(actionId, resourceId, payload.role);
     const old = await this.getOneByIdOrFail(id, projectId);
     await this.checkExistCode(projectId, dto.code, id);
     try {
@@ -100,7 +122,10 @@ export class CategoryService {
     }
   }
 
-  async delete(projectId: number, id: number): Promise<number> {
+  async delete(payload, projectId: number, id: number): Promise<number> {
+    const resourceId = await this.resourceRepo.getIdByCode('category');
+    const actionId = await this.actionRepo.getIdByCode('delete', resourceId);
+    await this.isExistPermission(actionId, resourceId, payload.role);
     const category = await this.getOneByIdOrFail(id, projectId);
     try {
       category.isDeleted = category.id;

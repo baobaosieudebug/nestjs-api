@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -62,15 +62,21 @@ export class ProjectController {
   }
 
   @ApiOkResponse({ description: 'Success' })
+  @Get(':code/admins')
+  async getListAdmin(@Payload() payload, @Param('code') code: string): Promise<UserRO[]> {
+    return await this.projectService.getListAdmin(payload, code);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
   @Put(':code')
   @UsePipes(ValidationPipe)
   async edit(@Payload() payload, @Param('code') code: string, @Body() dto: EditProjectDTO): Promise<ProjectRO> {
     return await this.projectService.edit(payload, code, dto);
   }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Delete(':id')
-  // async delete(@Param('id') id: string) {
-  //   return await this.projectService.delete(id);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Delete(':code')
+  async delete(@Payload() payload, @Param('id') code: string) {
+    return await this.projectService.delete(payload, code);
+  }
 }

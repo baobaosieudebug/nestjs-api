@@ -1,4 +1,4 @@
-import { Get, Put, UsePipes, ValidationPipe, Body, Controller, Post, Param } from '@nestjs/common';
+import { Get, Put, UsePipes, ValidationPipe, Body, Controller, Post, Param, Delete } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -61,9 +61,15 @@ export class OrganizationController {
   //   return await this.organizationService.uploadLogo(req, file);
   // }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Delete(':id')
-  // async delete(@Param('id') id: number): Promise<number> {
-  //   return await this.organizationService.delete(id);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Delete(':code')
+  async delete(@Payload() payload, @Param('code') code: string): Promise<number> {
+    return await this.organizationService.delete(payload, code);
+  }
+
+  @ApiOkResponse({ description: 'Success' })
+  @Get(':code/projects')
+  async getListProject(@Payload() payload, @Param('code') code: string) {
+    return await this.organizationService.getListProject(payload, code);
+  }
 }

@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { forwardRef, HttpModule, Module } from "@nestjs/common";
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
@@ -16,8 +16,8 @@ import { ResourceRepository } from './repository/resource.repository';
   imports: [
     TypeOrmModule.forFeature([PermissionRepository, ActionRepository, ResourceRepository]),
     PassportModule,
-    UserModule,
-    OrganizationModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => OrganizationModule),
     ConfigModule.forRoot(),
     HttpModule.registerAsync({
       useFactory: () => ({

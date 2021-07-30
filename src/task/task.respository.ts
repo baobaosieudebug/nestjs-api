@@ -21,4 +21,11 @@ export class TaskRepository extends Repository<TaskEntity> {
     });
     return entity > 0;
   }
+
+  async isOwner(code: string, createUserId: number): Promise<boolean> {
+    const entity = await this.count({
+      where: { code, createUserId },
+    });
+    return entity > 0;
+  }
 }

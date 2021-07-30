@@ -10,10 +10,11 @@ import { OrganizationModule } from '../organization/organization.module';
 import { MailModule } from '../mail/mail.module';
 import { UserOrganizationRepository } from './repository/user-organization.repository';
 import { UserProjectRepository } from './repository/user-project.repository';
+import { UserRoleRepository } from './repository/user-role.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository, UserOrganizationRepository, UserProjectRepository]),
+    TypeOrmModule.forFeature([UserRepository, UserOrganizationRepository, UserProjectRepository, UserRoleRepository]),
     HttpModule,
     TaskModule,
     GroupsModule,

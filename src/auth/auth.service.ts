@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  forwardRef,
   HttpService,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -20,6 +22,7 @@ import { OrganizationService } from '../organization/organization.service';
 import { PermissionRepository } from './repository/permission.repository';
 import { ActionRepository } from './repository/action.repository';
 import { ResourceRepository } from './repository/resource.repository';
+import { awsConfig } from '../config/aws.config';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +32,7 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly userService: UserService,
     private readonly userRepo: UserRepository,
+    @Inject(forwardRef(() => OrganizationService))
     private readonly orgService: OrganizationService,
     private readonly permissionRepo: PermissionRepository,
     private readonly actionRepo: ActionRepository,
@@ -86,7 +90,7 @@ export class AuthService {
     if (!(await bcrypt.compare(data.password, user.password))) {
       throw new NotFoundException('User wrong password');
     }
-    const token = this.getUserToken(user);
+    const token = await this.getUserToken(user);
     return {
       id: user.id,
       username: user.username,
@@ -96,12 +100,14 @@ export class AuthService {
     };
   }
 
-  getUserToken(user) {
+  async getUserToken(user) {
+    const role = await this.userService.getRoleById(user.id);
     const payload = {
       id: user.id,
       username: user.username,
       organizationCode: user.organization,
       email: user.email,
+      role: role.roleId,
     };
     const token = jwt.sign(payload, 'SECRET', { expiresIn: 60000 });
     return token;
@@ -134,6 +140,15 @@ export class AuthService {
     await this.orgService.isOwner(payload);
     try {
       return await this.addPermission(payload, data);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async isExistPermission(actionId: number, resourceId: number, roleId: number) {
+    try {
+      return await this.permissionRepo.isExistPer(actionId, resourceId, roleId);
     } catch (e) {
       this.logger.error(e);
       throw new InternalServerErrorException();

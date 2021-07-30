@@ -19,6 +19,10 @@ import { AddProjectDTO } from './dto/add-project.dto';
 import { EditProjectDTO } from './dto/edit-project.dto';
 import { ProjectRO } from './ro/project.ro';
 import { UserRO } from '../user/ro/user.ro';
+import { RoleRepository } from '../auth/repository/role.repository';
+import { AuthService } from '../auth/auth.service';
+import { ActionRepository } from '../auth/repository/action.repository';
+import { ResourceRepository } from '../auth/repository/resource.repository';
 
 @Injectable()
 export class ProjectService {
@@ -31,6 +35,10 @@ export class ProjectService {
     private readonly orgRepo: OrganizationRepository,
     private readonly userProjectRepo: UserProjectRepository,
     private readonly userService: UserService,
+    private readonly roleRepo: RoleRepository,
+    private readonly authService: AuthService,
+    private readonly actionRepo: ActionRepository,
+    private readonly resourceRepo: ResourceRepository,
   ) {}
 
   async getOneByCode(code: string): Promise<ProjectEntity> {
@@ -47,6 +55,13 @@ export class ProjectService {
       throw new NotFoundException('Project not found');
     }
     return project;
+  }
+
+  async isExistPermission(actionId: number, resourceId: number, roleId: number) {
+    const isExistPermission = await this.authService.isExistPermission(actionId, resourceId, roleId);
+    if (!isExistPermission) {
+      throw new ForbiddenException('Forbidden');
+    }
   }
 
   async mappingProjectRO(project: ProjectEntity): Promise<ProjectRO> {
@@ -133,6 +148,9 @@ export class ProjectService {
     if (!payload.organizationCode && !isUserExistInProject) {
       throw new ForbiddenException('Forbidden');
     }
+    const resourceId = await this.resourceRepo.getIdByCode('project');
+    const actionId = await this.actionRepo.getIdByCode('view', resourceId);
+    await this.isExistPermission(actionId, resourceId, payload.role);
     try {
       return this.mappingProjectRO(project);
     } catch (e) {
@@ -187,8 +205,10 @@ export class ProjectService {
   async edit(payload, code: string, dto: EditProjectDTO): Promise<ProjectRO> {
     const old = await this.getOneByCodeOrFail(code);
     const isOwner = await this.repo.isOwner(code, payload.id);
-    if (!isOwner && payload.id !== old.adminId) {
-      throw new ForbiddenException('Forbidden');
+    if (!isOwner) {
+      const resourceId = await this.resourceRepo.getIdByCode('project');
+      const actionId = await this.actionRepo.getIdByCode('edit', resourceId);
+      await this.isExistPermission(actionId, resourceId, payload.role);
     }
     const isExistCode = await this.repo.isExistCode(old.id, dto.code);
     if (isExistCode) {
@@ -204,16 +224,45 @@ export class ProjectService {
     }
   }
 
-  // async delete(id: string) {
-  //   const project = await this.getOneByCode(id);
-  //   try {
-  //     return await this.repo.delete(project.id);
-  //     // project.isDeleted = project.id;
-  //     // await this.repo.update(id, project);
-  //     // return this.mappingProjectRO(project);
-  //   } catch (e) {
-  //     this.logger.error(e);
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
+  async delete(payload, code: string) {
+    const project = await this.getOneByCode(code);
+    const isOwner = await this.repo.isOwner(code, payload.id);
+    if (!isOwner) {
+      throw new ForbiddenException('Forbidden');
+    }
+    try {
+      project.isDeleted = project.id;
+      await this.repo.update(project.id, project);
+      return project.id;
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getListProject(id: number) {
+    try {
+      const oldArray = await this.repo.getListProject(id);
+      return this.mappingListProjectRO(oldArray);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getListAdmin(payload, code: string): Promise<UserRO[]> {
+    await this.getOneByCodeOrFail(code);
+    const isOwner = await this.repo.isOwner(code, payload.id);
+    if (!isOwner) {
+      throw new ForbiddenException('Forbidden');
+    }
+    const roleCode = 'admin';
+    try {
+      const roleId = await this.roleRepo.getIdOfRoleByCode(roleCode);
+      return this.userService.getListAdmin(roleId);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
 }

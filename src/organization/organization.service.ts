@@ -17,6 +17,7 @@ import { EditOrganizationDTO } from './dto/edit-organization.dto';
 import { RandomString } from '../common/utils/random-string';
 import { OrganizationRO } from './ro/organization.ro';
 import { UserRO } from '../user/ro/user.ro';
+import { ProjectRepository } from '../project/project.repository';
 
 @Injectable()
 export class OrganizationService {
@@ -25,6 +26,7 @@ export class OrganizationService {
     private readonly repo: OrganizationRepository,
     @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
+    private readonly projectRepo: ProjectRepository,
     private readonly userService: UserService,
   ) {}
 
@@ -134,17 +136,18 @@ export class OrganizationService {
     }
   }
 
-  // async delete(id: number): Promise<number> {
-  //   const organization = await this.getOneByIdOrFail(id);
-  //   try {
-  //     organization.isDeleted = organization.id;
-  //     await this.repo.update(id, organization);
-  //     return id;
-  //   } catch (e) {
-  //     this.logger.error(e);
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
+  async delete(payload, code: string): Promise<number> {
+    await this.isOwner(payload);
+    const organization = await this.getOneByCode(code);
+    try {
+      organization.isDeleted = organization.id;
+      await this.repo.update(organization.id, organization);
+      return organization.id;
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
 
   // async uploadLogo(req, file): Promise<OrganizationRO> {
   //   const organization = await this.isOwner(req);
@@ -154,4 +157,13 @@ export class OrganizationService {
   //   organization.logo = file.originalname;
   //   return this.mappingOrganizationRO(organization);
   // }
+  async getListProject(payload, code: string) {
+    const organization = await this.getOneOrFail(payload, code);
+    try {
+      return await this.projectService.getListProject(organization.id);
+    } catch (e) {
+      this.logger.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
 }

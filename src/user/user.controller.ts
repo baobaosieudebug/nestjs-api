@@ -1,7 +1,9 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Payload } from '../decorators/payload.decorator';
 import { UserService } from './user.service';
+import { EditUserDTO } from './dto/edit-user.dto';
+import { UserRO } from './ro/user.ro';
 
 @ApiTags('User')
 @Controller('user')
@@ -48,16 +50,10 @@ export class UserController {
   //   return await this.usersService.assignTask(id, code);
   // }
 
-  // @ApiOkResponse({ description: 'Success' })
-  // @Put(':id')
-  // @UsePipes(ValidationPipe)
-  // async edit(@Body() dto: EditUserDTO, @Param('id') id: number): Promise<UserRO> {
-  //   return await this.usersService.edit(id, dto);
-  // }
-
-  // @ApiOkResponse({ description: 'Success' })
-  // @Delete(':id')
-  // async delete(@Param('id') id: number): Promise<UserRO> {
-  //   return await this.usersService.delete(id);
-  // }
+  @ApiOkResponse({ description: 'Success' })
+  @Put(':id')
+  @UsePipes(ValidationPipe)
+  async edit(@Payload() payload, @Body() dto: EditUserDTO, @Param('id') id: number): Promise<UserRO> {
+    return await this.usersService.edit(payload, id, dto);
+  }
 }
